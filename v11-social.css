@@ -1,0 +1,19 @@
+/* V11 — Likes, comentários e vídeos curtos */
+.card-media{display:block;width:100%;max-height:460px;object-fit:cover;background:#050505;border-bottom:1px solid rgba(45,255,142,.22)}
+video.card-media{aspect-ratio:16/10}
+.social-actions{display:flex;gap:9px;padding:13px 0 4px;border-top:1px solid rgba(255,255,255,.08);margin-top:14px}
+.social-btn{min-height:40px;padding:8px 13px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.035);color:#cad3df;font-weight:800;display:inline-flex;align-items:center;gap:7px;transition:.2s ease}
+.social-btn:hover,.social-btn:focus-visible{border-color:#28ff91;color:#fff;box-shadow:0 0 20px rgba(40,255,145,.13)}
+.social-btn.active{color:#28ff91;border-color:rgba(40,255,145,.48);background:rgba(40,255,145,.1)}
+.social-btn.active:first-letter{filter:drop-shadow(0 0 7px #28ff91)}
+.field-hint{display:block;color:#98a4b4;margin-top:7px;font-weight:600}
+.comments-head{display:flex;gap:13px;align-items:center;margin-bottom:18px}
+.comments-head>span{display:grid;place-items:center;width:45px;height:45px;border-radius:15px;background:linear-gradient(145deg,#15f28a,#188cff);color:#020706;font-size:25px;font-weight:900;box-shadow:0 0 25px rgba(35,242,151,.22)}
+.comments-head h2,.comments-head p{margin:0}.comments-head p{color:#9ba7b6;margin-top:3px}
+.comments-list{display:grid;gap:10px;max-height:44vh;overflow:auto;padding-right:3px;margin-bottom:18px}
+.comment{position:relative;padding:13px 14px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))}
+.comment>div{display:flex;justify-content:space-between;gap:12px}.comment b{color:#fff}.comment small{color:#778598}.comment p{margin:8px 0 0;color:#d5dde8;white-space:pre-wrap;overflow-wrap:anywhere}
+.comment>button{border:0;background:none;color:#ff7389;padding:7px 0 0;font-weight:700;font-size:12px}
+.comment-form{padding-top:15px;border-top:1px solid rgba(255,255,255,.1)}
+.comment-form textarea{min-height:90px}
+@media(max-width:520px){.social-actions{justify-content:space-between}.social-btn{flex:1;justify-content:center;padding-inline:8px;font-size:12px}.card-media{max-height:360px}}

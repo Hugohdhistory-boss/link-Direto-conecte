@@ -1,0 +1,36 @@
+LINK DIRETO CONNECT — V11 SOCIAL
+
+NOVIDADES
+- Likes nas publicações
+- Comentários nas publicações
+- Fotografias e vídeos
+- Vídeos limitados automaticamente a 60 segundos e 50 MB
+
+PARTE 1 — ATUALIZAR O SUPABASE
+
+1. Abra o Supabase.
+2. Entre em SQL Editor.
+3. Abra o ficheiro ATUALIZAR_SUPABASE_COMPLETO.sql deste pacote.
+4. Copie todo o conteúdo e cole no SQL Editor.
+5. Clique em Run.
+6. Confirme que aparece Success.
+
+PARTE 2 — ATUALIZAR O GITHUB
+
+1. Abra o repositório link-Direto-conecte no GitHub.
+2. Clique em Adicionar arquivo e depois Carregar arquivos.
+3. Envie estes ficheiros:
+   - index.html
+   - app.js
+   - sw.js
+   - v11-social.css
+4. Clique em Confirmar alterações.
+5. Espere cerca de 2 minutos.
+6. Abra o site usando:
+   https://hugohdhistory-boss.github.io/link-Direto-conecte/?v=11
+
+IMPORTANTE
+- Primeiro execute o SQL no Supabase.
+- Depois envie os 4 ficheiros para o GitHub.
+- Não envie este ficheiro de instruções para o GitHub.
+
