@@ -1,0 +1,30 @@
+LINK DIRETO CONNECT — V13 CORREÇÃO DE VÍDEOS
+
+PARTE 1 — SUPABASE
+1. Abra o Supabase e entre em SQL Editor.
+2. Clique em New query.
+3. Abra ATIVAR_VIDEOS_V13.sql.
+4. Copie tudo, cole no SQL Editor e clique em Run.
+5. Confirme que aparece Success.
+
+PARTE 2 — GITHUB
+1. Abra o repositório link-Direto-conecte.
+2. Clique em Adicionar arquivo e Carregar arquivos.
+3. Envie e substitua:
+   - index.html
+   - app.js
+   - sw.js
+   - v11-social.css
+   - v12-profile.css
+4. Clique em Confirmar alterações.
+5. Espere cerca de 2 minutos.
+6. Abra o site em:
+   https://hugohdhistory-boss.github.io/link-Direto-conecte/?v=13
+
+TESTE
+- Entre numa conta.
+- Abra Publicar.
+- Escolha um vídeo MP4, MOV ou WebM.
+- O vídeo deve ter no máximo 60 segundos e 50 MB.
+- O site mostrará uma mensagem específica se houver algum problema.
+
