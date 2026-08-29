@@ -1,0 +1,24 @@
+LINK DIRETO CONNECT — V12 PERFIL CONCLUÍDO
+
+O QUE MUDA
+- Depois de guardar, o formulário fecha automaticamente.
+- Aparece um cartão limpo com os dados do negócio.
+- O cartão mostra PERFIL CONCLUÍDO.
+- O botão Editar perfil abre novamente os campos.
+- O botão Fechar edição volta ao cartão sem alterar os dados guardados.
+
+COMO INSTALAR
+1. Abra o repositório link-Direto-conecte no GitHub.
+2. Clique em Adicionar arquivo e depois Carregar arquivos.
+3. Envie estes quatro ficheiros:
+   - index.html
+   - app.js
+   - sw.js
+   - v12-profile.css
+4. Clique em Confirmar alterações.
+5. Espere cerca de 2 minutos.
+6. Abra:
+   https://hugohdhistory-boss.github.io/link-Direto-conecte/?v=12
+
+Não é necessário executar SQL no Supabase para esta atualização.
+
