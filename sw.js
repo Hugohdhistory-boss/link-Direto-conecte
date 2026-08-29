@@ -1,5 +1,5 @@
-const CACHE_NAME='link-direto-v7-contas';
-const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
+const CACHE_NAME='link-direto-v8-notificacoes';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -23,4 +23,12 @@ self.addEventListener('fetch',event=>{
     if(response.ok&&new URL(event.request.url).origin===location.origin)cache.put(event.request,response.clone());
     return response;
   }))));
+});
+
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(windows=>{
+    for(const client of windows){if('focus'in client)return client.focus()}
+    return clients.openWindow('./?v=8');
+  }));
 });

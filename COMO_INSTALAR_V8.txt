@@ -1,0 +1,22 @@
+LINK DIRETO CONNECT — V8 NOTIFICAÇÕES
+
+1. No GitHub, abre o repositório link-Direto-conecte.
+2. Clica em Adicionar arquivo > Enviar arquivos.
+3. Envia estes quatro ficheiros:
+   - index.html
+   - app.js
+   - sw.js
+   - v8-notifications.css
+4. Confirma as alterações.
+5. Espera cerca de 2 minutos e abre o site com ?v=8 no fim do endereço.
+
+Não é necessário executar novo código no Supabase.
+
+Novidades:
+- contador vermelho de mensagens novas na aba Connect;
+- verificação automática de novas mensagens;
+- aviso dentro do aplicativo;
+- botão para ativar notificações do navegador;
+- ao tocar na notificação, o Link Direto volta a abrir.
+
+Nota: os alertas automáticos funcionam enquanto o aplicativo estiver aberto ou em segundo plano no navegador. O contador Connect guarda mensagens não vistas neste aparelho.
