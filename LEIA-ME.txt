@@ -1,26 +1,31 @@
-LINK DIRETO CONNECT — VERSÃO INSTALÁVEL (PWA)
+LINK DIRETO CONNECT — VERSÃO FUNCIONAL COMPLETA
 
-Para instalar como aplicativo, os ficheiros precisam ser servidos por um pequeno servidor web.
-Abrir o index.html diretamente funciona como página, mas o botão de instalação do navegador pode não aparecer.
+PASSO 1 — ATUALIZAR O SUPABASE
+1. Abra o Supabase e entre em SQL Editor.
+2. Clique em New query.
+3. Abra ATUALIZAR_SUPABASE_COMPLETO.sql.
+4. Copie todo o conteúdo, cole no SQL Editor e clique em Run.
+5. O resultado correto é: Success. No rows returned.
 
-COMPUTADOR (Chrome/Edge)
-1. Abra a pasta num servidor local.
-2. Entre no endereço local pelo navegador.
-3. Procure o ícone "Instalar app" na barra de endereço ou Menu > Instalar Link Direto Connect.
+PASSO 2 — PUBLICAR NO GITHUB
+Envie todos os ficheiros desta pasta para a raiz do repositório e confirme as alterações.
 
-CELULAR ANDROID (Chrome)
-1. Abra o endereço da aplicação no Chrome.
-2. Menu ⋮ > Adicionar à tela inicial / Instalar app.
-3. O ícone Link Direto ficará como um aplicativo normal.
+PASSO 3 — TESTAR
+1. Abra o endereço GitHub Pages numa janela anónima.
+2. Crie duas contas com e-mails diferentes para testar entre dois aparelhos.
+3. Confirme o e-mail se o Supabase solicitar.
+4. Publique numa conta e envie uma proposta pela outra.
+5. Aceite a proposta na primeira conta e abra a Sala de Negócio.
 
-IPHONE (Safari)
-1. Abra a aplicação no Safari.
-2. Partilhar > Adicionar ao Ecrã Principal.
-3. Confirme "Adicionar".
+FUNÇÕES INCLUÍDAS
+- Cadastro e entrada com e-mail e senha
+- Cartão Link / perfil empresarial
+- Publicações TENHO e PRECISO com fotografia
+- Feed, pesquisa, filtros e favoritos
+- Propostas com valor e prazo
+- Aceitar ou recusar propostas
+- Sala de Negócio / chat privado
+- Gestão das próprias publicações
+- Link Ads / publicidade segmentada
+- PWA instalável
 
-SERVIDOR LOCAL SIMPLES (COMPUTADOR)
-Se tiver Python instalado, abra o Terminal nesta pasta e execute:
-python3 -m http.server 8000
-
-Depois abra:
-http://localhost:8000
