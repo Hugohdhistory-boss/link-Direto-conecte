@@ -2,7 +2,6 @@
   "name": "Link Direto Connect",
   "short_name": "Link Direto",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
   "background_color": "#08111d",
   "theme_color": "#08111d",
