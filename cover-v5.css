@@ -1,0 +1,19 @@
+.splash-v5{padding:26px 18px 22px;text-align:left}
+.splash-v5 .splash-brand h1{font-size:38px;line-height:.98;margin:24px 0 12px;letter-spacing:-1.5px}
+.splash-v5 .splash-brand h1 span,.brand-row span{color:var(--green)}
+.splash-v5 .splash-brand>p{color:var(--muted);line-height:1.45;margin:0}
+.brand-row{display:flex;align-items:center;gap:11px}
+.brand-row b{display:block;font-size:17px}
+.brand-row small{display:block;color:var(--muted);margin-top:3px}
+.brand-row .logo-mark{width:52px;height:52px;flex:0 0 52px;margin:0;border-width:9px;font-size:15px}
+.cover-art{height:340px;margin:18px 0;position:relative;overflow:hidden;border:1px solid #315170;border-radius:30px;background:#10243d;box-shadow:0 25px 60px rgba(0,0,0,.38)}
+.cover-art img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,24,.08) 35%,rgba(4,12,24,.94) 100%)}
+.cover-badges{position:absolute;left:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap}
+.cover-badges span{background:rgba(5,17,31,.82);border:1px solid rgba(111,241,200,.5);color:#a1ffdf;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;letter-spacing:.5px}
+.cover-caption{position:absolute;left:18px;right:18px;bottom:18px}
+.cover-caption b{display:block;font-size:20px;max-width:290px}
+.cover-caption small{display:block;color:#c6d7e8;margin-top:5px}
+.splash-v5 .splash-card{text-align:center}
+.splash-v5 .splash-card>small{display:block;color:var(--muted);margin-top:9px}
+@media(max-height:760px){.cover-art{height:280px}.splash-v5 .splash-brand h1{font-size:32px;margin-top:16px}}

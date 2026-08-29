@@ -1,5 +1,5 @@
-const CACHE_NAME='link-direto-v4-completo';
-const ASSETS=['./','./index.html','./styles.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE_NAME='link-direto-v5-capa';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
