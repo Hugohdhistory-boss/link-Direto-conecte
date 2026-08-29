@@ -1,0 +1,26 @@
+LINK DIRETO CONNECT — VERSÃO INSTALÁVEL (PWA)
+
+Para instalar como aplicativo, os ficheiros precisam ser servidos por um pequeno servidor web.
+Abrir o index.html diretamente funciona como página, mas o botão de instalação do navegador pode não aparecer.
+
+COMPUTADOR (Chrome/Edge)
+1. Abra a pasta num servidor local.
+2. Entre no endereço local pelo navegador.
+3. Procure o ícone "Instalar app" na barra de endereço ou Menu > Instalar Link Direto Connect.
+
+CELULAR ANDROID (Chrome)
+1. Abra o endereço da aplicação no Chrome.
+2. Menu ⋮ > Adicionar à tela inicial / Instalar app.
+3. O ícone Link Direto ficará como um aplicativo normal.
+
+IPHONE (Safari)
+1. Abra a aplicação no Safari.
+2. Partilhar > Adicionar ao Ecrã Principal.
+3. Confirme "Adicionar".
+
+SERVIDOR LOCAL SIMPLES (COMPUTADOR)
+Se tiver Python instalado, abra o Terminal nesta pasta e execute:
+python3 -m http.server 8000
+
+Depois abra:
+http://localhost:8000

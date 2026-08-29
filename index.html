@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Link Direto Connect</title>
+<style>
+  :root {
+    --bg:#08111d;
+    --bg2:#0d1727;
+    --card:#122036;
+    --card2:#162742;
+    --text:#f8fafc;
+    --muted:#9cb0c8;
+    --line:#273b5a;
+    --accent:#22c997;
+    --accent2:#2f80ed;
+    --white:#ffffff;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(180deg,#07101c 0%, #0b1524 100%);
+    color:var(--text);
+  }
+  .app {
+    max-width:440px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    padding-bottom:90px;
+  }
+  .screen { display:none; }
+  .screen.active { display:block; }
+  .splash {
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:34px 24px 28px;
+    background:
+      radial-gradient(circle at top right, rgba(47,128,237,.17), transparent 28%),
+      radial-gradient(circle at top left, rgba(34,201,151,.14), transparent 30%),
+      linear-gradient(180deg,#07101c 0%, #0d1727 100%);
+  }
+  .splash .logo {
+    text-align:center;
+    margin-top:28px;
+  }
+  .brand {
+    font-size:34px;
+    line-height:1.05;
+    font-weight:900;
+    letter-spacing:.4px;
+  }
+  .brand span { color:var(--accent); }
+  .slogan {
+    color:#d5e1f1;
+    margin-top:12px;
+    font-size:15px;
+    text-align:center;
+  }
+  .hero-image {
+    width:100%;
+    border-radius:26px;
+    margin:18px auto 0;
+    display:block;
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 20px 50px rgba(0,0,0,.28);
+  }
+  .enter-card {
+    background:rgba(18,32,54,.9);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:18px;
+    text-align:center;
+  }
+  .enter-card p {
+    margin:0 0 15px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.45;
+  }
+  .btn {
+    width:100%;
+    border:none;
+    border-radius:15px;
+    padding:15px 16px;
+    font-weight:900;
+    cursor:pointer;
+    font-size:15px;
+  }
+  .btn.main { background:linear-gradient(135deg,var(--accent),#38d9a9); color:#03241b; }
+  .btn.secondary { background:#17304d; color:#dcefff; border:1px solid #29466f; }
+  .topbar {
+    position:sticky;
+    top:0;
+    z-index:5;
+    background:rgba(7,16,28,.92);
+    border-bottom:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
+    padding:16px 18px 14px;
+  }
+  .topbar .mini-brand {
+    font-weight:900;
+    font-size:19px;
+  }
+  .topbar .mini-brand span { color:var(--accent); }
+  .topbar .mini-sub {
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+  }
+  .content { padding:18px; }
+  .hero {
+    background:linear-gradient(135deg,#13253f 0%, #0f1e31 100%);
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:18px;
+    box-shadow:0 14px 30px rgba(0,0,0,.22);
+  }
+  .hero h1 {
+    font-size:24px;
+    line-height:1.1;
+    margin:0 0 8px;
+  }
+  .hero p {
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.45;
+  }
+  .hero img {
+    width:100%;
+    border-radius:18px;
+    margin-top:14px;
+    border:1px solid rgba(255,255,255,.05);
+  }
+  .action-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+  }
+  .action {
+    border:none;
+    border-radius:18px;
+    text-align:left;
+    padding:16px 14px;
+    min-height:120px;
+    color:white;
+    cursor:pointer;
+    font-size:19px;
+    font-weight:900;
+  }
+  .action small {
+    display:block;
+    font-size:12px;
+    font-weight:500;
+    line-height:1.35;
+    margin-top:6px;
+    opacity:.92;
+  }
+  .tenho { background:linear-gradient(135deg,#16a572 0%, #22c997 100%); }
+  .preciso { background:linear-gradient(135deg,#245fd8 0%, #2f80ed 100%); }
+  .section-title {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:22px 0 12px;
+  }
+  .section-title h2 {
+    margin:0;
+    font-size:17px;
+  }
+  .section-title button {
+    background:none;
+    border:0;
+    color:var(--accent);
+    font-weight:800;
+    cursor:pointer;
+  }
+  .card {
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:14px;
+  }
+  .card-image {
+    width:100%;
+    display:block;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    background:#102039;
+  }
+  .card-body {
+    padding:14px;
+  }
+  .tag {
+    display:inline-block;
+    padding:6px 9px;
+    border-radius:999px;
+    background:#17304d;
+    border:1px solid #2e4b71;
+    color:#d8e9ff;
+    font-size:11px;
+    margin-bottom:8px;
+  }
+  .card h3 {
+    margin:0 0 7px;
+    font-size:15px;
+  }
+  .card p {
+    margin:0 0 11px;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.45;
+  }
+  .meta {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    font-size:11px;
+    color:#c2d2e8;
+  }
+  .card .btn {
+    margin-top:12px;
+  }
+  .mini-card {
+    background:var(--card2);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+    margin-bottom:12px;
+  }
+  .result {
+    background:#0f1d31;
+    border:1px solid #28466c;
+    border-radius:16px;
+    padding:14px;
+    margin-top:12px;
+  }
+  .match {
+    font-size:30px;
+    font-weight:900;
+    color:var(--accent);
+  }
+  label {
+    display:block;
+    font-size:12px;
+    color:#d6e2f0;
+    margin-bottom:7px;
+  }
+  .form-group { margin-bottom:14px; }
+  input, select, textarea {
+    width:100%;
+    border-radius:13px;
+    border:1px solid var(--line);
+    background:#0c1728;
+    color:white;
+    padding:13px 14px;
+    outline:none;
+    font:inherit;
+  }
+  textarea {
+    min-height:100px;
+    resize:vertical;
+  }
+  .notice {
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.42;
+  }
+  .profile-head {
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .avatar {
+    width:58px;
+    height:58px;
+    border-radius:18px;
+    display:grid;
+    place-items:center;
+    font-size:22px;
+    font-weight:900;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+  }
+  .score {
+    margin-left:auto;
+    text-align:right;
+  }
+  .score small {
+    color:var(--muted);
+  }
+  .score b {
+    font-size:22px;
+    color:var(--accent);
+  }
+  .chips {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .chip {
+    background:#16304f;
+    color:#dcecff;
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:11px;
+  }
+  .bottom {
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(440px,100%);
+    background:rgba(8,15,27,.97);
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    padding:9px 8px 12px;
+    z-index:10;
+  }
+  .nav {
+    background:none;
+    border:0;
+    color:#94a8c4;
+    cursor:pointer;
+    font-size:10px;
+  }
+  .nav strong {
+    display:block;
+    font-size:18px;
+    margin-bottom:3px;
+  }
+  .nav.active {
+    color:var(--accent);
+  }
+  .fab strong {
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    margin:-24px auto 3px;
+    display:grid;
+    place-items:center;
+    background:var(--accent);
+    color:#05271d;
+    box-shadow:0 10px 24px rgba(34,201,151,.35);
+  }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#08111d">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<div class="app">
+  <section id="splash" class="screen active splash">
+    <div class="logo">
+      <div class="brand">LINK DIRETO <span>CONNECT</span></div>
+      <div class="slogan">Encontra. Liga. Faz negócio.</div>
+      <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJnMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjJjOTk3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzJmODBlZCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI1MDAiIHJ4PSIyOCIgZmlsbD0iIzBmMWQzMSIvPgogIDxjaXJjbGUgY3g9IjExNSIgY3k9IjEyMCIgcj0iNjUiIGZpbGw9IiMxNzMwNGQiLz4KICA8Y2lyY2xlIGN4PSI2ODAiIGN5PSI5MCIgcj0iNDgiIGZpbGw9IiMxODM1NWEiLz4KICA8cmVjdCB4PSIxMjAiIHk9IjI5MCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI5NSIgcng9IjE4IiBmaWxsPSIjMWEyYzQ3Ii8+CiAgPHJlY3QgeD0iMzI1IiB5PSIyNDAiIHdpZHRoPSIxNzAiIGhlaWdodD0iMTQ1IiByeD0iMTgiIGZpbGw9IiMxZjM1NTYiLz4KICA8cmVjdCB4PSI1MzAiIHk9IjIwMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxODUiIHJ4PSIxOCIgZmlsbD0iIzI1NDM2YyIvPgogIDxwYXRoIGQ9Ik0xNDUgMjg1IEMyMjAgMjIwLCAyNzAgMjMwLCAzNTAgMjE1IEM0MzAgMjAwLCA0OTAgMTU1LCA1NjAgMTY1IiBzdHJva2U9InVybCgjZzEpIiBzdHJva2Utd2lkdGg9IjEyIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIxNDUiIGN5PSIyODUiIHI9IjEwIiBmaWxsPSIjMjJjOTk3Ii8+CiAgPGNpcmNsZSBjeD0iMzUwIiBjeT0iMjE1IiByPSIxMCIgZmlsbD0iIzIyYzk5NyIvPgogIDxjaXJjbGUgY3g9IjU2MCIgY3k9IjE2NSIgcj0iMTAiIGZpbGw9IiMyMmM5OTciLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjUgMTI1KSI+CiAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iMzQiIGZpbGw9IiMyMmM5OTciLz4KICAgIDxyZWN0IHg9Ii0yNSIgeT0iMzgiIHdpZHRoPSI1MCIgaGVpZ2h0PSI3MCIgcng9IjE4IiBmaWxsPSIjZGNlZmZmIi8+CiAgPC9nPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5MCAxNDUpIj4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIzNCIgZmlsbD0iIzJmODBlZCIvPgogICAgPHJlY3QgeD0iLTI1IiB5PSIzOCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjcwIiByeD0iMTgiIGZpbGw9IiNkY2VmZmYiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjI1IDExNSkiPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjM0IiBmaWxsPSIjMjJjOTk3Ii8+CiAgICA8cmVjdCB4PSItMjUiIHk9IjM4IiB3aWR0aD0iNTAiIGhlaWdodD0iNzAiIHJ4PSIxOCIgZmlsbD0iI2RjZWZmZiIvPgogIDwvZz4KPC9zdmc+Cg==" alt="Ilustração de negócios conectados" class="hero-image" />
+    </div>
+    <div class="enter-card">
+      <p>Uma plataforma para ligar pequenos empresários, empreendedores e oportunidades reais de negócio.</p>
+      <button class="btn main" onclick="enterApp()">Entrar</button>
+    </div>
+  </section>
+
+  <section id="mainApp" class="screen">
+    <div class="topbar">
+      <div class="mini-brand">LINK DIRETO <span>CONNECT</span></div>
+      <div class="mini-sub">Encontra. Liga. Faz negócio.</div>
+    </div>
+
+    <main class="content">
+      <section id="home" class="subscreen active">
+        <div class="hero">
+          <h1>O teu próximo negócio pode estar perto de ti.</h1>
+          <p>Publica o que tens ou o que precisas e cria ligações com fornecedores, clientes e parceiros.</p>
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDgwMCA1MDAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJnMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMjJjOTk3Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzJmODBlZCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI1MDAiIHJ4PSIyOCIgZmlsbD0iIzBmMWQzMSIvPgogIDxjaXJjbGUgY3g9IjExNSIgY3k9IjEyMCIgcj0iNjUiIGZpbGw9IiMxNzMwNGQiLz4KICA8Y2lyY2xlIGN4PSI2ODAiIGN5PSI5MCIgcj0iNDgiIGZpbGw9IiMxODM1NWEiLz4KICA8cmVjdCB4PSIxMjAiIHk9IjI5MCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI5NSIgcng9IjE4IiBmaWxsPSIjMWEyYzQ3Ii8+CiAgPHJlY3QgeD0iMzI1IiB5PSIyNDAiIHdpZHRoPSIxNzAiIGhlaWdodD0iMTQ1IiByeD0iMTgiIGZpbGw9IiMxZjM1NTYiLz4KICA8cmVjdCB4PSI1MzAiIHk9IjIwMCIgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxODUiIHJ4PSIxOCIgZmlsbD0iIzI1NDM2YyIvPgogIDxwYXRoIGQ9Ik0xNDUgMjg1IEMyMjAgMjIwLCAyNzAgMjMwLCAzNTAgMjE1IEM0MzAgMjAwLCA0OTAgMTU1LCA1NjAgMTY1IiBzdHJva2U9InVybCgjZzEpIiBzdHJva2Utd2lkdGg9IjEyIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSIxNDUiIGN5PSIyODUiIHI9IjEwIiBmaWxsPSIjMjJjOTk3Ii8+CiAgPGNpcmNsZSBjeD0iMzUwIiBjeT0iMjE1IiByPSIxMCIgZmlsbD0iIzIyYzk5NyIvPgogIDxjaXJjbGUgY3g9IjU2MCIgY3k9IjE2NSIgcj0iMTAiIGZpbGw9IiMyMmM5OTciLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjUgMTI1KSI+CiAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iMzQiIGZpbGw9IiMyMmM5OTciLz4KICAgIDxyZWN0IHg9Ii0yNSIgeT0iMzgiIHdpZHRoPSI1MCIgaGVpZ2h0PSI3MCIgcng9IjE4IiBmaWxsPSIjZGNlZmZmIi8+CiAgPC9nPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5MCAxNDUpIj4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIzNCIgZmlsbD0iIzJmODBlZCIvPgogICAgPHJlY3QgeD0iLTI1IiB5PSIzOCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjcwIiByeD0iMTgiIGZpbGw9IiNkY2VmZmYiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNjI1IDExNSkiPgogICAgPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjM0IiBmaWxsPSIjMjJjOTk3Ii8+CiAgICA8cmVjdCB4PSItMjUiIHk9IjM4IiB3aWR0aD0iNTAiIGhlaWdodD0iNzAiIHJ4PSIxOCIgZmlsbD0iI2RjZWZmZiIvPgogIDwvZz4KPC9zdmc+Cg==" alt="Conexões empresariais" />
+          <div class="action-grid">
+            <button class="action tenho" onclick="openPublish('tenho')">TENHO
+              <small>Produto, serviço ou capacidade disponível.</small>
+            </button>
+            <button class="action preciso" onclick="openPublish('preciso')">PRECISO
+              <small>Fornecedor, cliente, parceria ou solução.</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h2>Oportunidades em destaque</h2>
+          <button onclick="showSubscreen('opps')">Ver todas</button>
+        </div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjkyIiBmaWxsPSIjMWYzNjU4Ii8+CiAgPHJlY3QgeD0iMjQ1IiB5PSI5NSIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIxNTUiIHJ4PSIyOCIgZmlsbD0iIzI2NDg2ZiIvPgogIDxlbGxpcHNlIGN4PSIzNTUiIGN5PSIxOTAiIHJ4PSI5NSIgcnk9IjU1IiBmaWxsPSIjZDhmM2RjIi8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMTcwIiByPSIyMCIgZmlsbD0iI2ZmY2EzYSIvPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE5MCIgcj0iMjIiIGZpbGw9IiNmNzdmMDAiLz4KICA8Y2lyY2xlIGN4PSIzNTAiIGN5PSIyMTAiIHI9IjE4IiBmaWxsPSIjZjk0MTQ0Ii8+CiAgPHJlY3QgeD0iMjg1IiB5PSIxMjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSI5NSIgcng9IjciIGZpbGw9IiNjZGUzZmYiLz4KICA8cmVjdCB4PSI0MTAiIHk9IjEyNSIgd2lkdGg9IjE1IiBoZWlnaHQ9Ijk1IiByeD0iNyIgZmlsbD0iI2NkZTNmZiIvPgogIDxwYXRoIGQ9Ik0yOTIgMTEwIGwyMCAtMjgiIHN0cm9rZT0iI2NkZTNmZiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTQxOCAxMTAgbDIwIC0yOCIgc3Ryb2tlPSIjY2RlM2ZmIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==" class="card-image" alt="Restaurante e alimentação" />
+          <div class="card-body">
+            <span class="tag">Alimentação</span>
+            <h3>Restaurante procura fornecedor de hortícolas</h3>
+            <p>Entrega 3 vezes por semana. Preferência por fornecedor da zona de Maputo/Matola.</p>
+            <div class="meta"><span>📍 6 km</span><span>⏱ Hoje</span><span>💬 4 propostas</span></div>
+            <button class="btn main" onclick="alert('Proposta iniciada no protótipo.')">Enviar proposta</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMjI1M2YiLz4KICA8Y2lyY2xlIGN4PSIxNjUiIGN5PSIxODAiIHI9Ijk1IiBmaWxsPSIjMWIzNjU5Ii8+CiAgPHJlY3QgeD0iMjU1IiB5PSI4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxOTAiIHJ4PSIyNiIgZmlsbD0iIzI1NDU2ZSIvPgogIDxyZWN0IHg9IjI4MCIgeT0iMTA1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjEzMCIgcng9IjE2IiBmaWxsPSIjZDhlYmZmIi8+CiAgPGNpcmNsZSBjeD0iMzI1IiBjeT0iMTQ1IiByPSIyMiIgZmlsbD0iIzIyYzk5NyIvPgogIDxyZWN0IHg9IjM2MCIgeT0iMTI4IiB3aWR0aD0iNzgiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjNzI5NGJmIi8+CiAgPHJlY3QgeD0iMzYwIiB5PSIxNDgiIHdpZHRoPSI1OCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiM3Mjk0YmYiLz4KICA8cmVjdCB4PSIzMDAiIHk9IjE5MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxNiIgcng9IjgiIGZpbGw9IiMyZjgwZWQiLz4KPC9zdmc+Cg==" class="card-image" alt="Serviços empresariais" />
+          <div class="card-body">
+            <span class="tag">Serviços</span>
+            <h3>Empresa procura serviço de limpeza para escritório</h3>
+            <p>Contrato mensal para escritório de pequena dimensão.</p>
+            <div class="meta"><span>📍 3 km</span><span>⏱ Hoje</span></div>
+            <button class="btn main" onclick="alert('Conexão iniciada no protótipo.')">Conectar</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="connect" class="subscreen" style="display:none">
+        <div class="section-title"><h2>Connect</h2></div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjEyMCIgd2lkdGg9IjM3MCIgaGVpZ2h0PSIxNDUiIHJ4PSIyMiIgZmlsbD0iIzI1NDU2ZSIvPgogIDxyZWN0IHg9IjExMCIgeT0iMTIwIiB3aWR0aD0iMzcwIiBoZWlnaHQ9IjM1IiByeD0iMjIiIGZpbGw9IiMyMmM5OTciLz4KICA8cmVjdCB4PSIxMzUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8cmVjdCB4PSIyNDUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8cmVjdCB4PSIzNTUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8Y2lyY2xlIGN4PSI1MDAiIGN5PSIxMTAiIHI9IjQ1IiBmaWxsPSIjMTgzNTVhIi8+Cjwvc3ZnPgo=" class="card-image" alt="Mercado e conexão entre negócios" />
+          <div class="card-body">
+            <span class="tag">Match recomendado</span>
+            <h3>Embalagens Maputo ↔ Doce Sabor</h3>
+            <p>Um negócio vende embalagens e o outro procura embalagens para pastelaria.</p>
+            <div class="result">
+              <div class="match">92%</div>
+              <div class="notice">Compatibilidade baseada em categoria, localização, necessidade e capacidade.</div>
+            </div>
+            <button class="btn main">Abrir conversa</button>
+          </div>
+        </div>
+
+        <div class="mini-card">
+          <span class="tag">Possível cliente</span>
+          <h3 style="margin:0 0 6px">Hotel procura fornecedor local de pastelaria</h3>
+          <p style="margin:0 0 10px;color:var(--muted);font-size:13px">O teu perfil corresponde ao tipo de fornecedor procurado.</p>
+          <button class="btn secondary">Ver oportunidade</button>
+        </div>
+      </section>
+
+      <section id="publish" class="subscreen" style="display:none">
+        <div class="section-title"><h2>Publicar</h2></div>
+        <div class="mini-card">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="ptype">
+              <option value="tenho">TENHO</option>
+              <option value="preciso">PRECISO</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Título</label>
+            <input id="ptitle" placeholder="Ex.: 300 caixas de tomate disponíveis" />
+          </div>
+          <div class="form-group">
+            <label>Categoria</label>
+            <select>
+              <option>Agricultura</option>
+              <option>Alimentação</option>
+              <option>Transporte</option>
+              <option>Construção</option>
+              <option>Serviços</option>
+              <option>Tecnologia</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <textarea placeholder="Quantidade, prazo, localização e outras condições..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Localização</label>
+            <input placeholder="Bairro / Cidade" />
+          </div>
+          <button class="btn main" onclick="publishDemo()">Publicar agora</button>
+          <p id="publishResult" class="notice" style="margin-top:12px"></p>
+        </div>
+      </section>
+
+      <section id="opps" class="subscreen" style="display:none">
+        <div class="section-title"><h2>Oportunidades</h2></div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjkyIiBmaWxsPSIjMWYzNjU4Ii8+CiAgPHJlY3QgeD0iMjQ1IiB5PSI5NSIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIxNTUiIHJ4PSIyOCIgZmlsbD0iIzI2NDg2ZiIvPgogIDxlbGxpcHNlIGN4PSIzNTUiIGN5PSIxOTAiIHJ4PSI5NSIgcnk9IjU1IiBmaWxsPSIjZDhmM2RjIi8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMTcwIiByPSIyMCIgZmlsbD0iI2ZmY2EzYSIvPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE5MCIgcj0iMjIiIGZpbGw9IiNmNzdmMDAiLz4KICA8Y2lyY2xlIGN4PSIzNTAiIGN5PSIyMTAiIHI9IjE4IiBmaWxsPSIjZjk0MTQ0Ii8+CiAgPHJlY3QgeD0iMjg1IiB5PSIxMjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSI5NSIgcng9IjciIGZpbGw9IiNjZGUzZmYiLz4KICA8cmVjdCB4PSI0MTAiIHk9IjEyNSIgd2lkdGg9IjE1IiBoZWlnaHQ9Ijk1IiByeD0iNyIgZmlsbD0iI2NkZTNmZiIvPgogIDxwYXRoIGQ9Ik0yOTIgMTEwIGwyMCAtMjgiIHN0cm9rZT0iI2NkZTNmZiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTQxOCAxMTAgbDIwIC0yOCIgc3Ryb2tlPSIjY2RlM2ZmIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==" class="card-image" alt="Água para eventos" />
+          <div class="card-body">
+            <span class="tag">Compras</span>
+            <h3>Procura-se fornecedor de água para evento</h3>
+            <p>Necessidade: 800 garrafas. Entrega em Maputo.</p>
+            <button class="btn main">Enviar proposta</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMjI1M2YiLz4KICA8Y2lyY2xlIGN4PSIxNjUiIGN5PSIxODAiIHI9Ijk1IiBmaWxsPSIjMWIzNjU5Ii8+CiAgPHJlY3QgeD0iMjU1IiB5PSI4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxOTAiIHJ4PSIyNiIgZmlsbD0iIzI1NDU2ZSIvPgogIDxyZWN0IHg9IjI4MCIgeT0iMTA1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjEzMCIgcng9IjE2IiBmaWxsPSIjZDhlYmZmIi8+CiAgPGNpcmNsZSBjeD0iMzI1IiBjeT0iMTQ1IiByPSIyMiIgZmlsbD0iIzIyYzk5NyIvPgogIDxyZWN0IHg9IjM2MCIgeT0iMTI4IiB3aWR0aD0iNzgiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjNzI5NGJmIi8+CiAgPHJlY3QgeD0iMzYwIiB5PSIxNDgiIHdpZHRoPSI1OCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiM3Mjk0YmYiLz4KICA8cmVjdCB4PSIzMDAiIHk9IjE5MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxNiIgcng9IjgiIGZpbGw9IiMyZjgwZWQiLz4KPC9zdmc+Cg==" class="card-image" alt="Carpintaria comercial" />
+          <div class="card-body">
+            <span class="tag">Construção</span>
+            <h3>Procura-se carpinteiro para mobiliário comercial</h3>
+            <p>Pedido de cotação para 6 balcões e 12 prateleiras.</p>
+            <button class="btn main">Enviar proposta</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8cmVjdCB4PSIxMTAiIHk9IjEyMCIgd2lkdGg9IjM3MCIgaGVpZ2h0PSIxNDUiIHJ4PSIyMiIgZmlsbD0iIzI1NDU2ZSIvPgogIDxyZWN0IHg9IjExMCIgeT0iMTIwIiB3aWR0aD0iMzcwIiBoZWlnaHQ9IjM1IiByeD0iMjIiIGZpbGw9IiMyMmM5OTciLz4KICA8cmVjdCB4PSIxMzUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8cmVjdCB4PSIyNDUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8cmVjdCB4PSIzNTUiIHk9IjE3NSIgd2lkdGg9IjgwIiBoZWlnaHQ9IjYwIiByeD0iMTIiIGZpbGw9IiNkY2VmZmYiLz4KICA8Y2lyY2xlIGN4PSI1MDAiIGN5PSIxMTAiIHI9IjQ1IiBmaWxsPSIjMTgzNTVhIi8+Cjwvc3ZnPgo=" class="card-image" alt="Transporte e distribuição" />
+          <div class="card-body">
+            <span class="tag">Transporte</span>
+            <h3>Pequeno distribuidor procura carrinha com motorista</h3>
+            <p>Serviço recorrente 3 vezes por semana.</p>
+            <button class="btn main">Conectar</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="profile" class="subscreen" style="display:none">
+        <div class="section-title"><h2>Perfil empresarial</h2></div>
+
+        <div class="mini-card">
+          <div class="profile-head">
+            <div class="avatar">LD</div>
+            <div>
+              <h3 style="margin:0 0 4px">Meu Negócio</h3>
+              <div class="notice" style="margin:0">Maputo • Serviços</div>
+            </div>
+            <div class="score"><small>Link Score</small><br><b>78</b></div>
+          </div>
+
+          <div class="chips">
+            <div class="chip">✓ Perfil completo</div>
+            <div class="chip">⚡ Responde rápido</div>
+            <div class="chip">3 conexões</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMjI1M2YiLz4KICA8Y2lyY2xlIGN4PSIxNjUiIGN5PSIxODAiIHI9Ijk1IiBmaWxsPSIjMWIzNjU5Ii8+CiAgPHJlY3QgeD0iMjU1IiB5PSI4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxOTAiIHJ4PSIyNiIgZmlsbD0iIzI1NDU2ZSIvPgogIDxyZWN0IHg9IjI4MCIgeT0iMTA1IiB3aWR0aD0iMTkwIiBoZWlnaHQ9IjEzMCIgcng9IjE2IiBmaWxsPSIjZDhlYmZmIi8+CiAgPGNpcmNsZSBjeD0iMzI1IiBjeT0iMTQ1IiByPSIyMiIgZmlsbD0iIzIyYzk5NyIvPgogIDxyZWN0IHg9IjM2MCIgeT0iMTI4IiB3aWR0aD0iNzgiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjNzI5NGJmIi8+CiAgPHJlY3QgeD0iMzYwIiB5PSIxNDgiIHdpZHRoPSI1OCIgaGVpZ2h0PSIxMCIgcng9IjUiIGZpbGw9IiM3Mjk0YmYiLz4KICA8cmVjdCB4PSIzMDAiIHk9IjE5MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxNiIgcng9IjgiIGZpbGw9IiMyZjgwZWQiLz4KPC9zdmc+Cg==" class="card-image" alt="Check-up empresarial" />
+          <div class="card-body">
+            <h3>Check-up empresarial</h3>
+            <p>Descobre onde o teu negócio pode melhorar.</p>
+            <div class="meta"><span>Gestão 70%</span><span>Marketing 45%</span><span>Digital 30%</span></div>
+            <button class="btn secondary">Fazer check-up</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom">
+      <button class="nav active" data-target="home" onclick="showSubscreen('home', this)"><strong>⌂</strong>Início</button>
+      <button class="nav" data-target="connect" onclick="showSubscreen('connect', this)"><strong>↔</strong>Connect</button>
+      <button class="nav fab" data-target="publish" onclick="showSubscreen('publish', this)"><strong>＋</strong>Publicar</button>
+      <button class="nav" data-target="opps" onclick="showSubscreen('opps', this)"><strong>◎</strong>Oportunidades</button>
+      <button class="nav" data-target="profile" onclick="showSubscreen('profile', this)"><strong>●</strong>Perfil</button>
+    </nav>
+  </section>
+</div>
+
+<script>
+  function enterApp() {
+    document.getElementById('splash').classList.remove('active');
+    document.getElementById('mainApp').classList.add('active');
+    showSubscreen('home');
+  }
+
+  function showSubscreen(id, el=null) {
+    document.querySelectorAll('.subscreen').forEach(s => s.style.display='none');
+    document.getElementById(id).style.display='block';
+    document.querySelectorAll('.nav').forEach(n => n.classList.remove('active'));
+    const target = el || document.querySelector(`.nav[data-target="${id}"]`);
+    if (target) target.classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function openPublish(type) {
+    document.getElementById('ptype').value = type;
+    showSubscreen('publish');
+  }
+
+  function publishDemo() {
+    const type = document.getElementById('ptype').value.toUpperCase();
+    const title = document.getElementById('ptitle').value || 'Nova publicação';
+    document.getElementById('publishResult').innerText = `✓ ${type}: "${title}" publicado com sucesso no protótipo.`;
+  }
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+}
+</script>
+</body>
+</html>
