@@ -1,0 +1,18 @@
+LINK DIRETO CONNECT — V15 VÍDEO AUTOMÁTICO
+
+NOVIDADE
+- O vídeo começa automaticamente quando aparece no ecrã.
+- O vídeo inicia sem som, como exigem os navegadores.
+- Quando o vídeo sai do ecrã, ele para.
+- Apenas um vídeo toca de cada vez.
+- Os controlos continuam disponíveis para ativar o som ou pausar.
+
+COMO INSTALAR
+1. Abre o repositório no GitHub.
+2. Clica em Add file > Upload files.
+3. Envia app.js e sw.js deste pacote.
+4. Confirma em Commit changes.
+5. Aguarda cerca de 2 minutos.
+6. Abre o site usando ?v=15 no fim do endereço.
+
+Não é necessário executar SQL no Supabase.
