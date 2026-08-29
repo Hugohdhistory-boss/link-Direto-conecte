@@ -9,11 +9,18 @@ const sessionKey='link_direto_session_v2';
 document.addEventListener('DOMContentLoaded',async()=>{
   fillCategories();
   updatePublishPreview();
+  initTechInteractions();
   try{state.session=JSON.parse(localStorage.getItem(sessionKey)||'null')}catch{}
   if(state.session?.access_token){await restoreSession();if(state.user)startNotificationPolling()}
   setInterval(()=>{if(state.session?.refresh_token)refreshSession()},40*60*1000);
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
 });
+
+function initTechInteractions(){
+  const updateNetwork=()=>{const subtitle=$('headerSubtitle');if(!subtitle)return;subtitle.textContent=navigator.onLine?'Sistema online • oportunidades perto de ti':'Sem ligação • tenta novamente';document.body.classList.toggle('is-offline',!navigator.onLine)};
+  updateNetwork();window.addEventListener('online',updateNetwork);window.addEventListener('offline',updateNetwork);
+  document.addEventListener('click',event=>{const button=event.target.closest('button,.btn');if(!button||button.disabled)return;if(navigator.vibrate)navigator.vibrate(8);if(!button.matches('.btn,.choice,.account,.tabs button,.icon-btn,.notification-panel button'))return;const rect=button.getBoundingClientRect(),size=Math.max(rect.width,rect.height)*1.8,ripple=document.createElement('i');ripple.className='tech-ripple';ripple.style.width=ripple.style.height=`${size}px`;ripple.style.left=`${event.clientX-rect.left}px`;ripple.style.top=`${event.clientY-rect.top}px`;button.appendChild(ripple);setTimeout(()=>ripple.remove(),550)});
+}
 
 function fillCategories(){
   const options=CATEGORIES.map(c=>`<option>${c}</option>`).join('');

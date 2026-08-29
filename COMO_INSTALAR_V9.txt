@@ -1,0 +1,22 @@
+LINK DIRETO CONNECT — V9 TECH PREMIUM
+
+1. No GitHub, abre o repositório link-Direto-conecte.
+2. Clica em Adicionar arquivo > Enviar arquivos.
+3. Envia estes cinco ficheiros:
+   - index.html
+   - app.js
+   - sw.js
+   - v8-notifications.css
+   - v9-tech.css
+4. Confirma as alterações.
+5. Espera cerca de 2 minutos e abre o site com ?v=9 no fim do endereço.
+
+Não é necessário executar código no Supabase.
+
+Melhorias V9:
+- botões tecnológicos com brilho, profundidade e resposta ao toque;
+- navegação inferior com efeito neon;
+- cartões, campos e modais com acabamento premium;
+- indicador online e offline;
+- animações suaves de carregamento;
+- notificações V8 incluídas no mesmo pacote.
