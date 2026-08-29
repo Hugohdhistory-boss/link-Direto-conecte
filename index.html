@@ -243,6 +243,13 @@
     padding:14px;
     margin-top:12px;
   }
+  .sync-status {
+    color:var(--muted);
+    font-size:12px;
+    margin:0 0 12px;
+  }
+  .sync-status.error { color:#ff9b9b; }
+  .dynamic-feed:empty { display:none; }
   .match {
     font-size:30px;
     font-weight:900;
@@ -400,6 +407,9 @@
           <button onclick="showSubscreen('opps')">Ver todas</button>
         </div>
 
+        <p id="homeFeedStatus" class="sync-status">A carregar publicações...</p>
+        <div id="homeFeed" class="dynamic-feed"></div>
+
         <div class="card">
           <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjkyIiBmaWxsPSIjMWYzNjU4Ii8+CiAgPHJlY3QgeD0iMjQ1IiB5PSI5NSIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIxNTUiIHJ4PSIyOCIgZmlsbD0iIzI2NDg2ZiIvPgogIDxlbGxpcHNlIGN4PSIzNTUiIGN5PSIxOTAiIHJ4PSI5NSIgcnk9IjU1IiBmaWxsPSIjZDhmM2RjIi8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMTcwIiByPSIyMCIgZmlsbD0iI2ZmY2EzYSIvPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE5MCIgcj0iMjIiIGZpbGw9IiNmNzdmMDAiLz4KICA8Y2lyY2xlIGN4PSIzNTAiIGN5PSIyMTAiIHI9IjE4IiBmaWxsPSIjZjk0MTQ0Ii8+CiAgPHJlY3QgeD0iMjg1IiB5PSIxMjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSI5NSIgcng9IjciIGZpbGw9IiNjZGUzZmYiLz4KICA8cmVjdCB4PSI0MTAiIHk9IjEyNSIgd2lkdGg9IjE1IiBoZWlnaHQ9Ijk1IiByeD0iNyIgZmlsbD0iI2NkZTNmZiIvPgogIDxwYXRoIGQ9Ik0yOTIgMTEwIGwyMCAtMjgiIHN0cm9rZT0iI2NkZTNmZiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTQxOCAxMTAgbDIwIC0yOCIgc3Ryb2tlPSIjY2RlM2ZmIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==" class="card-image" alt="Restaurante e alimentação" />
           <div class="card-body">
@@ -407,7 +417,7 @@
             <h3>Restaurante procura fornecedor de hortícolas</h3>
             <p>Entrega 3 vezes por semana. Preferência por fornecedor da zona de Maputo/Matola.</p>
             <div class="meta"><span>📍 6 km</span><span>⏱ Hoje</span><span>💬 4 propostas</span></div>
-            <button class="btn main" onclick="alert('Proposta iniciada no protótipo.')">Enviar proposta</button>
+            <button class="btn main" onclick="alert('A função de propostas estará disponível em breve.')">Enviar proposta</button>
           </div>
         </div>
 
@@ -418,7 +428,7 @@
             <h3>Empresa procura serviço de limpeza para escritório</h3>
             <p>Contrato mensal para escritório de pequena dimensão.</p>
             <div class="meta"><span>📍 3 km</span><span>⏱ Hoje</span></div>
-            <button class="btn main" onclick="alert('Conexão iniciada no protótipo.')">Conectar</button>
+            <button class="btn main" onclick="alert('A conversa estará disponível em breve.')">Conectar</button>
           </div>
         </div>
       </section>
@@ -464,7 +474,7 @@
           </div>
           <div class="form-group">
             <label>Categoria</label>
-            <select>
+            <select id="pcategory">
               <option>Agricultura</option>
               <option>Alimentação</option>
               <option>Transporte</option>
@@ -475,11 +485,11 @@
           </div>
           <div class="form-group">
             <label>Descrição</label>
-            <textarea placeholder="Quantidade, prazo, localização e outras condições..."></textarea>
+            <textarea id="pdescription" placeholder="Quantidade, prazo, localização e outras condições..."></textarea>
           </div>
           <div class="form-group">
             <label>Localização</label>
-            <input placeholder="Bairro / Cidade" />
+            <input id="plocation" placeholder="Bairro / Cidade" />
           </div>
           <button class="btn main" onclick="publishDemo()">Publicar agora</button>
           <p id="publishResult" class="notice" style="margin-top:12px"></p>
@@ -488,6 +498,9 @@
 
       <section id="opps" class="subscreen" style="display:none">
         <div class="section-title"><h2>Oportunidades</h2></div>
+
+        <p id="oppsFeedStatus" class="sync-status">A carregar publicações...</p>
+        <div id="oppsFeed" class="dynamic-feed"></div>
 
         <div class="card">
           <img src="data:image/svg+xml;base64,CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjM2MCIgdmlld0JveD0iMCAwIDYwMCAzNjAiPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iMzYwIiByeD0iMjQiIGZpbGw9IiMxMTIzM2QiLz4KICA8Y2lyY2xlIGN4PSIxNTAiIGN5PSIxODAiIHI9IjkyIiBmaWxsPSIjMWYzNjU4Ii8+CiAgPHJlY3QgeD0iMjQ1IiB5PSI5NSIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIxNTUiIHJ4PSIyOCIgZmlsbD0iIzI2NDg2ZiIvPgogIDxlbGxpcHNlIGN4PSIzNTUiIGN5PSIxOTAiIHJ4PSI5NSIgcnk9IjU1IiBmaWxsPSIjZDhmM2RjIi8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMTcwIiByPSIyMCIgZmlsbD0iI2ZmY2EzYSIvPgogIDxjaXJjbGUgY3g9IjM4NSIgY3k9IjE5MCIgcj0iMjIiIGZpbGw9IiNmNzdmMDAiLz4KICA8Y2lyY2xlIGN4PSIzNTAiIGN5PSIyMTAiIHI9IjE4IiBmaWxsPSIjZjk0MTQ0Ii8+CiAgPHJlY3QgeD0iMjg1IiB5PSIxMjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSI5NSIgcng9IjciIGZpbGw9IiNjZGUzZmYiLz4KICA8cmVjdCB4PSI0MTAiIHk9IjEyNSIgd2lkdGg9IjE1IiBoZWlnaHQ9Ijk1IiByeD0iNyIgZmlsbD0iI2NkZTNmZiIvPgogIDxwYXRoIGQ9Ik0yOTIgMTEwIGwyMCAtMjgiIHN0cm9rZT0iI2NkZTNmZiIgc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTQxOCAxMTAgbDIwIC0yOCIgc3Ryb2tlPSIjY2RlM2ZmIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==" class="card-image" alt="Água para eventos" />
@@ -563,6 +576,10 @@
 </div>
 
 <script>
+  const SUPABASE_URL = 'https://bfrofclxcjpufqpfyqiz.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
+  const OPPORTUNITIES_API = `${SUPABASE_URL}/rest/v1/opportunities`;
+
   function enterApp() {
     document.getElementById('splash').classList.remove('active');
     document.getElementById('mainApp').classList.add('active');
@@ -583,11 +600,95 @@
     showSubscreen('publish');
   }
 
-  function publishDemo() {
-    const type = document.getElementById('ptype').value.toUpperCase();
-    const title = document.getElementById('ptitle').value || 'Nova publicação';
-    document.getElementById('publishResult').innerText = `✓ ${type}: "${title}" publicado com sucesso no protótipo.`;
+  function escapeHtml(value='') {
+    return String(value).replace(/[&<>'"]/g, character => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+    })[character]);
   }
+
+  function opportunityCard(item) {
+    const type = item.type === 'tenho' ? 'TENHO' : 'PRECISO';
+    const created = item.created_at
+      ? new Date(item.created_at).toLocaleDateString('pt-PT')
+      : 'Agora';
+    return `
+      <article class="card">
+        <div class="card-body">
+          <span class="tag">${type} • ${escapeHtml(item.category)}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description)}</p>
+          <div class="meta">
+            <span>📍 ${escapeHtml(item.location)}</span>
+            <span>⏱ ${created}</span>
+          </div>
+          <button class="btn main" onclick="alert('Contacto disponível na próxima versão.')">Conectar</button>
+        </div>
+      </article>`;
+  }
+
+  async function loadOpportunities() {
+    const statuses = [document.getElementById('homeFeedStatus'), document.getElementById('oppsFeedStatus')];
+    try {
+      const response = await fetch(`${OPPORTUNITIES_API}?select=*&order=created_at.desc&limit=30`, {
+        headers: { apikey: SUPABASE_KEY }
+      });
+      if (!response.ok) throw new Error(`Supabase respondeu ${response.status}`);
+      const items = await response.json();
+      document.getElementById('homeFeed').innerHTML = items.slice(0, 3).map(opportunityCard).join('');
+      document.getElementById('oppsFeed').innerHTML = items.map(opportunityCard).join('');
+      statuses.forEach(status => {
+        status.classList.remove('error');
+        status.textContent = items.length ? 'Publicações recentes' : 'Ainda não existem publicações. Sê o primeiro a publicar.';
+      });
+    } catch (error) {
+      statuses.forEach(status => {
+        status.classList.add('error');
+        status.textContent = 'Não foi possível carregar o feed. Confirma a configuração do Supabase.';
+      });
+      console.error(error);
+    }
+  }
+
+  async function publishDemo() {
+    const result = document.getElementById('publishResult');
+    const item = {
+      type: document.getElementById('ptype').value,
+      title: document.getElementById('ptitle').value.trim(),
+      category: document.getElementById('pcategory').value,
+      description: document.getElementById('pdescription').value.trim(),
+      location: document.getElementById('plocation').value.trim()
+    };
+
+    if (!item.title || !item.description || !item.location) {
+      result.textContent = 'Preenche o título, a descrição e a localização.';
+      return;
+    }
+
+    result.textContent = 'A publicar...';
+    try {
+      const response = await fetch(OPPORTUNITIES_API, {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation'
+        },
+        body: JSON.stringify(item)
+      });
+      if (!response.ok) throw new Error(await response.text());
+      result.textContent = `✓ ${item.type.toUpperCase()}: "${item.title}" publicado com sucesso.`;
+      document.getElementById('ptitle').value = '';
+      document.getElementById('pdescription').value = '';
+      document.getElementById('plocation').value = '';
+      await loadOpportunities();
+      setTimeout(() => showSubscreen('home'), 700);
+    } catch (error) {
+      result.textContent = 'Não foi possível publicar. Confirma se executaste o ficheiro CONFIGURAR-SUPABASE.sql.';
+      console.error(error);
+    }
+  }
+
+  loadOpportunities();
 </script>
 
 <script>
