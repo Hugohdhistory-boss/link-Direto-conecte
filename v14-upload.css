@@ -1,0 +1,14 @@
+/* V14 — Indicador de processamento e progresso de upload */
+.upload-progress{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:24px;background:rgba(0,0,0,.86);backdrop-filter:blur(14px)}
+.upload-progress.hidden{display:none}
+.upload-progress-card{width:min(360px,100%);padding:30px 24px 25px;text-align:center;border:1px solid rgba(43,255,148,.34);border-radius:25px;background:linear-gradient(155deg,#0b1113,#020303);box-shadow:0 0 0 1px rgba(33,139,255,.08),0 28px 80px rgba(0,0,0,.7),0 0 45px rgba(41,255,150,.1)}
+.processing-cross{position:relative;width:92px;height:92px;margin:0 auto 21px;animation:cross-turn 2.2s linear infinite}
+.processing-cross i{position:absolute;left:39px;top:4px;width:14px;height:36px;border-radius:9px;background:linear-gradient(#30ff9a,#168dff);box-shadow:0 0 16px rgba(48,255,154,.55);transform-origin:7px 42px}
+.processing-cross i:nth-child(2){transform:rotate(90deg)}.processing-cross i:nth-child(3){transform:rotate(180deg)}.processing-cross i:nth-child(4){transform:rotate(270deg)}
+.processing-cross b{position:absolute;inset:27px;display:grid;place-items:center;border-radius:50%;background:#050a0b;color:#fff;font-size:8px;letter-spacing:.04em;box-shadow:0 0 18px rgba(21,141,255,.35)}
+.upload-progress h3{margin:0 0 7px;color:#fff}.upload-progress p{margin:0;color:#94a2b2;font-size:13px}
+.upload-progress-track{height:9px;margin:22px 0 11px;overflow:hidden;border:1px solid rgba(255,255,255,.11);border-radius:99px;background:#020303}.upload-progress-track i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#20f58c,#20dcdf,#1b84ff);box-shadow:0 0 14px rgba(34,245,145,.55);transition:width .18s ease}
+.upload-progress strong{color:#2cff98;font-size:18px;font-variant-numeric:tabular-nums}
+body.is-processing{overflow:hidden;cursor:wait}
+@keyframes cross-turn{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.processing-cross{animation:none}}

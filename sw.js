@@ -1,5 +1,5 @@
-const CACHE_NAME='link-direto-v13-video-fix';
-const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
+const CACHE_NAME='link-direto-v14-upload-progress';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-upload.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -29,6 +29,6 @@ self.addEventListener('notificationclick',event=>{
   event.notification.close();
   event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(windows=>{
     for(const client of windows){if('focus'in client)return client.focus()}
-    return clients.openWindow('./?v=13');
+    return clients.openWindow('./?v=14');
   }));
 });
