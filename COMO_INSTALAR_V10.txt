@@ -1,0 +1,31 @@
+LINK DIRETO CONNECT — V10 BLACK SKIN
+
+PASSO 1
+Abra o seu repositório link-Direto-conecte no GitHub.
+
+PASSO 2
+Clique em "Adicionar arquivo" e depois "Carregar arquivos".
+
+PASSO 3
+Envie estes 6 arquivos do pacote:
+
+1. index.html
+2. app.js
+3. sw.js
+4. v8-notifications.css
+5. v9-tech.css
+6. v10-black.css
+
+PASSO 4
+Clique em "Confirmar alterações".
+
+PASSO 5
+Espere cerca de 2 minutos e abra:
+https://hugohdhistory-boss.github.io/link-Direto-conecte/?v=10
+
+IMPORTANTE
+- Não precisa alterar nada no Supabase.
+- Esta versão já inclui as notificações de conversa da V8.
+- Esta versão já inclui os botões tecnológicos da V9.
+- A V10 acrescenta o visual Black Skin.
+
