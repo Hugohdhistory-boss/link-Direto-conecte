@@ -1,5 +1,5 @@
-const CACHE_NAME='link-direto-v6-interior';
-const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
+const CACHE_NAME='link-direto-v7-contas';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v5.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));

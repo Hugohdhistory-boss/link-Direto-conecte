@@ -1,0 +1,21 @@
+LINK DIRETO CONNECT — V7 CONTAS E PERFIS
+
+1. No GitHub, abre o repositório link-Direto-conecte.
+2. Clica em Adicionar arquivo > Enviar arquivos.
+3. Envia estes quatro ficheiros:
+   - index.html
+   - app.js
+   - sw.js
+   - v7-auth.css
+4. Confirma as alterações.
+5. Espera cerca de 2 minutos e abre o site com ?v=7 no fim do endereço.
+
+Não é necessário executar novo código no Supabase.
+
+Novidades:
+- criação e entrada em contas empresariais;
+- recuperação de senha por e-mail;
+- sessão renovada automaticamente;
+- fotografia ou logótipo no perfil;
+- estado de confirmação do e-mail;
+- Link Score e medidor de perfil completo.
