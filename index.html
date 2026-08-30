@@ -39,15 +39,36 @@
   </div>
 </section>
 <section id="view-profile" class="view"><div class="page-title visual-title"><span class="visual-icon">●</span><div><h2>Cartão Link</h2><p>A identidade digital do teu negócio.</p></div></div><div id="profileGuest" class="panel center profile-guest"><div class="avatar large">LD</div><h3>Cria o teu perfil empresarial</h3><p>Publica, recebe propostas e constrói o teu Link Score.</p><div class="guest-benefits"><span>✓ Publicações reais</span><span>✓ Propostas diretas</span><span>✓ Perfil empresarial</span></div><button class="btn primary" onclick="openAuth('signup')">Criar conta gratuita</button><button class="btn ghost" onclick="openAuth('login')">Já tenho conta</button></div><div id="profileSummary" class="panel profile-summary hidden"><div class="profile-complete-badge">✓ PERFIL CONCLUÍDO</div><div class="summary-identity"><div id="profileSummaryAvatar" class="avatar large">LD</div><div><h3 id="summaryName">Meu negócio</h3><span id="summaryScore" class="score">Link Score 40</span></div></div><div class="summary-tags"><span id="summaryCategory">Categoria</span><span>📍 <b id="summaryLocation">Moçambique</b></span></div><p id="summaryBio" class="summary-bio"></p><div class="summary-contact"><small>CONTACTO</small><b id="summaryPhone">Contacto não informado</b></div><button class="btn primary" onclick="editProfile()">Editar perfil</button><button class="btn ghost" onclick="logout()">Terminar sessão</button></div><form id="profileForm" class="panel hidden" onsubmit="saveProfile(event)"><div class="business-card"><div class="profile-heading"><div id="profileAvatar" class="avatar large">LD</div><div><h3 id="profileName">Meu negócio</h3><span id="profileScore" class="score">Link Score 40</span></div></div><div class="profile-progress"><i id="profileProgress"></i></div><div class="card-stripe"><span id="cardCategory">Categoria</span><span id="cardLocation">Moçambique</span></div></div><div class="account-status"><div><small>CONTA ATIVA</small><b id="profileEmail">—</b></div><span id="profileVerified">✓ Segura</span></div><label>Logótipo ou fotografia<input id="businessAvatar" type="file" accept="image/*" onchange="previewBusinessAvatar(event)"></label><label>Nome do negócio<input id="businessName" required maxlength="80"></label><label>Categoria<select id="businessCategory"></select></label><label>Localização<input id="businessLocation" required></label><label>WhatsApp ou telefone<input id="businessPhone" inputmode="tel" placeholder="Ex.: +258 84 000 0000"></label><label>Sobre o negócio<textarea id="businessBio" required maxlength="400" placeholder="Explica o que a tua empresa oferece..."></textarea></label><button class="btn primary" type="submit">Concluir e guardar perfil</button><button class="btn ghost" type="button" onclick="cancelProfileEdit()">Fechar edição</button><button class="btn ghost" type="button" onclick="logout()">Terminar sessão</button></form></section>
-  <nav class="bottom-nav v15-nav v16-nav">
+<nav class="bottom-nav v15-nav v16-nav">
+
+  <button data-view="home" class="active" onclick="showView('home', this)">
+    <b>⌂</b>
+    <span>Início</span>
+  </button>
+
+  <button data-view="news" onclick="showView('news', this)">
+    <b>📰</b>
+    <span>Notícias</span>
+  </button>
+
+  <button data-view="trending" onclick="showView('trending', this)">
+    <b>🔥</b>
+    <span>Trending</span>
+  </button>
+
+  <button data-view="market" onclick="showView('market', this)">
+    <b>🛍️</b>
+    <span>Mercado</span>
+  </button>
 
   <button data-view="discover" onclick="showView('discover', this)">
     <b>🔎</b>
     <span>Descobrir</span>
   </button>
 
-</main>
+  <button data-view="profile" onclick="showView('profile', this)">
+    <b>●</b>
+    <span>Perfil</span>
+  </button>
 
-</div>
-<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card"><button class="modal-close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
-<script src="app.js"></script></body></html>
+</nav>
