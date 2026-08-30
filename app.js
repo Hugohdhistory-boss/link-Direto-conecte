@@ -142,7 +142,36 @@ function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=
 async function saveProfile(e){e.preventDefault();if(!requireAuth())return;const button=e.submitter;button.disabled=true;button.textContent='A guardar...';try{let avatar_url=state.profile?.avatar_url||null;const avatarFile=$('businessAvatar').files?.[0];if(avatarFile)avatar_url=await uploadImage(avatarFile);const body={business_name:$('businessName').value.trim(),category:$('businessCategory').value,location:$('businessLocation').value.trim(),phone:$('businessPhone').value.trim(),bio:$('businessBio').value.trim(),avatar_url,updated_at:new Date().toISOString()};await api('profiles',`?id=eq.${state.user.id}`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});state.profile={...state.profile,...body};state.profileEditing=false;$('businessAvatar').value='';updateAccountUI();renderProfile();toast('Perfil concluído e guardado.')}catch(err){console.error(err);toast('Não foi possível guardar o perfil.',true)}finally{button.disabled=false;button.textContent='Concluir e guardar perfil'}}
 function requireAuth(){if(state.user)return true;openAuth();toast('Entra primeiro na tua conta.');return false}
 
-async function loadPublicData(){try{const [opps,ads,likes,comments]=await Promise.all([api('opportunities','?select=*&order=created_at.desc&limit=100'),api('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),api('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),api('opportunity_comments','?select=*&order=created_at.asc&limit=5000')]);state.opportunities=opps||[];const now=Date.now();state.ads=(ads||[]).filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);state.likes=likes||[];state.comments=comments||[];state.likedOpportunities=new Set(state.user?state.likes.filter(x=>x.user_id===state.user.id).map(x=>String(x.opportunity_id)):[]);if(state.user)await loadFavorites();renderHome();renderSearch();renderAds();loadV16Data()}catch(err){console.error(err);$('homeFeed').innerHTML='<div class="empty">Não foi possível carregar. Executa primeiro o ficheiro ATUALIZAR_SUPABASE_COMPLETO.sql.</div>'}}
+async function loadPublicData(){
+  const safeLoad=async(table,query,fallback=[])=>{
+    try{return await api(table,query)||fallback}
+    catch(err){console.warn(`[Link Direto] ${table} indisponível:`,err);return fallback}
+  };
+  try{
+    // O feed principal é independente dos módulos opcionais. Assim uma tabela auxiliar
+    // em falta (anúncios, likes ou comentários) nunca bloqueia as oportunidades.
+    const opps=await api('opportunities','?select=*&order=created_at.desc&limit=100');
+    state.opportunities=opps||[];
+
+    const [ads,likes,comments]=await Promise.all([
+      safeLoad('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
+      safeLoad('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
+      safeLoad('opportunity_comments','?select=*&order=created_at.asc&limit=5000')
+    ]);
+
+    const now=Date.now();
+    state.ads=(ads||[]).filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);
+    state.likes=likes||[];
+    state.comments=comments||[];
+    state.likedOpportunities=new Set(state.user?state.likes.filter(x=>x.user_id===state.user.id).map(x=>String(x.opportunity_id)):[]);
+    if(state.user){try{await loadFavorites()}catch(err){console.warn('[Link Direto] favoritos indisponíveis:',err)}}
+    renderHome();renderSearch();renderAds();
+    try{loadV16Data()}catch(err){console.warn('[Link Direto] módulos V16 indisponíveis:',err)}
+  }catch(err){
+    console.error('[Link Direto] falha no feed de oportunidades:',err);
+    $('homeFeed').innerHTML='<div class="empty"><b>Não foi possível carregar as oportunidades agora.</b><br><small>Atualiza a página. Se continuar, verifica apenas a tabela <code>opportunities</code> no Supabase.</small></div>';
+  }
+}
 async function loadFavorites(){if(!state.user)return;try{const d=await api('favorites',`?user_id=eq.${state.user.id}&select=opportunity_id`);state.favorites=new Set((d||[]).map(x=>String(x.opportunity_id)))}catch{}}
 function likeCount(id){return state.likes.filter(x=>String(x.opportunity_id)===String(id)).length}
 function commentCount(id){return state.comments.filter(x=>String(x.opportunity_id)===String(id)).length}

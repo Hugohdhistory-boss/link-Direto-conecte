@@ -1,0 +1,15 @@
+LINK DIRETO CONNECT V16.7 — CORREÇÃO OPORTUNIDADES
+
+O que foi corrigido:
+- A área “Oportunidades recentes” já não é bloqueada se uma tabela opcional (anúncios, likes, comentários ou favoritos) estiver ausente/indisponível.
+- O feed principal carrega diretamente da tabela opportunities.
+- Módulos opcionais falham de forma silenciosa e o app continua utilizável.
+- Mensagem de erro agora aponta apenas para opportunities se o feed principal realmente falhar.
+- Cache do Service Worker atualizado para V16.7.
+
+COMO PUBLICAR:
+1. No GitHub, substitua app.js e sw.js pelos ficheiros desta versão.
+2. Não precisa executar SQL novo para esta correção.
+3. Abra o app com ?v=16.7 e feche/reabra o app instalado para atualizar o cache.
+
+Importante: esta correção não apaga nem altera dados do Supabase.
