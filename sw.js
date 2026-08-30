@@ -1,6 +1,6 @@
-// Link Direto V16.6 Smart News
-const CACHE_NAME='link-direto-v16-5';
-const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v161.png'];
+// Link Direto V16.7 Descobrir
+const CACHE_NAME='link-direto-v16-7';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./v16-smart-news.css','./v16-7-discover.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v161.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -30,6 +30,6 @@ self.addEventListener('notificationclick',event=>{
   event.notification.close();
   event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(windows=>{
     for(const client of windows){if('focus'in client)return client.focus()}
-    return clients.openWindow('./?v=16.5');
+    return clients.openWindow('./?v=16.7');
   }));
 });

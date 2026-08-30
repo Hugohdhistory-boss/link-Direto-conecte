@@ -1,7 +1,7 @@
 const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
 const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
 const CATEGORIES=['Agricultura','Alimentação','Comércio','Construção','Educação','Eventos','Finanças','Saúde','Serviços','Tecnologia','Transporte','Turismo'];
-const state={session:null,user:null,profile:null,profileEditing:false,opportunities:[],ads:[],favorites:new Set(),likes:[],comments:[],likedOpportunities:new Set(),proposals:[],messages:[],unreadMessages:0,notificationTimer:null,deferredInstallPrompt:null,news:[],newsCategory:'',market:[],trendingMode:'all',adClicks:[],notifications:[]};
+const state={session:null,user:null,profile:null,profileEditing:false,opportunities:[],ads:[],favorites:new Set(),likes:[],comments:[],likedOpportunities:new Set(),proposals:[],messages:[],unreadMessages:0,notificationTimer:null,deferredInstallPrompt:null,news:[],newsCategory:'',market:[],trendingMode:'all',adClicks:[],notifications:[],discoverProfiles:[],discoverFollows:[],discoverFollowing:new Set(),discoverFilter:'all'};
 const $=id=>document.getElementById(id);
 const esc=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[c]);
 const sessionKey='link_direto_session_v2';
@@ -75,7 +75,7 @@ function openMainApp(){
   loadPublicData();
 }
 
-function showView(name,button){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name).classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));(button||document.querySelector(`[data-view="${name}"]`))?.classList.add('active');scrollTo(0,0);if(name==='connect')loadConnect().then(()=>markMessagesSeen());if(name==='profile')renderProfile();if(name==='news')loadNews();if(name==='trending')renderTrending();if(name==='market')loadMarket();if(name==='ads')renderAdvertiserDashboard()}
+function showView(name,button){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name).classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));(button||document.querySelector(`[data-view="${name}"]`))?.classList.add('active');scrollTo(0,0);if(name==='connect')loadConnect().then(()=>markMessagesSeen());if(name==='profile')renderProfile();if(name==='news')loadNews();if(name==='trending')renderTrending();if(name==='market')loadMarket();if(name==='discover')loadDiscover();if(name==='ads')renderAdvertiserDashboard()}
 function openPublish(type='tenho'){showView('publish');document.querySelector(`input[name="ptype"][value="${type}"]`).checked=true;if(!state.user)openAuth()}
 function handleAccountClick(){state.user?showView('profile'):openAuth()}
 function toast(message,error=false){const t=$('toast');t.textContent=message;t.className='toast show'+(error?' error':'');setTimeout(()=>t.className='toast',3200)}
@@ -132,51 +132,46 @@ async function logout(){try{await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method
 function updateAccountUI(){$('accountButton').textContent=state.profile?.business_name?.split(' ')[0]||'Entrar'}
 function readableError(err){const s=String(err.message||err);if(s.includes('Invalid login'))return'E-mail ou senha incorretos.';if(s.includes('already registered'))return'Este e-mail já está registado.';if(s.includes('rate limit'))return'Tentaste muitas vezes. Aguarda alguns minutos.';return'Não foi possível concluir. Confirma os dados e tenta novamente.'}
 
-async function loadProfile(){if(!state.user)return;try{const d=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=d?.[0]||null;if(!state.profile){await api('profiles','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({id:state.user.id,business_name:state.user.user_metadata?.business_name||'Meu negócio'})});const p=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=p?.[0]}}catch(err){console.error(err)}}
+async function loadProfile(){if(!state.user)return;try{const d=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=d?.[0]||null;if(!state.profile){await api('profiles','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({id:state.user.id,business_name:state.user.user_metadata?.business_name||'Meu negócio',account_type:'company'})});const p=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=p?.[0]}}catch(err){console.error(err)}}
 function setAvatar(element,url,name='LD'){if(!element)return;const initials=(name||'LD').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();element.textContent=initials;if(url){element.style.backgroundImage=`url("${String(url).replace(/["\\]/g,'')}")`;element.classList.add('has-image')}else{element.style.backgroundImage='';element.classList.remove('has-image')}}
 function previewBusinessAvatar(e){const file=e.target.files?.[0];if(!file)return;if(file.size>5*1024*1024){toast('A imagem deve ter menos de 5 MB.',true);e.target.value='';return}setAvatar($('profileAvatar'),URL.createObjectURL(file),$('businessName').value)}
 function profileComplete(p={}){return Boolean(p.business_name&&p.business_name!=='Meu negócio'&&p.category&&p.location&&p.bio)}
 function editProfile(){state.profileEditing=true;renderProfile();setTimeout(()=>$('businessName')?.focus(),80)}
 function cancelProfileEdit(){if(!profileComplete(state.profile||{})){toast('Preenche os campos obrigatórios e guarda o perfil primeiro.',true);return}state.profileEditing=false;renderProfile()}
-function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').textContent=p.business_name||'Meu negócio';setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified'))$('profileVerified').textContent=state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar';if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').textContent=p.business_name||'Meu negócio';if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`}
-async function saveProfile(e){e.preventDefault();if(!requireAuth())return;const button=e.submitter;button.disabled=true;button.textContent='A guardar...';try{let avatar_url=state.profile?.avatar_url||null;const avatarFile=$('businessAvatar').files?.[0];if(avatarFile)avatar_url=await uploadImage(avatarFile);const body={business_name:$('businessName').value.trim(),category:$('businessCategory').value,location:$('businessLocation').value.trim(),phone:$('businessPhone').value.trim(),bio:$('businessBio').value.trim(),avatar_url,updated_at:new Date().toISOString()};await api('profiles',`?id=eq.${state.user.id}`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});state.profile={...state.profile,...body};state.profileEditing=false;$('businessAvatar').value='';updateAccountUI();renderProfile();toast('Perfil concluído e guardado.')}catch(err){console.error(err);toast('Não foi possível guardar o perfil.',true)}finally{button.disabled=false;button.textContent='Concluir e guardar perfil'}}
+function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';if($('businessAccountType'))$('businessAccountType').value=p.account_type||'company';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').textContent=p.business_name||'Meu negócio';setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified'))$('profileVerified').textContent=state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar';if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').textContent=p.business_name||'Meu negócio';if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`}
+async function saveProfile(e){e.preventDefault();if(!requireAuth())return;const button=e.submitter;button.disabled=true;button.textContent='A guardar...';try{let avatar_url=state.profile?.avatar_url||null;const avatarFile=$('businessAvatar').files?.[0];if(avatarFile)avatar_url=await uploadImage(avatarFile);const body={business_name:$('businessName').value.trim(),account_type:$('businessAccountType')?.value||'company',category:$('businessCategory').value,location:$('businessLocation').value.trim(),phone:$('businessPhone').value.trim(),bio:$('businessBio').value.trim(),avatar_url,updated_at:new Date().toISOString()};await api('profiles',`?id=eq.${state.user.id}`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});state.profile={...state.profile,...body};state.profileEditing=false;$('businessAvatar').value='';updateAccountUI();renderProfile();toast('Perfil concluído e guardado.')}catch(err){console.error(err);toast('Não foi possível guardar o perfil.',true)}finally{button.disabled=false;button.textContent='Concluir e guardar perfil'}}
 function requireAuth(){if(state.user)return true;openAuth();toast('Entra primeiro na tua conta.');return false}
 
 async function loadPublicData(){
-  const safeLoad=async(table,query,fallback=[])=>{
-    try{return await api(table,query)||fallback}
-    catch(err){console.warn(`[Link Direto] ${table} indisponível:`,err);return fallback}
-  };
-  try{
-    // O feed principal é independente dos módulos opcionais. Assim uma tabela auxiliar
-    // em falta (anúncios, likes ou comentários) nunca bloqueia as oportunidades.
-    const opps=await api('opportunities','?select=*&order=created_at.desc&limit=100');
-    state.opportunities=opps||[];
-
-    const [ads,likes,comments]=await Promise.all([
-      safeLoad('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
-      safeLoad('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
-      safeLoad('opportunity_comments','?select=*&order=created_at.asc&limit=5000')
-    ]);
-
-    const now=Date.now();
-    state.ads=(ads||[]).filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);
-    state.likes=likes||[];
-    state.comments=comments||[];
-    state.likedOpportunities=new Set(state.user?state.likes.filter(x=>x.user_id===state.user.id).map(x=>String(x.opportunity_id)):[]);
-    if(state.user){try{await loadFavorites()}catch(err){console.warn('[Link Direto] favoritos indisponíveis:',err)}}
-    renderHome();renderSearch();renderAds();
-    try{loadV16Data()}catch(err){console.warn('[Link Direto] módulos V16 indisponíveis:',err)}
-  }catch(err){
-    console.error('[Link Direto] falha no feed de oportunidades:',err);
-    $('homeFeed').innerHTML='<div class="empty"><b>Não foi possível carregar as oportunidades agora.</b><br><small>Atualiza a página. Se continuar, verifica apenas a tabela <code>opportunities</code> no Supabase.</small></div>';
+  const requests=[
+    api('opportunities','?select=*&order=created_at.desc&limit=100'),
+    api('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
+    api('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
+    api('opportunity_comments','?select=*&order=created_at.asc&limit=5000')
+  ];
+  const [oppsR,adsR,likesR,commentsR]=await Promise.allSettled(requests);
+  state.opportunities=oppsR.status==='fulfilled'?(oppsR.value||[]):[];
+  const now=Date.now();
+  const ads=adsR.status==='fulfilled'?(adsR.value||[]):[];
+  state.ads=ads.filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);
+  state.likes=likesR.status==='fulfilled'?(likesR.value||[]):[];
+  state.comments=commentsR.status==='fulfilled'?(commentsR.value||[]):[];
+  state.likedOpportunities=new Set(state.user?state.likes.filter(x=>x.user_id===state.user.id).map(x=>String(x.opportunity_id)):[]);
+  if(state.user)await loadFavorites();
+  renderHome();renderSearch();renderAds();
+  loadDiscover(false);
+  loadV16Data();
+  if(oppsR.status==='rejected'){
+    console.error('opportunities',oppsR.reason);
+    if($('homeFeed'))$('homeFeed').innerHTML='<div class="empty">Não foi possível carregar as oportunidades agora.</div>';
   }
 }
+
 async function loadFavorites(){if(!state.user)return;try{const d=await api('favorites',`?user_id=eq.${state.user.id}&select=opportunity_id`);state.favorites=new Set((d||[]).map(x=>String(x.opportunity_id)))}catch{}}
 function likeCount(id){return state.likes.filter(x=>String(x.opportunity_id)===String(id)).length}
 function commentCount(id){return state.comments.filter(x=>String(x.opportunity_id)===String(id)).length}
 function opportunityCard(o){const saved=state.favorites.has(String(o.id)),liked=state.likedOpportunities.has(String(o.id));const mine=state.user&&o.user_id===state.user.id;const media=o.video_url?`<video class="card-media" src="${esc(o.video_url)}" controls playsinline preload="metadata"></video>`:o.image_url?`<img class="card-media" src="${esc(o.image_url)}" alt="Imagem da publicação" loading="lazy">`:'';return `<article class="card">${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3><p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="social-actions"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span> comentários</button></div><div class="card-actions">${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir anúncio</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`}
-function renderHome(){$('homeFeed').innerHTML=state.opportunities.slice(0,6).map(opportunityCard).join('')||'<div class="empty">Ainda não existem oportunidades.</div>';$('homeAd').innerHTML=state.ads[0]?adCard(state.ads[0]):'';if($('statOpps'))$('statOpps').textContent=state.opportunities.length;if($('statAds'))$('statAds').textContent=state.ads.length;renderForYou()}
+function renderHome(){$('homeFeed').innerHTML=state.opportunities.slice(0,6).map(opportunityCard).join('')||'<div class="empty">Ainda não existem oportunidades.</div>';$('homeAd').innerHTML=state.ads[0]?adCard(state.ads[0]):'';if($('statOpps'))$('statOpps').textContent=state.opportunities.length;if($('statAds'))$('statAds').textContent=state.discoverProfiles.length||state.ads.length;renderForYou()}
 function quickCategory(category){$('searchCategory').value=category;renderSearch()}
 function updatePublishPreview(){const type=document.querySelector('input[name="ptype"]:checked')?.value?.toUpperCase()||'TENHO';const title=$('pTitle')?.value?.trim()||'O teu anúncio aparecerá aqui';const category=$('pCategory')?.value||'Categoria';const location=$('pLocation')?.value?.trim()||'Localização';if($('publishPreview'))$('publishPreview').innerHTML=`<small>${esc(type)} • ${esc(category)}</small><b>${esc(title)}</b><span>📍 ${esc(location)}</span>`}
 function renderSearch(){const text=($('searchText')?.value||'').toLowerCase(),type=$('searchType')?.value||'',cat=$('searchCategory')?.value||'';const items=state.opportunities.filter(o=>(!type||o.type===type)&&(!cat||o.category===cat)&&(!text||`${o.title} ${o.description} ${o.location}`.toLowerCase().includes(text)));$('searchFeed').innerHTML=items.map(opportunityCard).join('')||'<div class="empty">Nenhuma oportunidade encontrada.</div>'}
@@ -260,6 +255,68 @@ function renderForYou(){const el=$('forYouFeed');if(!el)return;const items=[...s
 function setTrendingMode(mode,button){state.trendingMode=mode;document.querySelectorAll('.trend-tabs button').forEach(x=>x.classList.remove('active'));button?.classList.add('active');renderTrending()}
 function trendingOpportunityScore(o){const hours=Math.max(1,(Date.now()-new Date(o.created_at).getTime())/36e5);return (likeCount(o.id)*5+commentCount(o.id)*8+8)/Math.pow(hours+2,.28)}
 function renderTrending(){const el=$('trendingFeed');if(!el)return;let html='';if(state.trendingMode!=='news'){const opps=[...state.opportunities].sort((a,b)=>trendingOpportunityScore(b)-trendingOpportunityScore(a)).slice(0,8);html+=opps.map((o,i)=>`<div class="trend-row"><div class="trend-rank">${i+1}</div><div class="trend-content"><span class="trend-label">🔥 ${likeCount(o.id)} likes · ${commentCount(o.id)} comentários</span>${opportunityCard(o)}</div></div>`).join('')}if(state.trendingMode!=='opportunities'&&state.news.length){const news=state.news.slice(0,6);html+=`<div class="trend-news-title">📰 Agora nas notícias</div>`+news.map((n,i)=>`<article class="trend-news"><b>#${i+1}</b><div><span>${esc(n.category||'Notícia')} · ${esc(n.source_name||'Fonte')}</span>${n.is_demo?`<strong>${esc(n.title)}</strong>`:`<a href="${newsSafeLink(n.original_url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`}</div></article>`).join('')}el.innerHTML=html||'<div class="empty">As tendências aparecerão quando houver atividade no Link Direto.</div>'}
+
+function discoverType(p){const t=String(p.account_type||'company').toLowerCase();return ['person','company','organization'].includes(t)?t:'company'}
+function discoverTypeLabel(t){return t==='person'?'Pessoa / Profissional':t==='organization'?'Organização':'Empresa'}
+function discoverInitials(name='LD'){return String(name||'LD').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'LD'}
+function followerCount(profileId){return state.discoverFollows.filter(x=>String(x.following_id)===String(profileId)).length}
+function isFollowing(profileId){return state.discoverFollowing.has(String(profileId))}
+function setDiscoverFilter(filter,button){state.discoverFilter=filter;document.querySelectorAll('.discover-tabs button').forEach(x=>x.classList.remove('active'));button?.classList.add('active');renderDiscover()}
+async function loadDiscover(showLoading=false){
+  const feed=$('discoverFeed');if(showLoading&&feed)feed.innerHTML='<div class="loading">A atualizar comunidade...</div>';
+  try{
+    const profileReq=api('profiles','?select=id,business_name,account_type,category,bio,location,phone,avatar_url,verified,created_at&order=created_at.desc&limit=200');
+    const followsReq=api('follows','?select=follower_id,following_id&limit=5000');
+    const [profilesR,followsR]=await Promise.allSettled([profileReq,followsReq]);
+    if(profilesR.status==='fulfilled')state.discoverProfiles=profilesR.value||[];
+    else throw profilesR.reason;
+    state.discoverFollows=followsR.status==='fulfilled'?(followsR.value||[]):[];
+    state.discoverFollowing=new Set(state.user?state.discoverFollows.filter(x=>String(x.follower_id)===String(state.user.id)).map(x=>String(x.following_id)):[]);
+    if($('statAds'))$('statAds').textContent=state.discoverProfiles.length;
+    renderDiscover();
+  }catch(err){
+    console.error('discover',err);
+    if(feed)feed.innerHTML='<div class="discover-empty"><b>Comunidade ainda não disponível.</b><span>Executa o ficheiro ATIVAR_V16_7_DESCOBRIR.sql no Supabase.</span></div>';
+  }
+}
+function renderDiscover(){
+  const feed=$('discoverFeed');if(!feed)return;
+  const q=($('discoverSearch')?.value||'').trim().toLowerCase();
+  const filter=state.discoverFilter||'all';
+  const rows=state.discoverProfiles.filter(p=>{
+    const t=discoverType(p);
+    const hay=`${p.business_name||''} ${p.category||''} ${p.location||''} ${p.bio||''}`.toLowerCase();
+    return (filter==='all'||t===filter)&&(!q||hay.includes(q));
+  });
+  if($('discoverTotal'))$('discoverTotal').textContent=state.discoverProfiles.length;
+  if($('discoverHeading'))$('discoverHeading').textContent=filter==='company'?'Empresas no Link Direto':filter==='person'?'Pessoas e profissionais':filter==='organization'?'Organizações':'Novos no Link Direto';
+  feed.innerHTML=rows.map(discoverCard).join('')||'<div class="discover-empty"><b>Nenhum perfil encontrado.</b><span>Tenta outro nome, categoria ou localização.</span></div>';
+}
+function discoverCard(p){
+  const type=discoverType(p),mine=state.user&&String(state.user.id)===String(p.id),following=isFollowing(p.id),count=followerCount(p.id);
+  const avatar=p.avatar_url?`<img src="${esc(p.avatar_url)}" alt="" loading="lazy">`:`<span>${esc(discoverInitials(p.business_name))}</span>`;
+  const contact=String(p.phone||'').replace(/[^+\d]/g,'');const wa=contact?`https://wa.me/${contact.replace('+','')}`:'';
+  return `<article class="discover-card"><div class="discover-avatar">${avatar}</div><div class="discover-card-main"><div class="discover-name-row"><h3>${esc(p.business_name||'Perfil Link Direto')}</h3>${p.verified?'<i class="discover-verified">✓</i>':''}</div><div class="discover-meta"><span>${type==='company'?'🏢':type==='organization'?'◉':'●'} ${esc(discoverTypeLabel(type))}</span>${p.category?`<span>• ${esc(p.category)}</span>`:''}</div>${p.location?`<div class="discover-location">📍 ${esc(p.location)}</div>`:''}${p.bio?`<p>${esc(p.bio)}</p>`:''}<div class="discover-footer"><span><b>${count}</b> seguidores</span><div class="discover-actions">${!mine?`<button class="discover-follow ${following?'following':''}" onclick="toggleDiscoverFollow('${p.id}',this)">${following?'A seguir':'Seguir'}</button>`:'<span class="discover-own">O teu perfil</span>'}${wa?`<a class="discover-contact" href="${wa}" target="_blank" rel="noopener">Contactar</a>`:''}</div></div></div></article>`
+}
+async function toggleDiscoverFollow(profileId,button){
+  if(!requireAuth())return;
+  if(String(profileId)===String(state.user.id)){toast('Este é o teu próprio perfil.');return}
+  button.disabled=true;
+  try{
+    if(isFollowing(profileId)){
+      await api('follows',`?follower_id=eq.${state.user.id}&following_id=eq.${profileId}`,{method:'DELETE'});
+      state.discoverFollows=state.discoverFollows.filter(x=>!(String(x.follower_id)===String(state.user.id)&&String(x.following_id)===String(profileId)));
+      state.discoverFollowing.delete(String(profileId));
+      toast('Deixaste de seguir este perfil.');
+    }else{
+      await api('follows','',{method:'POST',body:JSON.stringify({follower_id:state.user.id,following_id:profileId})});
+      state.discoverFollows.push({follower_id:state.user.id,following_id:profileId});
+      state.discoverFollowing.add(String(profileId));
+      toast('Agora estás a seguir este perfil.');
+    }
+    renderDiscover();
+  }catch(err){console.error(err);toast('Não foi possível atualizar o seguimento.',true)}finally{button.disabled=false}
+}
 async function loadMarket(showLoading=true){const el=$('marketFeed');if(showLoading&&el)el.innerHTML='<div class="loading">A carregar mercado...</div>';try{state.market=await api('market_listings','?select=*&status=eq.active&order=created_at.desc&limit=100')||[];renderMarket()}catch(err){if(el)el.innerHTML='<div class="market-empty"><b>Link Market ainda não está ativado.</b><span>Executa o ficheiro ATIVAR_V16_COMERCIAL.sql no Supabase.</span></div>'}}
 function renderMarket(){const el=$('marketFeed');if(!el)return;const q=($('marketSearch')?.value||'').toLowerCase(),cat=$('marketCategory')?.value||'';const rows=state.market.filter(x=>(!cat||x.category===cat)&&(!q||`${x.title} ${x.description} ${x.seller_name} ${x.location}`.toLowerCase().includes(q)));el.innerHTML=rows.map(marketCard).join('')||'<div class="market-empty"><b>Nenhum produto encontrado.</b><span>Os anúncios publicados aparecerão aqui.</span></div>'}
 function moneyMzn(v){const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('pt-MZ',{style:'currency',currency:'MZN',maximumFractionDigits:0}).format(n):esc(v||'Preço sob consulta')}
