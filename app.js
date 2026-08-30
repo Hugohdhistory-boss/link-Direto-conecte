@@ -26,16 +26,17 @@ function initTechInteractions(){
 function isIosDevice(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}
 function isStandaloneApp(){return window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true}
 function initInstallApp(){
-  const buttons=[$('installAppButton'),$('installAppHeaderButton')].filter(Boolean);
-  if(!buttons.length)return;
-  const showButtons=()=>buttons.forEach(button=>button.classList.remove('hidden'));
-  const hideButtons=()=>buttons.forEach(button=>button.classList.add('hidden'));
-  if(isStandaloneApp()){hideButtons();return}
-  // Mantém o botão sempre visível no navegador. Quando o Chrome disponibiliza
-  // a instalação nativa, guardamos o prompt para abrir ao toque.
-  showButtons();
-  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();state.deferredInstallPrompt=event;showButtons()});
-  window.addEventListener('appinstalled',()=>{state.deferredInstallPrompt=null;hideButtons();toast('Link Direto instalado com sucesso.')});
+  const button=$('installAppButton');
+  if(!button)return;
+  if(isStandaloneApp()){button.classList.add('hidden');return}
+  button.classList.remove('hidden');
+  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();state.deferredInstallPrompt=event;button.classList.remove('hidden')});
+  window.addEventListener('appinstalled',()=>{
+    state.deferredInstallPrompt=null;
+    button.classList.add('hidden');
+    toast('Link Direto instalado com sucesso.');
+    continueWithoutInstall();
+  });
 }
 async function installLinkDireto(){
   if(isStandaloneApp()){toast('O Link Direto já está instalado.');return}
@@ -57,7 +58,20 @@ function fillCategories(){
   $('pCategory').innerHTML=options;$('businessCategory').innerHTML=options;
   $('searchCategory').innerHTML='<option value="">Todas categorias</option>'+options;
 }
-function enterApp(){$('splash').classList.add('hidden');$('app').classList.remove('hidden');loadPublicData()}
+function enterApp(){
+  $('splash').classList.add('hidden');
+  if(isStandaloneApp()){openMainApp();return}
+  $('installGate')?.classList.remove('hidden');
+}
+function continueWithoutInstall(){
+  $('installGate')?.classList.add('hidden');
+  openMainApp();
+}
+function openMainApp(){
+  $('app').classList.remove('hidden');
+  loadPublicData();
+}
+
 function showView(name,button){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name).classList.add('active');document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));(button||document.querySelector(`[data-view="${name}"]`))?.classList.add('active');scrollTo(0,0);if(name==='connect')loadConnect().then(()=>markMessagesSeen());if(name==='profile')renderProfile();if(name==='news')loadNews();if(name==='trending')renderTrending();if(name==='market')loadMarket();if(name==='ads')renderAdvertiserDashboard()}
 function openPublish(type='tenho'){showView('publish');document.querySelector(`input[name="ptype"][value="${type}"]`).checked=true;if(!state.user)openAuth()}
 function handleAccountClick(){state.user?showView('profile'):openAuth()}
