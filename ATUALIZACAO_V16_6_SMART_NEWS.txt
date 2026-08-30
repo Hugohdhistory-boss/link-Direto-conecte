@@ -1,0 +1,20 @@
+LINK DIRETO CONNECT V16.6 — SMART NEWS
+
+O que mudou:
+- Aba Notícias redesenhada para aparência de app comercial.
+- Destaque principal com imagem em tela cheia e texto sobre gradiente.
+- Cards compactos e uniformes, sem links roxos/sublinhados.
+- Categorias em barra horizontal mais limpa.
+- Ticker "AGORA" mais discreto.
+- Fonte e tempo de publicação organizados.
+- Toque no card abre a notícia original.
+- Mantém RSS/Supabase da V16.5 sem novo SQL.
+
+No GitHub, envie/substitua:
+1. index.html
+2. app.js
+3. sw.js
+4. v16-smart-news.css (NOVO)
+
+Não precisa executar SQL no Supabase.
+Depois de publicar, feche o app completamente e reabra. Se o visual antigo continuar, abra a URL no Safari com ?v=16.6 e atualize.
