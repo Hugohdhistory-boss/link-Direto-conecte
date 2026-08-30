@@ -23,3 +23,12 @@
 .install-gate-primary{width:100%;margin-top:0!important;min-height:54px;font-size:15px}
 .install-skip{display:block;width:100%;margin-top:10px;padding:14px;border:0;background:transparent;color:#aab5af;font-weight:800;cursor:pointer}
 .install-gate-card>small{display:block;color:#66716b;margin-top:4px}
+
+
+/* V16.3 — evita zoom automático do Safari ao escrever */
+input, textarea, select {
+  font-size: 16px !important;
+}
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select { font-size: 16px !important; }
+}

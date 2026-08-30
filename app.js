@@ -11,8 +11,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
   updatePublishPreview();
   initTechInteractions();
   initInstallApp();
-  try{state.session=JSON.parse(localStorage.getItem(sessionKey)||'null')}catch{}
-  if(state.session?.access_token){await restoreSession();if(state.user)startNotificationPolling()}
+  const recoveryHandled=await handlePasswordRecoveryLink();
+  if(!recoveryHandled){
+    try{state.session=JSON.parse(localStorage.getItem(sessionKey)||'null')}catch{}
+    if(state.session?.access_token){await restoreSession();if(state.user)startNotificationPolling()}
+  }
   setInterval(()=>{if(state.session?.refresh_token)refreshSession()},40*60*1000);
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
 });
@@ -87,6 +90,38 @@ function openAuth(mode='login'){
 function togglePassword(){const input=$('authPassword'),button=input?.nextElementSibling;if(!input)return;input.type=input.type==='password'?'text':'password';if(button)button.textContent=input.type==='password'?'MOSTRAR':'OCULTAR'}
 function openPasswordReset(){openModal(`<div class="auth-intro"><span class="auth-lock">↺</span><div><h2>Recuperar senha</h2><p>Enviaremos um acesso seguro para o teu e-mail.</p></div></div><form onsubmit="requestPasswordReset(event)"><label>E-mail da conta<input id="resetEmail" type="email" required autocomplete="email" placeholder="nome@empresa.com"></label><button class="btn primary">Enviar acesso</button><button class="text-action" type="button" onclick="openAuth('login')">Voltar para entrar</button></form>`)}
 async function requestPasswordReset(e){e.preventDefault();const button=e.submitter;button.disabled=true;button.textContent='A enviar...';try{const redirect=`${location.origin}${location.pathname}`;const r=await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(redirect)}`,{method:'POST',headers:authHeaders(),body:JSON.stringify({email:$('resetEmail').value.trim()})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.msg||d.message);openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Verifica o teu e-mail</h2><p class="muted">Enviámos as instruções para criares uma nova senha.</p><button class="btn primary" onclick="closeModal()">Entendido</button></div>')}catch(err){toast(readableError(err),true);button.disabled=false;button.textContent='Enviar acesso'}}
+
+async function handlePasswordRecoveryLink(){
+  const raw=location.hash.startsWith('#')?location.hash.slice(1):'';
+  if(!raw)return false;
+  const params=new URLSearchParams(raw);
+  if(params.get('type')!=='recovery'||!params.get('access_token'))return false;
+  state.session={access_token:params.get('access_token'),refresh_token:params.get('refresh_token')||'',token_type:params.get('token_type')||'bearer',expires_in:Number(params.get('expires_in')||3600)};
+  localStorage.setItem(sessionKey,JSON.stringify(state.session));
+  history.replaceState(null,document.title,location.pathname+location.search);
+  openNewPasswordModal();
+  return true;
+}
+function openNewPasswordModal(){
+  openModal(`<div class="auth-intro"><span class="auth-lock">🔐</span><div><h2>Criar nova senha</h2><p>Escolhe uma nova senha para a tua conta Link Direto.</p></div></div><form onsubmit="updateRecoveredPassword(event)"><label>Nova senha<div class="password-wrap"><input id="newPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo de 6 caracteres"><button type="button" onclick="toggleFieldPassword('newPassword',this)">MOSTRAR</button></div></label><label>Confirmar nova senha<input id="confirmNewPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="Repete a nova senha"></label><button class="btn primary">Guardar nova senha</button></form>`);
+}
+function toggleFieldPassword(id,button){const input=$(id);if(!input)return;input.type=input.type==='password'?'text':'password';button.textContent=input.type==='password'?'MOSTRAR':'OCULTAR'}
+async function updateRecoveredPassword(e){
+  e.preventDefault();
+  const button=e.submitter,password=$('newPassword').value,confirm=$('confirmNewPassword').value;
+  if(password!==confirm){toast('As duas senhas não são iguais.',true);return}
+  button.disabled=true;button.textContent='A guardar...';
+  try{
+    const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{method:'PUT',headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${state.session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({password})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.msg||d.message||'PASSWORD_UPDATE');
+    state.user=d;
+    state.session={...state.session,user:d};
+    localStorage.setItem(sessionKey,JSON.stringify(state.session));
+    await loadProfile();updateAccountUI();
+    openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Senha alterada</h2><p class="muted">A tua nova senha já está ativa. Podes continuar no Link Direto.</p><button class="btn primary" onclick="closeModal(); openMainApp();">Continuar</button></div>');
+  }catch(err){toast('Não foi possível alterar a senha. Pede um novo link de recuperação.',true);button.disabled=false;button.textContent='Guardar nova senha'}
+}
 async function signup(e){e.preventDefault();const button=e.submitter;button.disabled=true;button.textContent='A criar conta...';try{const r=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{method:'POST',headers:authHeaders(),body:JSON.stringify({email:$('authEmail').value.trim(),password:$('authPassword').value,data:{business_name:$('authBusiness').value.trim()}})});const d=await r.json();if(!r.ok)throw new Error(d.msg||d.message);if(d.access_token){setSession(d);await afterLogin();showView('profile');toast('Conta criada com sucesso.')}else{openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Conta criada</h2><p class="muted">Confirma o teu e-mail. Depois volta para entrar na conta.</p><button class="btn primary" onclick="openAuth(\'login\')">Ir para entrar</button></div>')}}catch(err){toast(readableError(err),true);button.disabled=false;button.textContent='Criar conta gratuita'}}
 async function login(e){e.preventDefault();try{const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:authHeaders(),body:JSON.stringify({email:$('authEmail').value,password:$('authPassword').value})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||d.message);setSession(d);await afterLogin();toast('Sessão iniciada com sucesso.')}catch(err){toast(readableError(err),true)}}
 function setSession(d){state.session=d;state.user=d.user;localStorage.setItem(sessionKey,JSON.stringify(d))}
