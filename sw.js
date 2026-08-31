@@ -1,5 +1,5 @@
 // Link Direto V17 Empregos
-const CACHE_NAME='link-direto-v17-jobs';
+const CACHE_NAME='link-direto-v17-jobs-share-v1';
 const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./v16-smart-news.css','./v16-7-discover.css','./v17-jobs.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v161.png'];
 
 self.addEventListener('install',event=>{
