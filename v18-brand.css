@@ -12,3 +12,8 @@
 /* V19.2 — topo: ficheiro de logo versionado para evitar cache antigo no iPhone */
 .topbar-logo{width:30px!important;height:30px!important;flex:0 0 30px!important;object-fit:contain!important;border-radius:8px!important;background:#087cff!important;padding:0!important}
 @media(max-width:420px){.topbar-logo{width:29px!important;height:29px!important;flex-basis:29px!important}}
+
+/* V19.3 — logo plano: remove o efeito de “segundo logo” causado pela sombra embutida */
+.brand-logo-image,.brand-install-logo{background:transparent!important;box-shadow:none!important;border:0!important;overflow:visible!important}
+.brand-logo-image img,.brand-install-logo img,.topbar-logo{box-shadow:none!important;filter:none!important;background:transparent!important}
+.topbar-logo{width:30px!important;height:30px!important;flex:0 0 30px!important;object-fit:contain!important;border-radius:8px!important;padding:0!important}
