@@ -1,9 +1,10 @@
-/* Link Direto V18.1 — identidade visual corporativa */
+/* Link Direto V19.1 — identidade azul clara, topo compacto */
 .brand-logo-image{overflow:hidden;background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
 .brand-logo-image img{display:block;width:100%;height:100%;object-fit:contain;border-radius:22%}
 .brand-install-logo{overflow:hidden;padding:0!important;background:transparent!important;border:0!important;box-shadow:0 16px 36px rgba(0,68,190,.28)!important}
 .brand-install-logo img{display:block;width:100%;height:100%;object-fit:contain;border-radius:24%}
 .topbar-brand{display:flex;align-items:center;gap:10px;min-width:0}
 .topbar-brand>div{min-width:0}
-.topbar-logo{width:34px;height:34px;border-radius:9px;object-fit:contain;box-shadow:none;flex:0 0 auto;display:block}
-@media(max-width:420px){.topbar-logo{width:32px;height:32px;border-radius:8px}.topbar-brand{gap:8px}}
+/* Mais pequeno para não competir com LINK DIRETO CONNECT nem parecer duplicado */
+.topbar-logo{width:27px;height:27px;border-radius:7px;object-fit:cover;box-shadow:none!important;flex:0 0 27px;display:block;overflow:hidden}
+@media(max-width:420px){.topbar-logo{width:26px;height:26px;flex-basis:26px;border-radius:7px}.topbar-brand{gap:9px}}

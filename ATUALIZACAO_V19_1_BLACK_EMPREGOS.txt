@@ -1,0 +1,8 @@
+LINK DIRETO V19.1
+
+- Aba Empregos voltou ao visual escuro da Black Edition.
+- Azul claro permanece como cor tecnológica de destaque e identidade do novo logo.
+- Partilha de vagas mantém WhatsApp, Facebook, Mais opções e Copiar link.
+- Detalhes das vagas voltaram ao tema escuro.
+- Logo do topo reduzido para ficar limpo e não parecer duplicado/cortado.
+- Cache atualizado para link-direto-v19-1-black-jobs-share.
