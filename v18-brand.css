@@ -8,3 +8,7 @@
 /* Mais pequeno para não competir com LINK DIRETO CONNECT nem parecer duplicado */
 .topbar-logo{width:27px;height:27px;border-radius:7px;object-fit:cover;box-shadow:none!important;flex:0 0 27px;display:block;overflow:hidden}
 @media(max-width:420px){.topbar-logo{width:26px;height:26px;flex-basis:26px;border-radius:7px}.topbar-brand{gap:9px}}
+
+/* V19.2 — topo: ficheiro de logo versionado para evitar cache antigo no iPhone */
+.topbar-logo{width:30px!important;height:30px!important;flex:0 0 30px!important;object-fit:contain!important;border-radius:8px!important;background:#087cff!important;padding:0!important}
+@media(max-width:420px){.topbar-logo{width:29px!important;height:29px!important;flex-basis:29px!important}}

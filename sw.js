@@ -1,6 +1,6 @@
 // Link Direto V19.1 — Black Edition + Empregos + Partilha
-const CACHE_NAME='link-direto-v19-1-black-jobs-share';
-const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./v16-smart-news.css','./v16-7-discover.css','./v17-jobs.css','./v18-brand.css','./v19-jobs.css','./app.js','./manifest.json','./icon-192.png','./icon-512.png','./icon-1024.png','./capa-link-direto-v161.png'];
+const CACHE_NAME='link-direto-v19-2-icon-fix';
+const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./v16-smart-news.css','./v16-7-discover.css','./v17-jobs.css','./v18-brand.css','./v19-jobs.css','./app.js','./manifest.json','./brand-icon-v192.png','./apple-touch-icon-v192.png','./pwa-icon-192-v192.png','./pwa-icon-512-v192.png','./pwa-icon-1024-v192.png','./capa-link-direto-v161.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
