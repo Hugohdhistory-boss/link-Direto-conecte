@@ -1,0 +1,101 @@
+/* Link Direto - IA Anúncios v20 */
+
+.ai-ads-page {
+  padding: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.ai-ads-header {
+  margin-bottom: 22px;
+}
+
+.ai-ads-header h2 {
+  margin: 0 0 6px;
+  font-size: 26px;
+}
+
+.ai-ads-header p {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.ai-ads-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.ai-ads-field {
+  margin-bottom: 14px;
+}
+
+.ai-ads-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.ai-ads-field input,
+.ai-ads-field select,
+.ai-ads-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  background: #fff;
+}
+
+.ai-ads-field textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+.ai-generate-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #1677ff;
+  color: #fff;
+}
+
+.ai-result {
+  display: none;
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f5f7fb;
+}
+
+.ai-result.show {
+  display: block;
+}
+
+.ai-result-text {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.ai-result-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ai-result-actions button {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
