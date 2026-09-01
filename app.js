@@ -392,4 +392,66 @@ async function submitJobApplication(e,jobId){
   const row={job_id:jobId,candidate_id:state.user.id,candidate_name:$('candidateName').value.trim(),candidate_phone:$('candidatePhone').value.trim(),note:$('applicationNote').value.trim()||null,status:'sent'};
   try{await api('job_applications','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Candidatura enviada</h2><p class="muted">A empresa já pode encontrar a tua candidatura no Link Direto.</p><button class="btn primary" onclick="closeModal()">Concluído</button></div>')}
   catch(err){console.error(err);const msg=String(err?.message||'');if(msg.includes('duplicate')||msg.includes('23505'))toast('Já te candidataste a esta vaga.',true);else toast('Não foi possível enviar a candidatura.',true);button.disabled=false;button.textContent='Enviar candidatura'}
+}// ===== IA ANÚNCIOS =====
+
+function gerarAnuncioIA() {
+  const tipo = document.getElementById('ai-tipo')?.value || 'produto';
+  const nome = document.getElementById('ai-nome')?.value.trim() || '';
+  const preco = document.getElementById('ai-preco')?.value.trim() || '';
+  const local = document.getElementById('ai-local')?.value.trim() || '';
+  const detalhes = document.getElementById('ai-detalhes')?.value.trim() || '';
+
+  if (!nome) {
+    toast('Escreve primeiro o que queres anunciar.', true);
+    return;
+  }
+
+  const titulos = {
+    produto: `🔥 ${nome} disponível`,
+    servico: `✨ ${nome} em ${local || 'Moçambique'}`,
+    emprego: `💼 Oportunidade: ${nome}`,
+    imovel: `🏠 ${nome} disponível`
+  };
+
+  let anuncio = `${titulos[tipo] || `✨ ${nome}`}\n\n`;
+
+  if (detalhes) {
+    anuncio += `${detalhes}\n\n`;
+  }
+
+  if (preco) {
+    anuncio += `💰 Preço: ${preco} MT\n`;
+  }
+
+  if (local) {
+    anuncio += `📍 Localização: ${local}\n`;
+  }
+
+  anuncio += `\n📲 Entre em contacto para mais informações.`;
+  anuncio += `\n\n#LinkDireto #Moçambique`;
+
+  const resultado = document.getElementById('ai-resultado-texto');
+
+  if (resultado) {
+    resultado.innerText = anuncio;
+  }
+
+  toast('Anúncio criado com sucesso.');
 }
+
+async function copiarAnuncioIA() {
+  const texto = document.getElementById('ai-resultado-texto')?.innerText.trim();
+
+  if (!texto) {
+    toast('Primeiro gera um anúncio.', true);
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(texto);
+    toast('Anúncio copiado.');
+  } catch {
+    window.prompt('Copia o anúncio:', texto);
+  }
+}
+
