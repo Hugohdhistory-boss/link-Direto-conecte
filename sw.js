@@ -1,5 +1,5 @@
 // Link Direto V19 Match Direto
-const CACHE_NAME='link-direto-v20-4-splash-logo';
+const CACHE_NAME='link-direto-v20-5-two-logos';
 const ASSETS=['./','./index.html','./styles.css','./cover-v5.css','./v6-enhancements.css','./v7-auth.css','./v8-notifications.css','./v9-tech.css','./v10-black.css','./v11-social.css','./v12-profile.css','./v14-install-chat.css','./v15-commercial-news.css','./v16-growth-market.css','./v16-smart-news.css','./v16-7-discover.css','./v17-jobs.css','./v18-home-focus.css','./v19-match.css','./app.js','./v20-ai-ads.css','./v20-ai-ads.js','./v20-trust.css','./v20-trust.js','./brand-icon-v193.png','./manifest.json','./icon-192.png','./icon-512.png','./capa-link-direto-v161.png'];
 
 self.addEventListener('install',event=>{

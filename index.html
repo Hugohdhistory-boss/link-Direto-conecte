@@ -7,11 +7,34 @@
 }
 </style>
 
+
+<style id="v20-5-two-logo-fix">
+.logo-mark,
+.install-gate-logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.logo-mark img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.install-gate-logo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
-<section id="splash" class="splash splash-v5"><div class="splash-brand"><div class="brand-row"><div class="logo-mark">LD</div><div><b>LINK DIRETO <span>CONNECT</span></b><small>Encontra. Liga. Faz negócio.</small></div></div><h1>Oportunidades não se procuram. <span>Conectam-se.</span></h1><p>Liga negócios, fornecedores e clientes numa rede criada para crescer em Moçambique.</p></div><div class="cover-art"><img src="capa-link-direto-v5.png" alt="Empreendedores moçambicanos ligados por oportunidades de negócio"><div class="cover-shade"></div><div class="cover-badges"><span>TENHO</span><span>PRECISO</span><span>MATCH DIRETO</span></div><div class="cover-caption"><b>Uma ligação certa pode mudar um negócio.</b><small>Começa pela tua.</small></div></div><div class="splash-card"><button class="btn primary" onclick="enterApp()">Continuar</button><small>Publica, encontra e conversa diretamente.</small></div></section>
-<section id="installGate" class="install-gate hidden" aria-label="Instalar Link Direto"><div class="install-gate-card"><div class="install-gate-logo">LD</div><span class="eyebrow">LINK DIRETO CONNECT</span><h1>Tenha o Link Direto no seu celular.</h1><p>Instale para abrir mais rápido e ter uma experiência igual a um aplicativo.</p><div class="install-benefits"><span>✓ Acesso pela tela inicial</span><span>✓ Experiência em tela cheia</span><span>✓ Acesso rápido às mensagens e oportunidades</span></div><button id="installAppButton" class="btn install-app install-gate-primary" type="button" onclick="installLinkDireto()">📲 INSTALAR APP</button><button class="install-skip" type="button" onclick="continueWithoutInstall()">Agora não</button><small id="installAppHint">A instalação é gratuita.</small></div></section>
+<section id="splash" class="splash splash-v5"><div class="splash-brand"><div class="brand-row"><div class="logo-mark"><img src="brand-icon-v193.png" alt="Link Direto"></div><div><b>LINK DIRETO <span>CONNECT</span></b><small>Encontra. Liga. Faz negócio.</small></div></div><h1>Oportunidades não se procuram. <span>Conectam-se.</span></h1><p>Liga negócios, fornecedores e clientes numa rede criada para crescer em Moçambique.</p></div><div class="cover-art"><img src="capa-link-direto-v5.png" alt="Empreendedores moçambicanos ligados por oportunidades de negócio"><div class="cover-shade"></div><div class="cover-badges"><span>TENHO</span><span>PRECISO</span><span>MATCH DIRETO</span></div><div class="cover-caption"><b>Uma ligação certa pode mudar um negócio.</b><small>Começa pela tua.</small></div></div><div class="splash-card"><button class="btn primary" onclick="enterApp()">Continuar</button><small>Publica, encontra e conversa diretamente.</small></div></section>
+<section id="installGate" class="install-gate hidden" aria-label="Instalar Link Direto"><div class="install-gate-card"><div class="install-gate-logo"><img src="brand-icon-v193.png" alt="Link Direto"></div><span class="eyebrow">LINK DIRETO CONNECT</span><h1>Tenha o Link Direto no seu celular.</h1><p>Instale para abrir mais rápido e ter uma experiência igual a um aplicativo.</p><div class="install-benefits"><span>✓ Acesso pela tela inicial</span><span>✓ Experiência em tela cheia</span><span>✓ Acesso rápido às mensagens e oportunidades</span></div><button id="installAppButton" class="btn install-app install-gate-primary" type="button" onclick="installLinkDireto()">📲 INSTALAR APP</button><button class="install-skip" type="button" onclick="continueWithoutInstall()">Agora não</button><small id="installAppHint">A instalação é gratuita.</small></div></section>
 <div id="app" class="app hidden">
 <header class="topbar"><div class="top-brand"><div class="top-logo"><img src="brand-icon-v193.png" alt="Link Direto"></div><div><b>LINK DIRETO <span>CONNECT</span></b><small id="headerSubtitle">Oportunidades perto de ti</small><i class="black-edition">BLACK EDITION</i></div></div><div class="top-actions"><button id="notificationCenterButton" class="notification-bell" onclick="openNotificationCenter()" aria-label="Notificações">🔔<i id="notificationCenterBadge" class="nav-badge hidden">0</i></button><button id="accountButton" class="account" onclick="handleAccountClick()">Entrar</button></div></header>
 <main>
