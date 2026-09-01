@@ -1,2 +1,10 @@
 
 .ai-hero{padding:24px 0 12px}.ai-hero h2{margin:5px 0 7px;font-size:28px}.ai-hero p{margin:0;opacity:.72;max-width:620px}.ai-form{margin-top:8px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ai-result{margin-top:14px}.ai-result p{white-space:pre-line;line-height:1.55}.ai-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.v20-nav .ai-nav b{font-size:18px}@media(max-width:620px){.ai-grid{grid-template-columns:1fr}}
+
+/* V20.2: restaura logo escolhido e permite todas as abas sem cortar funções */
+.top-brand{display:flex;align-items:center;gap:10px}
+.top-logo{width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex:0 0 46px}
+.top-logo img{width:46px;height:46px;object-fit:contain;border-radius:12px}
+.v20-nav{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}
+.v20-nav::-webkit-scrollbar{display:none}
+.v20-nav button{min-width:66px;flex:0 0 66px}
