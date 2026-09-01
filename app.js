@@ -173,21 +173,7 @@ function commentCount(id){return state.comments.filter(x=>String(x.opportunity_i
 function shareBaseUrl(){return `${location.origin}${location.pathname}`}
 async function shareContent({title,text,url=shareBaseUrl()}){try{if(navigator.share){await navigator.share({title,text,url});return}if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(`${text}\n${url}`);toast('Link copiado. Já podes compartilhar.');return}window.prompt('Copia este link para compartilhar:',url)}catch(err){if(err?.name!=='AbortError')toast('Não foi possível abrir a partilha.',true)}}
 function shareOpportunity(id){const o=state.opportunities.find(x=>String(x.id)===String(id));if(!o)return;const kind=o.type==='tenho'?'Oferta':'Pedido';const text=`${kind}: ${o.title}${o.location?` — ${o.location}`:''}. Veja no Link Direto.`;shareContent({title:o.title||'Link Direto',text})}
-function jobShareUrl(id){return `${shareBaseUrl()}#job=${encodeURIComponent(id)}`}
-function jobShareText(j){return `Encontrei esta oportunidade no Link Direto: ${j.title} — ${j.company_name}${j.location?` | ${j.location}`:''}. Confira a vaga.`}
-function shareJob(id){
-  const j=state.jobs.find(x=>String(x.id)===String(id));if(!j)return;
-  const url=jobShareUrl(j.id),text=jobShareText(j);
-  openModal(`<div class="v19-share-sheet"><div class="v19-share-head"><div class="v19-share-logo"><img src="brand-icon-v193.png" alt="Link Direto"></div><div><span>PARTILHAR VAGA</span><h2>Ajuda alguém a encontrar o próximo passo.</h2></div></div><div class="v19-share-preview"><div class="v19-share-preview-top"><img src="brand-icon-v193.png" alt=""><div><small>LINK DIRETO • EMPREGOS</small><b>${esc(j.title)}</b><span>${esc(j.company_name)}</span></div></div><div class="v19-share-meta"><span>📍 ${esc(j.location||'Moçambique')}</span><span>💼 ${esc(jobTypeLabel(j.employment_type))}</span>${j.category?`<span>◫ ${esc(j.category)}</span>`:''}</div><p>${esc(j.description||'')}</p><strong>Ver vaga no Link Direto →</strong></div><div class="v19-share-options"><button onclick="shareJobChannel('${j.id}','whatsapp')"><i class="wa">W</i><span>WhatsApp</span></button><button onclick="shareJobChannel('${j.id}','facebook')"><i class="fb">f</i><span>Facebook</span></button><button onclick="shareJobChannel('${j.id}','native')"><i class="more">↗</i><span>Mais opções</span></button></div><button class="v19-copy-link" onclick="shareJobChannel('${j.id}','copy')"><span>🔗</span><div><b>Copiar link da vaga</b><small>${esc(url)}</small></div><em>Copiar</em></button><button class="v19-share-cancel" onclick="closeModal()">Cancelar</button></div>`)
-}
-async function shareJobChannel(id,channel){
-  const j=state.jobs.find(x=>String(x.id)===String(id));if(!j)return;
-  const url=jobShareUrl(j.id),text=jobShareText(j),encodedText=encodeURIComponent(`${text}\n${url}`),encodedUrl=encodeURIComponent(url);
-  if(channel==='whatsapp'){window.open(`https://wa.me/?text=${encodedText}`,'_blank','noopener');return}
-  if(channel==='facebook'){window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,'_blank','noopener');return}
-  if(channel==='copy'){try{await navigator.clipboard.writeText(url);toast('Link da vaga copiado.');}catch{window.prompt('Copia este link:',url)}return}
-  await shareContent({title:`${j.title} — ${j.company_name}`,text,url});
-}
+function shareJob(id){const j=state.jobs.find(x=>String(x.id)===String(id));if(!j)return;const text=`Vaga: ${j.title} na ${j.company_name}${j.location?` — ${j.location}`:''}. Veja esta oportunidade no Link Direto.`;shareContent({title:`${j.title} — ${j.company_name}`,text})}
 function opportunityCard(o){const saved=state.favorites.has(String(o.id)),liked=state.likedOpportunities.has(String(o.id));const mine=state.user&&o.user_id===state.user.id;const media=o.video_url?`<video class="card-media" src="${esc(o.video_url)}" controls playsinline preload="metadata"></video>`:o.image_url?`<img class="card-media" src="${esc(o.image_url)}" alt="Imagem da publicação" loading="lazy">`:'';return `<article class="card">${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3><p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="social-actions"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span></button><button class="social-btn" onclick="shareOpportunity('${o.id}')" aria-label="Compartilhar esta publicação">↗ <span>Compartilhar</span></button></div><div class="card-actions">${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir anúncio</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`}
 function renderHome(){$('homeFeed').innerHTML=state.opportunities.slice(0,6).map(opportunityCard).join('')||'<div class="empty">Ainda não existem oportunidades.</div>';$('homeAd').innerHTML=state.ads[0]?adCard(state.ads[0]):'';if($('statOpps'))$('statOpps').textContent=state.opportunities.length;if($('statAds'))$('statAds').textContent=state.discoverProfiles.length||state.ads.length;renderForYou()}
 function quickCategory(category){$('searchCategory').value=category;renderSearch()}
@@ -220,7 +206,7 @@ function stopNotificationPolling(){if(state.notificationTimer)clearInterval(stat
 function updateNotificationBadge(){const badge=$('connectBadge');if(!badge)return;badge.textContent=state.unreadMessages>99?'99+':String(state.unreadMessages);badge.classList.toggle('hidden',!state.unreadMessages)}
 function updateNotificationPanel(){const panel=$('notificationPanel'),button=$('notificationButton');if(!panel||!button)return;panel.classList.toggle('hidden',!state.user);const enabled='Notification'in window&&Notification.permission==='granted';panel.classList.toggle('enabled',enabled);button.textContent=enabled?'Ativadas':'Ativar'}
 async function enableNotifications(){if(!('Notification'in window)){toast('Este navegador não permite alertas. O contador no Connect continuará ativo.',true);return}try{const permission=await Notification.requestPermission();updateNotificationPanel();toast(permission==='granted'?'Notificações ativadas.':'Permissão de notificações não autorizada.',permission!=='granted')}catch{toast('Não foi possível ativar as notificações.',true)}}
-async function showMessageNotification(message){const text=(message.body||'Recebeste uma nova mensagem.').slice(0,100);if(!document.querySelector('#view-connect.active'))toast(`Nova mensagem: ${text}`);if(!('Notification'in window)||Notification.permission!=='granted')return;try{if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.ready;await registration.showNotification('Nova mensagem no Link Direto',{body:text,icon:'./brand-icon-v193.png',badge:'./brand-icon-v193.png',tag:`message-${message.id}`,data:{url:`${location.pathname}?v=8`}})}else new Notification('Nova mensagem no Link Direto',{body:text,icon:'./brand-icon-v193.png'})}catch{}}
+async function showMessageNotification(message){const text=(message.body||'Recebeste uma nova mensagem.').slice(0,100);if(!document.querySelector('#view-connect.active'))toast(`Nova mensagem: ${text}`);if(!('Notification'in window)||Notification.permission!=='granted')return;try{if('serviceWorker'in navigator){const registration=await navigator.serviceWorker.ready;await registration.showNotification('Nova mensagem no Link Direto',{body:text,icon:'./icon-192.png',badge:'./icon-192.png',tag:`message-${message.id}`,data:{url:`${location.pathname}?v=8`}})}else new Notification('Nova mensagem no Link Direto',{body:text,icon:'./icon-192.png'})}catch{}}
 async function pollNotifications(silent=false){if(!state.user)return;try{const seen=localStorage.getItem(seenMessagesKey())||new Date().toISOString();const checked=localStorage.getItem(checkedMessagesKey())||seen;const [unread,newItems]=await Promise.all([api('messages',`?receiver_id=eq.${state.user.id}&created_at=gt.${encodeURIComponent(seen)}&select=id&order=created_at.asc&limit=100`),api('messages',`?receiver_id=eq.${state.user.id}&created_at=gt.${encodeURIComponent(checked)}&select=id,body,created_at&order=created_at.asc&limit=20`)]);state.unreadMessages=(unread||[]).length;updateNotificationBadge();if(!silent&&newItems?.length)await showMessageNotification(newItems[newItems.length-1]);localStorage.setItem(checkedMessagesKey(),new Date().toISOString())}catch(err){console.error('notification check',err)}}
 function markMessagesSeen(){if(!state.user)return;const now=new Date().toISOString();localStorage.setItem(seenMessagesKey(),now);localStorage.setItem(checkedMessagesKey(),now);state.unreadMessages=0;updateNotificationBadge()}
 async function loadConnect(){if(!state.user){$('connectContent').innerHTML='<div class="empty">Entra na tua conta para veres propostas e conversas.</div>';return}try{state.proposals=await api('proposals',`?or=(sender_id.eq.${state.user.id},owner_id.eq.${state.user.id})&order=created_at.desc` )||[];$('pendingCount').textContent=state.proposals.filter(p=>p.status==='pending').length;$('acceptedCount').textContent=state.proposals.filter(p=>p.status==='accepted').length;$('messageCount').textContent=state.proposals.filter(p=>p.status==='accepted').length;$('connectContent').innerHTML=state.proposals.map(proposalCard).join('')||'<div class="empty">Ainda não existem propostas.</div>'}catch(err){console.error(err);$('connectContent').innerHTML='<div class="empty">Não foi possível carregar as propostas.</div>'}}
@@ -268,8 +254,39 @@ function filterNews(category,button){state.newsCategory=category;document.queryS
 function smartNewsOpen(n){if(n?.is_demo||!n?.original_url)return;const url=newsSafeLink(n.original_url);if(url&&url!=='#')window.open(url,'_blank','noopener')}
 function renderNews(){const filtered=state.newsCategory?state.news.filter(n=>(n.category||'').toLowerCase()===state.newsCategory.toLowerCase()):state.news;const ticker=$('newsTicker');if(ticker)ticker.textContent=state.news.slice(0,3).map(n=>n.title).join('  •  ')||'As principais notícias vão aparecer aqui.';const demoMode=state.news.length&&state.news.every(n=>n.is_demo);const demoBanner=$('newsDemoBanner');if(demoBanner)demoBanner.classList.toggle('hidden',!demoMode);const lead=$('newsLead'),feed=$('newsFeed');if(!lead||!feed)return;if(!filtered.length){lead.innerHTML='';feed.innerHTML='<div class="news-empty"><b>Sem notícias nesta categoria.</b>As novas publicações aparecerão automaticamente.</div>';return}const top=filtered[0];const topMedia=top.image_url?`<img class="smart-lead-media" src="${esc(top.image_url)}" alt="" loading="eager">`:`<div class="smart-lead-placeholder">${newsEmoji(top.category)}</div>`;lead.innerHTML=`<article class="smart-lead" role="button" tabindex="0" onclick='smartNewsOpen(${JSON.stringify(top).replace(/'/g,"&#39;")})'><div class="smart-lead-media-wrap">${topMedia}</div><div class="smart-lead-shade"></div><div class="smart-lead-copy"><div class="smart-lead-topline"><span class="smart-category">${top.is_demo?'DEMO · ':''}${esc(top.category||'Destaque')}</span><span>${esc(top.source_name||'Fonte')}</span><span>·</span><span>${newsTimeAgo(top.published_at)}</span></div><h3>${esc(top.title)}</h3><p>${esc(top.summary||'')}</p></div></article>`;feed.innerHTML=filtered.slice(1).map(newsCard).join('')||'<div class="news-empty">Mais notícias serão adicionadas em breve.</div>'}
 function newsCard(n){const media=n.image_url?`<img src="${esc(n.image_url)}" alt="" loading="lazy">`:newsEmoji(n.category);const payload=JSON.stringify(n).replace(/'/g,"&#39;");return `<article class="smart-news-card" role="button" tabindex="0" onclick='smartNewsOpen(${payload})'><div class="smart-news-thumb">${media}</div><div class="smart-news-copy"><div class="smart-news-meta"><span class="smart-category">${n.is_demo?'DEMO · ':''}${esc(n.category||'Notícia')}</span><span>${newsTimeAgo(n.published_at)}</span></div><h3>${esc(n.title)}</h3><p>${esc(n.summary||'')}</p><div class="smart-source">${esc(n.source_name||'Fonte')}${n.is_demo?'':' · Ler na fonte ↗'}</div></div></article>`}
-function recommendationScore(o){let score=likeCount(o.id)*4+commentCount(o.id)*6;const cat=(state.profile?.category||'').toLowerCase(),loc=(state.profile?.location||'').toLowerCase();if(cat&&String(o.category||'').toLowerCase()===cat)score+=20;if(loc&&String(o.location||'').toLowerCase().includes(loc))score+=12;const age=Math.max(0,(Date.now()-new Date(o.created_at).getTime())/86400000);score+=Math.max(0,12-age);return score}
-function renderForYou(){const el=$('forYouFeed');if(!el)return;const items=[...state.opportunities].sort((a,b)=>recommendationScore(b)-recommendationScore(a)).slice(0,6);el.innerHTML=items.map(o=>`<div class="for-you-item"><span class="match-mini">${Math.min(99,62+Math.round(recommendationScore(o)))}% match</span>${opportunityCard(o)}</div>`).join('')||'<div class="empty">Publica ou completa o perfil para receber recomendações.</div>'}
+// ===== V19 MATCH DIRETO =====
+const MATCH_STOPWORDS=new Set('de da do das dos e em para por com um uma uns umas o a os as que quero preciso tenho procuro procura vender comprar venda compra disponivel disponível oferta pedido'.split(' '));
+function matchWords(value=''){return [...new Set(String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2&&!MATCH_STOPWORDS.has(w)))];}
+function wordOverlap(a,b){const A=matchWords(a),B=new Set(matchWords(b));if(!A.length||!B.size)return 0;const hits=A.filter(w=>B.has(w)).length;return hits/Math.max(1,Math.min(A.length,B.size));}
+function activeOwnOpportunities(){if(!state.user)return [];return state.opportunities.filter(o=>o.user_id===state.user.id&&o.status!=='closed');}
+function matchAgainst(candidate,source){
+  if(!candidate||!source||String(candidate.id)===String(source.id))return {percent:0,reasons:[]};
+  if(candidate.user_id&&source.user_id&&candidate.user_id===source.user_id)return {percent:0,reasons:[]};
+  let points=0;const reasons=[];
+  const opposite=(source.type==='tenho'&&candidate.type==='preciso')||(source.type==='preciso'&&candidate.type==='tenho');
+  if(!opposite)return {percent:0,reasons:[]};
+  points+=34;reasons.push(source.type==='tenho'?'Precisa do que tens':'Tem o que precisas');
+  if(String(candidate.category||'').toLowerCase()===String(source.category||'').toLowerCase()){points+=28;reasons.push('Mesma categoria')}
+  const textA=`${source.title||''} ${source.description||''}`,textB=`${candidate.title||''} ${candidate.description||''}`;
+  const overlap=wordOverlap(textA,textB);if(overlap>0){points+=Math.min(22,Math.round(overlap*28));if(overlap>=.18)reasons.push('Interesse semelhante')}
+  const locA=String(source.location||'').toLowerCase(),locB=String(candidate.location||'').toLowerCase();
+  if(locA&&locB&&(locA.includes(locB)||locB.includes(locA))){points+=10;reasons.push('Mesma localização')}
+  const age=Math.max(0,(Date.now()-new Date(candidate.created_at).getTime())/86400000);points+=Math.max(0,6-Math.min(6,age/3));
+  return {percent:Math.max(55,Math.min(98,Math.round(points))),reasons:[...new Set(reasons)].slice(0,3)};
+}
+function smartMatch(candidate){
+  const own=activeOwnOpportunities();
+  if(own.length){let best={percent:0,reasons:[],source:null};for(const source of own){const r=matchAgainst(candidate,source);if(r.percent>best.percent)best={...r,source}}return best}
+  // Sem publicação própria ainda: usa o perfil para ordenar recomendações, sem fingir um match bilateral.
+  let percent=58,reasons=[];const cat=String(state.profile?.category||'').toLowerCase(),loc=String(state.profile?.location||'').toLowerCase();
+  if(cat&&String(candidate.category||'').toLowerCase()===cat){percent+=18;reasons.push('Categoria do teu perfil')}
+  if(loc&&String(candidate.location||'').toLowerCase().includes(loc)){percent+=10;reasons.push('Perto de ti')}
+  percent+=Math.min(8,likeCount(candidate.id)*2+commentCount(candidate.id)*2);
+  return {percent:Math.min(86,percent),reasons:reasons.slice(0,3),source:null};
+}
+function recommendationScore(o){const m=smartMatch(o);return m.percent+(likeCount(o.id)*.3)+(commentCount(o.id)*.5)}
+function matchCard(o){const m=smartMatch(o),reasonHtml=m.reasons.map(r=>`<span>${esc(r)}</span>`).join('');const sourceLabel=m.source?`Match com o teu anúncio: ${esc(m.source.title||'publicação')}`:'Recomendação baseada no teu perfil e atividade';return `<div class="for-you-item v19-match-card"><div class="match-intelligence"><div class="match-percent"><b>${m.percent}%</b><small>compatível</small></div><div class="match-why"><strong>${m.source?'MATCH ENCONTRADO':'RECOMENDADO PARA TI'}</strong><small>${sourceLabel}</small><div class="match-reasons">${reasonHtml}</div></div></div>${opportunityCard(o)}</div>`}
+function renderForYou(){const el=$('forYouFeed');if(!el)return;let items=[...state.opportunities].filter(o=>!state.user||o.user_id!==state.user.id);const own=activeOwnOpportunities();if(own.length)items=items.filter(o=>own.some(source=>matchAgainst(o,source).percent>0));items=items.sort((a,b)=>recommendationScore(b)-recommendationScore(a)).slice(0,6);if(items.length){el.innerHTML=items.map(matchCard).join('');return}el.innerHTML=own.length?'<div class="empty match-empty"><b>A procurar o teu match…</b><span>Ainda não apareceu uma publicação compatível. Quando alguém publicar o oposto do que tens ou precisas, vai surgir aqui.</span></div>':'<div class="empty match-empty"><b>Cria o teu primeiro match</b><span>Publica o que TENS ou PRECISAS. O Link Direto começa a procurar o lado oposto automaticamente.</span><button class="btn primary" onclick="openPublish(\'tenho\')">Publicar agora</button></div>'}
 function setTrendingMode(mode,button){state.trendingMode=mode;document.querySelectorAll('.trend-tabs button').forEach(x=>x.classList.remove('active'));button?.classList.add('active');renderTrending()}
 function trendingOpportunityScore(o){const hours=Math.max(1,(Date.now()-new Date(o.created_at).getTime())/36e5);return (likeCount(o.id)*5+commentCount(o.id)*8+8)/Math.pow(hours+2,.28)}
 function renderTrending(){const el=$('trendingFeed');if(!el)return;let html='';if(state.trendingMode!=='news'){const opps=[...state.opportunities].sort((a,b)=>trendingOpportunityScore(b)-trendingOpportunityScore(a)).slice(0,8);html+=opps.map((o,i)=>`<div class="trend-row"><div class="trend-rank">${i+1}</div><div class="trend-content"><span class="trend-label">🔥 ${likeCount(o.id)} likes · ${commentCount(o.id)} comentários</span>${opportunityCard(o)}</div></div>`).join('')}if(state.trendingMode!=='opportunities'&&state.news.length){const news=state.news.slice(0,6);html+=`<div class="trend-news-title">📰 Agora nas notícias</div>`+news.map((n,i)=>`<article class="trend-news"><b>#${i+1}</b><div><span>${esc(n.category||'Notícia')} · ${esc(n.source_name||'Fonte')}</span>${n.is_demo?`<strong>${esc(n.title)}</strong>`:`<a href="${newsSafeLink(n.original_url)}" target="_blank" rel="noopener">${esc(n.title)}</a>`}</div></article>`).join('')}el.innerHTML=html||'<div class="empty">As tendências aparecerão quando houver atividade no Link Direto.</div>'}
@@ -365,11 +382,11 @@ function renderJobs(){
 }
 function jobCard(j){
   const featured=j.featured?'<div class="job-featured">★ VAGA EM DESTAQUE</div>':'';
-  return `<article class="job-card ${j.featured?'featured':''}">${featured}<div class="job-top"><div class="job-logo">${esc(jobInitials(j.company_name))}</div><div class="job-main"><h3>${esc(j.title)}</h3><div class="job-company">${esc(j.company_name)}</div><div class="job-meta"><span>📍 ${esc(j.location)}</span><span>💼 ${esc(jobTypeLabel(j.employment_type))}</span><span>${esc(j.category||'Outros')}</span></div><p class="job-description">${esc(j.description)}</p></div></div><div class="job-footer"><span class="job-date">${jobDateLabel(j.deadline)}</span><div class="job-actions"><button class="job-share-btn" onclick="shareJob('${j.id}')">↗ Partilhar</button><button class="job-details-btn" onclick="openJobDetails('${j.id}')">Detalhes</button><button class="job-apply-btn" onclick="openJobApplication('${j.id}')">Candidatar-me</button></div></div></article>`
+  return `<article class="job-card ${j.featured?'featured':''}">${featured}<div class="job-top"><div class="job-logo">${esc(jobInitials(j.company_name))}</div><div class="job-main"><h3>${esc(j.title)}</h3><div class="job-company">${esc(j.company_name)}</div><div class="job-meta"><span>📍 ${esc(j.location)}</span><span>💼 ${esc(jobTypeLabel(j.employment_type))}</span><span>${esc(j.category||'Outros')}</span></div><p class="job-description">${esc(j.description)}</p></div></div><div class="job-footer"><span class="job-date">${jobDateLabel(j.deadline)}</span><div class="job-actions"><button class="job-share-btn" onclick="shareJob('${j.id}')">↗ Compartilhar</button><button class="job-details-btn" onclick="openJobDetails('${j.id}')">Detalhes</button><button class="job-apply-btn" onclick="openJobApplication('${j.id}')">Candidatar-me</button></div></div></article>`
 }
 function openJobDetails(id){
   const j=state.jobs.find(x=>String(x.id)===String(id));if(!j)return;
-  openModal(`<div class="v19-job-detail"><div class="v19-detail-head"><img src="brand-icon-v193.png" alt="Link Direto"><div><span>DETALHES DA VAGA</span><h2>${esc(j.title)}</h2><p>${esc(j.company_name)}</p></div></div><div class="v19-detail-pills"><span>📍 ${esc(j.location)}</span><span>💼 ${esc(jobTypeLabel(j.employment_type))}</span><span>◫ ${esc(j.category||'Outros')}</span></div><div class="job-detail-list"><div class="job-detail-box"><small>DESCRIÇÃO</small><p>${esc(j.description)}</p></div>${j.requirements?`<div class="job-detail-box"><small>REQUISITOS</small><p>${esc(j.requirements)}</p></div>`:''}<div class="job-detail-box"><small>PRAZO</small><p>${jobDateLabel(j.deadline)}</p></div></div><div class="job-detail-actions"><button class="btn secondary" onclick="shareJob('${j.id}')">↗ Partilhar</button><button class="btn primary" onclick="closeModal();openJobApplication('${j.id}')">Candidatar-me</button></div></div>`)
+  openModal(`<div class="auth-intro"><span class="auth-lock">💼</span><div><h2>${esc(j.title)}</h2><p>${esc(j.company_name)} · 📍 ${esc(j.location)}</p></div></div><div class="job-detail-list"><div class="job-detail-box"><small>TIPO DE VAGA</small><p>${esc(jobTypeLabel(j.employment_type))} · ${esc(j.category||'Outros')}</p></div><div class="job-detail-box"><small>DESCRIÇÃO</small><p>${esc(j.description)}</p></div>${j.requirements?`<div class="job-detail-box"><small>REQUISITOS</small><p>${esc(j.requirements)}</p></div>`:''}<div class="job-detail-box"><small>PRAZO</small><p>${jobDateLabel(j.deadline)}</p></div></div><div class="job-detail-actions"><button class="btn secondary" onclick="shareJob('${j.id}')">↗ Compartilhar</button><button class="btn primary" onclick="closeModal();openJobApplication('${j.id}')">Candidatar-me</button></div>`)
 }
 function openJobForm(){
   if(!requireAuth())return;
@@ -392,66 +409,4 @@ async function submitJobApplication(e,jobId){
   const row={job_id:jobId,candidate_id:state.user.id,candidate_name:$('candidateName').value.trim(),candidate_phone:$('candidatePhone').value.trim(),note:$('applicationNote').value.trim()||null,status:'sent'};
   try{await api('job_applications','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(row)});openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Candidatura enviada</h2><p class="muted">A empresa já pode encontrar a tua candidatura no Link Direto.</p><button class="btn primary" onclick="closeModal()">Concluído</button></div>')}
   catch(err){console.error(err);const msg=String(err?.message||'');if(msg.includes('duplicate')||msg.includes('23505'))toast('Já te candidataste a esta vaga.',true);else toast('Não foi possível enviar a candidatura.',true);button.disabled=false;button.textContent='Enviar candidatura'}
-}// ===== IA ANÚNCIOS =====
-
-function gerarAnuncioIA() {
-  const tipo = document.getElementById('ai-tipo')?.value || 'produto';
-  const nome = document.getElementById('ai-nome')?.value.trim() || '';
-  const preco = document.getElementById('ai-preco')?.value.trim() || '';
-  const local = document.getElementById('ai-local')?.value.trim() || '';
-  const detalhes = document.getElementById('ai-detalhes')?.value.trim() || '';
-
-  if (!nome) {
-    toast('Escreve primeiro o que queres anunciar.', true);
-    return;
-  }
-
-  const titulos = {
-    produto: `🔥 ${nome} disponível`,
-    servico: `✨ ${nome} em ${local || 'Moçambique'}`,
-    emprego: `💼 Oportunidade: ${nome}`,
-    imovel: `🏠 ${nome} disponível`
-  };
-
-  let anuncio = `${titulos[tipo] || `✨ ${nome}`}\n\n`;
-
-  if (detalhes) {
-    anuncio += `${detalhes}\n\n`;
-  }
-
-  if (preco) {
-    anuncio += `💰 Preço: ${preco} MT\n`;
-  }
-
-  if (local) {
-    anuncio += `📍 Localização: ${local}\n`;
-  }
-
-  anuncio += `\n📲 Entre em contacto para mais informações.`;
-  anuncio += `\n\n#LinkDireto #Moçambique`;
-
-  const resultado = document.getElementById('ai-resultado-texto');
-
-  if (resultado) {
-    resultado.innerText = anuncio;
-  }
-
-  toast('Anúncio criado com sucesso.');
 }
-
-async function copiarAnuncioIA() {
-  const texto = document.getElementById('ai-resultado-texto')?.innerText.trim();
-
-  if (!texto) {
-    toast('Primeiro gera um anúncio.', true);
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(texto);
-    toast('Anúncio copiado.');
-  } catch {
-    window.prompt('Copia o anúncio:', texto);
-  }
-}
-
