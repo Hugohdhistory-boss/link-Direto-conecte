@@ -1,0 +1,213 @@
+
+/* ===== LINK DIRETO — IA ANÚNCIOS RESULTADO V2 ===== */
+
+#view-ai-ads .ai-ads-page{
+  padding: 18px 16px 110px;
+}
+
+#view-ai-ads .ai-ads-header{
+  margin-bottom: 16px;
+}
+
+#view-ai-ads .ai-ads-header h2{
+  margin: 0 0 6px;
+  font-size: 28px;
+  letter-spacing: -0.6px;
+}
+
+#view-ai-ads .ai-ads-header p{
+  margin: 0;
+  opacity: .72;
+}
+
+#view-ai-ads .ai-ads-card{
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 18px 55px rgba(0,0,0,.22);
+}
+
+#view-ai-ads .ai-ads-field{
+  margin-bottom: 14px;
+}
+
+#view-ai-ads .ai-ads-field label{
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: .85;
+}
+
+#view-ai-ads .ai-ads-field input,
+#view-ai-ads .ai-ads-field select,
+#view-ai-ads .ai-ads-field textarea{
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 14px 15px;
+  background: rgba(255,255,255,.055);
+  color: inherit;
+  outline: none;
+  font: inherit;
+}
+
+#view-ai-ads .ai-ads-field textarea{
+  min-height: 110px;
+  resize: vertical;
+}
+
+#view-ai-ads .ai-generate-btn{
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  padding: 15px 16px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+#view-ai-ads .ai-result{
+  display: none;
+}
+
+#view-ai-ads .ai-result.is-visible{
+  display: block;
+  animation: aiResultIn .28s ease;
+}
+
+@keyframes aiResultIn{
+  from{opacity:0;transform:translateY(10px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+#view-ai-ads .ai-result-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+#view-ai-ads .ai-result-icon{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:rgba(64,255,137,.10);
+  border:1px solid rgba(64,255,137,.20);
+  font-size:22px;
+}
+
+#view-ai-ads .ai-result-head small{
+  display:block;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1px;
+  opacity:.62;
+  margin-bottom:3px;
+}
+
+#view-ai-ads .ai-result-head h3{
+  margin:0;
+  font-size:22px;
+}
+
+#view-ai-ads .ai-result-text{
+  white-space: pre-wrap;
+  line-height:1.58;
+  font-size:15px;
+  padding:18px;
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+  margin-bottom:14px;
+}
+
+#view-ai-ads .ai-result-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+#view-ai-ads .ai-result-meta > div{
+  padding:12px;
+  border-radius:16px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+#view-ai-ads .ai-result-meta small{
+  display:block;
+  opacity:.6;
+  font-size:11px;
+  margin-bottom:4px;
+}
+
+#view-ai-ads .ai-result-meta b{
+  font-size:14px;
+}
+
+#view-ai-ads .ai-result-actions{
+  display:grid;
+  gap:10px;
+}
+
+#view-ai-ads .ai-result-actions button{
+  width:100%;
+  border-radius:17px;
+  padding:14px 16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+#view-ai-ads .ai-copy-btn{
+  border:0;
+}
+
+#view-ai-ads .ai-edit-btn{
+  background:transparent;
+  color:inherit;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+#view-ai-ads .ai-loading{
+  display:none;
+  text-align:center;
+  padding:42px 12px;
+}
+
+#view-ai-ads .ai-loading.is-visible{
+  display:block;
+}
+
+#view-ai-ads .ai-loading-spark{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 14px;
+  font-size:26px;
+  background:rgba(64,255,137,.10);
+  animation:aiPulse .85s ease-in-out infinite alternate;
+}
+
+@keyframes aiPulse{
+  from{transform:scale(.94);opacity:.65}
+  to{transform:scale(1.04);opacity:1}
+}
+
+#view-ai-ads .ai-loading b{
+  display:block;
+  margin-bottom:6px;
+}
+
+#view-ai-ads .ai-loading span{
+  opacity:.65;
+  font-size:13px;
+}
