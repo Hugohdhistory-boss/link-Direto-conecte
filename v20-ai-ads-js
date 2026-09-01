@@ -1,0 +1,55 @@
+/* Link Direto - IA Anúncios v20 */
+
+function gerarAnuncioIA() {
+  const tipo = document.getElementById("ai-tipo")?.value || "produto";
+  const nome = document.getElementById("ai-nome")?.value.trim();
+  const preco = document.getElementById("ai-preco")?.value.trim();
+  const local = document.getElementById("ai-local")?.value.trim();
+  const detalhes = document.getElementById("ai-detalhes")?.value.trim();
+
+  if (!nome) {
+    alert("Escreva o nome do produto, serviço ou oportunidade.");
+    return;
+  }
+
+  let titulo = "";
+  let texto = "";
+
+  if (tipo === "emprego") {
+    titulo = `📢 Oportunidade de Emprego: ${nome}`;
+    texto = `${titulo}\n\nEstamos a divulgar uma oportunidade para ${nome}.`;
+  } else if (tipo === "servico") {
+    titulo = `🚀 Serviço disponível: ${nome}`;
+    texto = `${titulo}\n\nPrecisa deste serviço? Temos ${nome} disponível.`;
+  } else if (tipo === "imovel") {
+    titulo = `🏠 Imóvel disponível: ${nome}`;
+    texto = `${titulo}\n\nExcelente oportunidade para quem procura ${nome}.`;
+  } else {
+    titulo = `🔥 ${nome} disponível`;
+    texto = `${titulo}\n\nAproveite esta oportunidade. ${nome} disponível para venda.`;
+  }
+
+  if (preco) texto += `\n💰 Preço: ${preco}`;
+  if (local) texto += `\n📍 Localização: ${local}`;
+  if (detalhes) texto += `\n\n${detalhes}`;
+
+  texto += `\n\n📲 Entre em contacto pelo Link Direto.`;
+
+  const resultado = document.getElementById("ai-resultado");
+  const textoResultado = document.getElementById("ai-resultado-texto");
+
+  if (resultado && textoResultado) {
+    textoResultado.innerText = texto;
+    resultado.classList.add("show");
+  }
+}
+
+function copiarAnuncioIA() {
+  const texto = document.getElementById("ai-resultado-texto")?.innerText;
+
+  if (!texto) return;
+
+  navigator.clipboard.writeText(texto)
+    .then(() => alert("Anúncio copiado!"))
+    .catch(() => alert("Não foi possível copiar automaticamente."));
+}
