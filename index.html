@@ -43,6 +43,18 @@
 }
 </style>
 
+
+<style id="match-only-v26">
+.bottom-nav.v15-nav.v16-nav .match-nav b{
+  font-size:18px!important;
+  line-height:1!important;
+}
+.bottom-nav.v15-nav.v16-nav .match-nav span{
+  font-size:6.8px!important;
+  white-space:nowrap!important;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -121,7 +133,7 @@
 </main>
 <nav class="bottom-nav v15-nav v16-nav">
 <button data-view="home" class="active" onclick="showView('home',this)"><b>⌂</b><span>Início</span></button>
-<button data-view="search" class="search-nav" onclick="showView('search',this)"><b>🔍</b><span>Search</span></button>
+<button type="button" class="match-nav" onclick="openMatchDirect(this)"><b>↔</b><span>Match</span></button>
 <button data-view="trending" onclick="showView('trending',this)"><b>🔥</b><span>Trending</span></button>
 <button data-view="publish" class="publish-nav" onclick="showView('publish',this)"><b>＋</b><span>Publicar</span></button>
 <button data-view="ai-ads" onclick="showView('ai-ads',this)"><b>✨</b><span>IA</span></button>
@@ -139,7 +151,19 @@ function openMoreMenu(){
   const modal=document.getElementById('modal');
   const box=document.getElementById('modalContent');
   if(!modal||!box) return;
-  box.innerHTML=`<div style="padding:8px 0 4px"><h2 style="margin:0 0 14px">Mais</h2><div style="display:grid;gap:10px"><button class="btn ghost" onclick="closeModal();showView('market')">▣ Mercado</button><button class="btn ghost" onclick="closeModal();showView('jobs')">💼 Empregos</button><button class="btn ghost" onclick="closeModal();showView('discover')">⌕ Descobrir</button><button class="btn ghost" onclick="closeModal();showView('connect')">↔ Connect</button><button class="btn ghost" onclick="closeModal();showView('profile')">● Perfil</button></div></div>`;
+  box.innerHTML=`
+    <div style="padding:8px 0 4px">
+      <h2 style="margin:0 0 14px">Mais</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn ghost" onclick="closeModal();showView('search')">🔍 Pesquisar</button>
+        <button class="btn ghost" onclick="closeModal();showView('trending')">🔥 Trending</button>
+        <button class="btn ghost" onclick="closeModal();showView('ai-ads')">✨ IA Anúncios</button>
+        <button class="btn ghost" onclick="closeModal();showView('market')">▣ Mercado</button>
+        <button class="btn ghost" onclick="closeModal();showView('jobs')">💼 Empregos</button>
+        <button class="btn ghost" onclick="closeModal();showView('discover')">⌕ Descobrir</button>
+        <button class="btn ghost" onclick="closeModal();showView('profile')">● Perfil</button>
+      </div>
+    </div>`;
   modal.classList.remove('hidden');
 }
 </script>
@@ -182,4 +206,17 @@ function openMoreMenu(){
   document.addEventListener('visibilitychange',()=>{if(document.hidden) document.querySelectorAll('video').forEach(v=>v.pause());});
 })();
 </script>
+
+<script id="match-direct-nav-v26">
+function openMatchDirect(button){
+  showView('home');
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  button?.classList.add('active');
+  setTimeout(()=>{
+    const target=document.getElementById('forYouFeed') || document.querySelector('.v16-section');
+    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+  },80);
+}
+</script>
+
 <script src="app.js"></script><script src="ai-ads.js"></script></body></html>
