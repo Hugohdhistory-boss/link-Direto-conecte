@@ -55,6 +55,37 @@
 }
 </style>
 
+
+<style id="hero-plus-search-v27">
+.hero-actions .choice{
+  position:relative!important;
+}
+.hero-actions .choice .hero-choice-icon{
+  position:absolute!important;
+  top:18px!important;
+  right:18px!important;
+  width:48px!important;
+  height:48px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-style:normal!important;
+  font-weight:800!important;
+  font-size:28px!important;
+  line-height:1!important;
+  color:#fff!important;
+  background:rgba(255,255,255,.16)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  backdrop-filter:blur(4px)!important;
+  -webkit-backdrop-filter:blur(4px)!important;
+  pointer-events:none!important;
+}
+.hero-actions .choice.preciso .hero-choice-icon{
+  font-size:25px!important;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -63,7 +94,7 @@
 <div id="app" class="app hidden">
 <header class="topbar"><div class="topbar-brand"><img class="topbar-logo" src="brand-icon-v193.png" alt=""><div><b>LINK DIRETO <span>CONNECT</span></b><small id="headerSubtitle">Oportunidades perto de ti</small><i class="black-edition">BLACK EDITION</i></div></div><div class="top-actions"><button id="notificationCenterButton" class="notification-bell" onclick="openNotificationCenter()" aria-label="Notificações">🔔<i id="notificationCenterBadge" class="nav-badge hidden">0</i></button><button id="accountButton" class="account" onclick="handleAccountClick()">Entrar</button></div></header>
 <main>
-<section id="view-home" class="view active"><div class="hero home-hero"><div class="hero-glass"><span class="eyebrow">REDE EMPRESARIAL MOÇAMBICANA</span><h2>O teu próximo negócio pode estar perto de ti.</h2><p>Publica o que tens ou precisas. O Match Direto encontra ligações compatíveis.</p></div><div class="hero-actions"><button class="choice tenho" onclick="openPublish('tenho')"><b>TENHO</b><small>Produto ou serviço disponível</small></button><button class="choice preciso" onclick="openPublish('preciso')"><b>PRECISO</b><small>Fornecedor, cliente ou solução</small></button></div></div><div class="quick-stats"><div><b id="statOpps">0</b><span>Oportunidades</span></div><div><b id="statAds">0</b><span>Perfis</span></div><div><b>12</b><span>Categorias</span></div></div><div id="homeAd" class="ad-slot"></div><div class="section-head v16-section"><div><span class="eyebrow">PARA TI</span><h3>Escolhidas para o teu negócio</h3></div><button onclick="showView('trending')">Ver tendências</button></div><div id="forYouFeed" class="for-you-rail"><div class="loading">A preparar recomendações...</div></div><div class="section-head"><h3>Oportunidades recentes</h3><button onclick="showView('search')">Ver todas</button></div><div id="homeFeed" class="stack"><div class="loading">A carregar oportunidades...</div></div></section>
+<section id="view-home" class="view active"><div class="hero home-hero"><div class="hero-glass"><span class="eyebrow">REDE EMPRESARIAL MOÇAMBICANA</span><h2>O teu próximo negócio pode estar perto de ti.</h2><p>Publica o que tens ou precisas. O Match Direto encontra ligações compatíveis.</p></div><div class="hero-actions"><button class="choice tenho" onclick="openPublish('tenho')"><i class="hero-choice-icon" aria-hidden="true">＋</i><b>TENHO</b><small>Produto ou serviço disponível</small></button><button class="choice preciso" onclick="openPublish('preciso')"><i class="hero-choice-icon" aria-hidden="true">⌕</i><b>PRECISO</b><small>Fornecedor, cliente ou solução</small></button></div></div><div class="quick-stats"><div><b id="statOpps">0</b><span>Oportunidades</span></div><div><b id="statAds">0</b><span>Perfis</span></div><div><b>12</b><span>Categorias</span></div></div><div id="homeAd" class="ad-slot"></div><div class="section-head v16-section"><div><span class="eyebrow">PARA TI</span><h3>Escolhidas para o teu negócio</h3></div><button onclick="showView('trending')">Ver tendências</button></div><div id="forYouFeed" class="for-you-rail"><div class="loading">A preparar recomendações...</div></div><div class="section-head"><h3>Oportunidades recentes</h3><button onclick="showView('search')">Ver todas</button></div><div id="homeFeed" class="stack"><div class="loading">A carregar oportunidades...</div></div></section>
 <section id="view-search" class="view"><div class="page-title visual-title"><span class="visual-icon">⌕</span><div><h2>Explorar oportunidades</h2><p>Pesquisa por necessidade, categoria ou localização.</p></div></div><div class="category-rail"><button onclick="quickCategory('Agricultura')">🌱 Agricultura</button><button onclick="quickCategory('Alimentação')">🍲 Alimentação</button><button onclick="quickCategory('Construção')">🏗 Construção</button><button onclick="quickCategory('Tecnologia')">💻 Tecnologia</button><button onclick="quickCategory('Transporte')">🚚 Transporte</button></div><div class="filters"><input id="searchText" placeholder="Pesquisar..." oninput="renderSearch()"><select id="searchType" onchange="renderSearch()"><option value="">TENHO e PRECISO</option><option value="tenho">TENHO</option><option value="preciso">PRECISO</option></select><select id="searchCategory" onchange="renderSearch()"><option value="">Todas categorias</option></select></div><div id="searchFeed" class="stack"></div></section>
 <section id="view-publish" class="view"><div class="page-title visual-title"><span class="visual-icon green">＋</span><div><h2>Nova publicação</h2><p>Cria uma oportunidade clara e fácil de encontrar.</p></div></div><div class="publish-steps"><span class="done">1 Tipo</span><span>2 Detalhes</span><span>3 Publicar</span></div><div id="publishPreview" class="publish-preview"><small>PRÉ-VISUALIZAÇÃO</small><b>O teu anúncio aparecerá aqui</b><span>Adiciona título, categoria e localização.</span></div><form id="publishForm" class="panel" onsubmit="submitOpportunity(event)"><div class="segmented"><label><input type="radio" name="ptype" value="tenho" checked onchange="updatePublishPreview()"><span>TENHO</span></label><label><input type="radio" name="ptype" value="preciso" onchange="updatePublishPreview()"><span>PRECISO</span></label></div><label>Título<input id="pTitle" required maxlength="100" placeholder="Ex.: Hortícolas disponíveis" oninput="updatePublishPreview()"></label><label>Categoria<select id="pCategory" required onchange="updatePublishPreview()"></select></label><label>Descrição<textarea id="pDescription" required maxlength="700" placeholder="Quantidade, prazo e condições..."></textarea></label><label>Localização<input id="pLocation" required placeholder="Bairro / Cidade" oninput="updatePublishPreview()"></label><label>Fotografia ou vídeo<input id="pMedia" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" onchange="previewOpportunityMedia(event)"><small id="mediaHint" class="field-hint">Vídeos até 60 segundos e 50 MB.</small></label><button class="btn primary" type="submit">Publicar agora</button></form></section>
 <section id="view-connect" class="view"><div class="connect-showcase"><div class="match-orbit"><b>92%</b><span>Match</span></div><div><span class="eyebrow">MATCH DIRETO</span><h2>Conexões que fazem sentido.</h2><p>As propostas mais compatíveis chegam primeiro.</p></div></div><div id="notificationPanel" class="notification-panel hidden"><div><b>🔔 Alertas de conversa</b><small>Recebe avisos quando chegar uma mensagem nova.</small></div><button id="notificationButton" onclick="enableNotifications()">Ativar</button></div><div class="metric-grid"><div class="metric"><b id="pendingCount">0</b><span>Pendentes</span></div><div class="metric"><b id="acceptedCount">0</b><span>Aceites</span></div><div class="metric"><b id="messageCount">0</b><span>Conversas</span></div></div><div id="connectContent" class="stack"><div class="empty">Entra na tua conta para veres propostas e conversas.</div></div></section>
