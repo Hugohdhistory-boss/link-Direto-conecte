@@ -86,6 +86,26 @@
 }
 </style>
 
+
+<style id="smart-scroll-nav-v28">
+/* Barra inferior inteligente: esconde durante o scroll e reaparece quando o utilizador para. */
+.bottom-nav.v15-nav.v16-nav{
+  transition:transform .24s ease, opacity .2s ease!important;
+  will-change:transform,opacity;
+}
+.bottom-nav.v15-nav.v16-nav.nav-scrolling{
+  transform:translateY(calc(100% + env(safe-area-inset-bottom) + 12px))!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.bottom-nav.v15-nav.v16-nav .publish-nav b{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:34px!important;height:34px!important;margin:-12px auto 1px!important;
+  border-radius:50%!important;background:#fff!important;color:#050806!important;
+  font-size:25px!important;box-shadow:0 5px 16px rgba(0,0,0,.28)!important;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -248,6 +268,28 @@ function openMatchDirect(button){
     if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
   },80);
 }
+</script>
+
+
+<script id="smart-scroll-nav-v28">
+(function(){
+  const STOP_DELAY=500;
+  let timer=null;
+  let lastY=window.scrollY;
+  function nav(){ return document.querySelector('.bottom-nav.v15-nav.v16-nav'); }
+  function show(){ const n=nav(); if(n) n.classList.remove('nav-scrolling'); }
+  function hide(){ const n=nav(); if(n) n.classList.add('nav-scrolling'); }
+  function onScroll(){
+    const y=window.scrollY;
+    if(Math.abs(y-lastY)>2) hide();
+    lastY=y;
+    clearTimeout(timer);
+    timer=setTimeout(show,STOP_DELAY);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('touchend',()=>{ clearTimeout(timer); timer=setTimeout(show,180); },{passive:true});
+  document.addEventListener('DOMContentLoaded',show);
+})();
 </script>
 
 <script src="app.js"></script><script src="ai-ads.js"></script></body></html>
