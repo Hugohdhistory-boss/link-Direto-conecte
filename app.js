@@ -1,3 +1,4 @@
+window.LINK_DIRETO_BUILD='32.1-perfil-posts';
 const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
 const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
 const CATEGORIES=['Agricultura','Alimentação','Comércio','Construção','Educação','Eventos','Finanças','Saúde','Serviços','Tecnologia','Transporte','Turismo'];
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(state.session?.access_token){await restoreSession();if(state.user)startNotificationPolling()}
   }
   setInterval(()=>{if(state.session?.refresh_token)refreshSession()},40*60*1000);
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=32.1');
 });
 
 function initTechInteractions(){
