@@ -87,16 +87,28 @@
 </style>
 
 
-<style id="smart-scroll-nav-v28">
-/* Barra inferior inteligente: esconde durante o scroll e reaparece quando o utilizador para. */
+<style id="facebook-scroll-nav-v29">
+/* Navegação tipo Facebook: fixa ao ecrã, some ao descer e volta imediatamente ao subir. */
 .bottom-nav.v15-nav.v16-nav{
-  transition:transform .24s ease, opacity .2s ease!important;
+  position:fixed!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  z-index:9999!important;
+  transform:translateY(0)!important;
+  opacity:1!important;
+  transition:transform .22s ease, opacity .16s ease!important;
   will-change:transform,opacity;
 }
-.bottom-nav.v15-nav.v16-nav.nav-scrolling{
-  transform:translateY(calc(100% + env(safe-area-inset-bottom) + 12px))!important;
+.bottom-nav.v15-nav.v16-nav.nav-hidden-down{
+  transform:translateY(110%)!important;
   opacity:0!important;
   pointer-events:none!important;
+}
+/* Garante espaço para a barra fixa não tapar o último conteúdo. */
+#app main{
+  padding-bottom:calc(78px + env(safe-area-inset-bottom))!important;
 }
 .bottom-nav.v15-nav.v16-nav .publish-nav b{
   display:flex!important;align-items:center!important;justify-content:center!important;
@@ -271,24 +283,43 @@ function openMatchDirect(button){
 </script>
 
 
-<script id="smart-scroll-nav-v28">
+<script id="facebook-scroll-nav-v29">
 (function(){
-  const STOP_DELAY=500;
-  let timer=null;
-  let lastY=window.scrollY;
+  let lastY=Math.max(window.scrollY,0);
+  let ticking=false;
+  const DELTA=6;
+
   function nav(){ return document.querySelector('.bottom-nav.v15-nav.v16-nav'); }
-  function show(){ const n=nav(); if(n) n.classList.remove('nav-scrolling'); }
-  function hide(){ const n=nav(); if(n) n.classList.add('nav-scrolling'); }
-  function onScroll(){
-    const y=window.scrollY;
-    if(Math.abs(y-lastY)>2) hide();
+  function show(){ const n=nav(); if(n) n.classList.remove('nav-hidden-down'); }
+  function hide(){ const n=nav(); if(n) n.classList.add('nav-hidden-down'); }
+
+  function update(){
+    const y=Math.max(window.scrollY,0);
+    const diff=y-lastY;
+
+    if(y<=12){
+      show();
+    }else if(diff>DELTA){
+      hide();          // a descer: liberta espaço para o conteúdo
+    }else if(diff<-DELTA){
+      show();          // a subir: volta logo, como no Facebook
+    }
+
     lastY=y;
-    clearTimeout(timer);
-    timer=setTimeout(show,STOP_DELAY);
+    ticking=false;
   }
+
+  function onScroll(){
+    if(!ticking){
+      requestAnimationFrame(update);
+      ticking=true;
+    }
+  }
+
   window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('touchend',()=>{ clearTimeout(timer); timer=setTimeout(show,180); },{passive:true});
+  window.addEventListener('touchstart',()=>{ lastY=Math.max(window.scrollY,0); },{passive:true});
   document.addEventListener('DOMContentLoaded',show);
+  window.addEventListener('pageshow',show);
 })();
 </script>
 
