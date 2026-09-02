@@ -118,7 +118,7 @@ async function updateRecoveredPassword(e){
     state.user=d;
     state.session={...state.session,user:d};
     localStorage.setItem(sessionKey,JSON.stringify(state.session));
-    await loadProfile();updateAccountUI();
+    await loadProfile();await loadAdminStatus();updateAccountUI();
     openModal('<div class="auth-success"><span class="auth-lock">✓</span><h2>Senha alterada</h2><p class="muted">A tua nova senha já está ativa. Podes continuar no Link Direto.</p><button class="btn primary" onclick="closeModal(); openMainApp();">Continuar</button></div>');
   }catch(err){toast('Não foi possível alterar a senha. Pede um novo link de recuperação.',true);button.disabled=false;button.textContent='Guardar nova senha'}
 }
@@ -126,11 +126,66 @@ async function signup(e){e.preventDefault();const button=e.submitter;button.disa
 async function login(e){e.preventDefault();try{const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:authHeaders(),body:JSON.stringify({email:$('authEmail').value,password:$('authPassword').value})});const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||d.message);setSession(d);await afterLogin();toast('Sessão iniciada com sucesso.')}catch(err){toast(readableError(err),true)}}
 function setSession(d){state.session=d;state.user=d.user;localStorage.setItem(sessionKey,JSON.stringify(d))}
 async function refreshSession(){if(!state.session?.refresh_token)return false;try{const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:state.session.refresh_token})});const d=await r.json();if(!r.ok)throw new Error();setSession(d);return true}catch{return false}}
-async function restoreSession(){try{let r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:authHeaders(false)});if(!r.ok&&await refreshSession())r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:authHeaders(false)});if(!r.ok)throw new Error();state.user=await r.json();await loadProfile();updateAccountUI()}catch{localStorage.removeItem(sessionKey);state.session=null;state.user=null}}
-async function afterLogin(){closeModal();await loadProfile();await loadFavorites();updateAccountUI();renderProfile();loadPublicData();startNotificationPolling()}
-async function logout(){try{await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:'POST',headers:authHeaders(false)})}catch{}stopNotificationPolling();localStorage.removeItem(sessionKey);state.session=null;state.user=null;state.profile=null;state.profileEditing=false;state.favorites.clear();state.likedOpportunities.clear();state.unreadMessages=0;updateNotificationBadge();updateAccountUI();renderProfile();showView('home');toast('Sessão terminada.')}
+async function restoreSession(){try{let r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:authHeaders(false)});if(!r.ok&&await refreshSession())r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:authHeaders(false)});if(!r.ok)throw new Error();state.user=await r.json();await loadProfile();await loadAdminStatus();updateAccountUI()}catch{localStorage.removeItem(sessionKey);state.session=null;state.user=null}}
+async function afterLogin(){closeModal();await loadProfile();await loadAdminStatus();await loadFavorites();updateAccountUI();renderProfile();loadPublicData();startNotificationPolling()}
+async function logout(){try{await fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:'POST',headers:authHeaders(false)})}catch{}stopNotificationPolling();localStorage.removeItem(sessionKey);state.session=null;state.user=null;state.profile=null;state.profileEditing=false;state.isAdmin=false;state.adminProfiles=[];state.favorites.clear();state.likedOpportunities.clear();state.unreadMessages=0;updateNotificationBadge();updateAccountUI();renderProfile();showView('home');toast('Sessão terminada.')}
 function updateAccountUI(){$('accountButton').textContent=state.profile?.business_name?.split(' ')[0]||'Entrar'}
 function readableError(err){const s=String(err.message||err);if(s.includes('Invalid login'))return'E-mail ou senha incorretos.';if(s.includes('already registered'))return'Este e-mail já está registado.';if(s.includes('rate limit'))return'Tentaste muitas vezes. Aguarda alguns minutos.';return'Não foi possível concluir. Confirma os dados e tenta novamente.'}
+
+// ===== ADMIN DE VERIFICACAO LINK DIRETO =====
+async function loadAdminStatus(){
+  state.isAdmin=false;
+  if(!state.user)return false;
+  try{
+    const rows=await api('link_admins',`?user_id=eq.${state.user.id}&select=user_id&limit=1`);
+    state.isAdmin=Boolean(rows?.length);
+  }catch(err){console.warn('admin status',err);state.isAdmin=false}
+  return state.isAdmin;
+}
+function injectAdminControl(){
+  document.querySelectorAll('.ld-admin-verify-btn').forEach(x=>x.remove());
+  if(!state.user||!state.isAdmin)return;
+  const make=()=>{const b=document.createElement('button');b.type='button';b.className='btn secondary ld-admin-verify-btn';b.innerHTML='🇲🇿 ✓ Gerir verificados';b.onclick=openVerificationAdmin;return b};
+  const summary=$('profileSummary');if(summary&&!summary.classList.contains('hidden'))summary.appendChild(make());
+  const form=$('profileForm');if(form&&!form.classList.contains('hidden'))form.appendChild(make());
+}
+async function openVerificationAdmin(){
+  if(!state.isAdmin){toast('Esta área é reservada ao administrador.',true);return}
+  openModal(`<div class="ld-admin-head"><span>${verifiedBadge('large')}</span><div><h2>Contas verificadas</h2><p>Escolhe quem recebe o selo oficial do Link Direto.</p></div></div><div class="ld-admin-search"><input id="ldAdminSearch" type="search" placeholder="Pesquisar nome ou localização..." oninput="filterVerificationAdmin(this.value)"></div><div id="verificationAdminList"><div class="loading">A carregar perfis...</div></div>`);
+  try{state.adminProfiles=await api('profiles','?select=id,business_name,account_type,location,verified&order=business_name.asc&limit=300')||[];renderVerificationAdmin(state.adminProfiles)}
+  catch(err){console.error(err);$('verificationAdminList').innerHTML='<div class="empty">Não foi possível carregar as contas.</div>'}
+}
+function filterVerificationAdmin(value=''){
+  const q=String(value).trim().toLowerCase();
+  const rows=(state.adminProfiles||[]).filter(p=>!q||`${p.business_name||''} ${p.location||''}`.toLowerCase().includes(q));
+  renderVerificationAdmin(rows);
+}
+function renderVerificationAdmin(rows=[]){
+  const el=$('verificationAdminList');if(!el)return;
+  el.innerHTML=rows.map(p=>`<div class="ld-admin-profile"><div class="ld-admin-profile-main"><div class="ld-admin-mini-avatar">${esc(discoverInitials(p.business_name))}</div><div><b>${esc(p.business_name||'Perfil Link Direto')} ${p.verified?verifiedBadge('small'):''}</b><small>${esc(discoverTypeLabel(discoverType(p)))}${p.location?` · ${esc(p.location)}`:''}</small></div></div><button class="${p.verified?'btn ghost':'btn primary'}" onclick="setProfileVerifiedAdmin('${p.id}',${p.verified?'false':'true'})">${p.verified?'Retirar selo':'✓ Verificar'}</button></div>`).join('')||'<div class="empty">Nenhuma conta encontrada.</div>';
+}
+async function setProfileVerifiedAdmin(profileId,newVerified){
+  if(!state.isAdmin)return;
+  try{
+    await api('rpc/set_profile_verified','',{method:'POST',body:JSON.stringify({target_profile_id:profileId,new_verified:Boolean(newVerified)})});
+    const p=(state.adminProfiles||[]).find(x=>String(x.id)===String(profileId));if(p)p.verified=Boolean(newVerified);
+    const publicP=state.discoverProfiles.find(x=>String(x.id)===String(profileId));if(publicP)publicP.verified=Boolean(newVerified);
+    if(state.profile&&String(state.profile.id)===String(profileId))state.profile.verified=Boolean(newVerified);
+    filterVerificationAdmin($('ldAdminSearch')?.value||'');renderDiscover();renderProfile();
+    toast(newVerified?'Conta verificada com sucesso.':'Selo retirado da conta.');
+  }catch(err){console.error(err);toast('Não foi possível alterar o verificado. Confirma o SQL de administrador.',true)}
+}
+(function addVerificationAdminStyles(){
+  if(document.getElementById('ld-admin-verify-styles'))return;
+  const st=document.createElement('style');st.id='ld-admin-verify-styles';st.textContent=`
+  .ld-admin-head{display:flex;gap:12px;align-items:center;margin-bottom:14px}.ld-admin-head h2{margin:0 0 4px}.ld-admin-head p{margin:0;color:var(--muted,#8d968f)}
+  .ld-admin-search{margin-bottom:12px}.ld-admin-search input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:inherit;font:inherit}
+  .ld-admin-profile{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  .ld-admin-profile-main{display:flex;align-items:center;gap:10px;min-width:0}.ld-admin-profile-main b{display:flex;align-items:center;gap:5px}.ld-admin-profile-main small{display:block;margin-top:3px;color:var(--muted,#8d968f)}
+  .ld-admin-mini-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#17221b;font-weight:800;flex:none}.ld-admin-verify-btn{margin-top:10px;width:100%}
+  `;document.head.appendChild(st);
+})();
+
 
 async function loadProfile(){if(!state.user)return;try{const d=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=d?.[0]||null;if(!state.profile){await api('profiles','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({id:state.user.id,business_name:state.user.user_metadata?.business_name||'Meu negócio',account_type:'company'})});const p=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=p?.[0]}}catch(err){console.error(err)}}
 function setAvatar(element,url,name='LD'){if(!element)return;const initials=(name||'LD').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();element.textContent=initials;if(url){element.style.backgroundImage=`url("${String(url).replace(/["\\]/g,'')}")`;element.classList.add('has-image')}else{element.style.backgroundImage='';element.classList.remove('has-image')}}
@@ -138,7 +193,7 @@ function previewBusinessAvatar(e){const file=e.target.files?.[0];if(!file)return
 function profileComplete(p={}){return Boolean(p.business_name&&p.business_name!=='Meu negócio'&&p.category&&p.location&&p.bio)}
 function editProfile(){state.profileEditing=true;renderProfile();setTimeout(()=>$('businessName')?.focus(),80)}
 function cancelProfileEdit(){if(!profileComplete(state.profile||{})){toast('Preenche os campos obrigatórios e guarda o perfil primeiro.',true);return}state.profileEditing=false;renderProfile()}
-function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';if($('businessAccountType'))$('businessAccountType').value=p.account_type||'company';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('small'):''}</span>`;setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified')){$('profileVerified').innerHTML=p.verified?`${verifiedBadge('small')} Verificado`:(state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar');$('profileVerified').classList.toggle('ld-verified-name',!!p.verified)}if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('large'):''}</span>`;if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`}
+function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';if($('businessAccountType'))$('businessAccountType').value=p.account_type||'company';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('small'):''}</span>`;setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified')){$('profileVerified').innerHTML=p.verified?`${verifiedBadge('small')} Verificado`:(state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar');$('profileVerified').classList.toggle('ld-verified-name',!!p.verified)}if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('large'):''}</span>`;if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`;injectAdminControl()}
 async function saveProfile(e){e.preventDefault();if(!requireAuth())return;const button=e.submitter;button.disabled=true;button.textContent='A guardar...';try{let avatar_url=state.profile?.avatar_url||null;const avatarFile=$('businessAvatar').files?.[0];if(avatarFile)avatar_url=await uploadImage(avatarFile);const body={business_name:$('businessName').value.trim(),account_type:$('businessAccountType')?.value||'company',category:$('businessCategory').value,location:$('businessLocation').value.trim(),phone:$('businessPhone').value.trim(),bio:$('businessBio').value.trim(),avatar_url,updated_at:new Date().toISOString()};await api('profiles',`?id=eq.${state.user.id}`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});state.profile={...state.profile,...body};state.profileEditing=false;$('businessAvatar').value='';updateAccountUI();renderProfile();toast('Perfil concluído e guardado.')}catch(err){console.error(err);toast('Não foi possível guardar o perfil.',true)}finally{button.disabled=false;button.textContent='Concluir e guardar perfil'}}
 function requireAuth(){if(state.user)return true;openAuth();toast('Entra primeiro na tua conta.');return false}
 
