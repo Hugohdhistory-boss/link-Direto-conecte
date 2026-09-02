@@ -1,4 +1,3 @@
-window.LINK_DIRETO_BUILD='32.1-perfil-posts';
 const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
 const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
 const CATEGORIES=['Agricultura','Alimentação','Comércio','Construção','Educação','Eventos','Finanças','Saúde','Serviços','Tecnologia','Transporte','Turismo'];
@@ -18,7 +17,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(state.session?.access_token){await restoreSession();if(state.user)startNotificationPolling()}
   }
   setInterval(()=>{if(state.session?.refresh_token)refreshSession()},40*60*1000);
-  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=32.1');
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js');
 });
 
 function initTechInteractions(){
@@ -251,46 +250,6 @@ async function registerOpportunityView(o){
     renderHome();renderSearch();
   }catch(err){console.warn('view count',err);state.viewedOpportunities.delete(String(o.id));}
 }
-function sellerProfileFor(userId){
-  if(!userId)return null;
-  if(state.profile&&String(state.profile.id)===String(userId))return state.profile;
-  return state.discoverProfiles.find(p=>String(p.id)===String(userId))||null;
-}
-function sellerAvatarMarkup(p){
-  if(p?.avatar_url)return `<img src="${esc(p.avatar_url)}" alt="" loading="lazy">`;
-  return `<span>${esc(discoverInitials(p?.business_name||'LD'))}</span>`;
-}
-function sellerNameFor(o,p){return p?.business_name||o?.seller_name||'Utilizador Link Direto'}
-function sellerHeader(o,compact=false){
-  const p=sellerProfileFor(o.user_id),name=sellerNameFor(o,p);
-  const meta=[p?.category,p?.location].filter(Boolean).map(esc).join(' · ');
-  return `<button type="button" class="post-seller ${compact?'compact':''}" onclick="event.stopPropagation();openPublicProfile('${o.user_id||''}')"><span class="post-seller-avatar">${sellerAvatarMarkup(p)}</span><span class="post-seller-copy"><b class="${p?.verified?'ld-verified-name':''}">${esc(name)}${p?.verified?verifiedBadge('small'):''}</b>${meta?`<small>${meta}</small>`:'<small>Ver perfil</small>'}</span><span class="post-seller-open">›</span></button>`;
-}
-function openPublicProfile(profileId){
-  if(!profileId)return;
-  const p=sellerProfileFor(profileId);
-  if(!p){toast('Perfil ainda a carregar. Tenta novamente.');loadDiscover(false);return;}
-  const type=discoverType(p);
-  const count=followerCount(p.id);
-  const mine=!!(state.user&&String(state.user.id)===String(p.id));
-  const following=isFollowing(p.id);
-  const avatar=sellerAvatarMarkup(p);
-  const contact=String(p.phone||'').replace(/[^+\d]/g,'');
-  const wa=contact?`https://wa.me/${contact.replace('+','')}`:'';
-  const posts=state.opportunities.filter(o=>String(o.user_id)===String(p.id)&&o.status!=='closed').length;
-  const badge=p.verified?verifiedBadge('large'):'';
-  const typeIcon=type==='company'?'🏢':type==='organization'?'◉':'●';
-  const category=p.category?` · ${esc(p.category)}`:'';
-  const bio=p.bio?`<p class="public-profile-bio">${esc(p.bio)}</p>`:'';
-  const location=p.location?`<span>📍 ${esc(p.location)}</span>`:'';
-  const followButton=!mine
-    ?`<button class="btn secondary" onclick="toggleDiscoverFollow('${p.id}',this);setTimeout(()=>openPublicProfile('${p.id}'),250)">${following?'A seguir':'Seguir'}</button>`
-    :`<button class="btn secondary" onclick="closeModal();showView('profile')">O meu perfil</button>`;
-  const contactButton=wa?`<a class="btn primary link-btn" href="${wa}" target="_blank" rel="noopener">Contactar</a>`:'';
-  const postsButton=posts?`<button class="btn ghost full" onclick="closeModal();showView('search')">Ver publicações</button>`:'';
-  openModal(`<div class="public-profile-modal"><div class="public-profile-top"><div class="public-profile-avatar">${avatar}</div><div><h2 class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Perfil Link Direto')}${badge}</h2><span>${typeIcon} ${esc(discoverTypeLabel(type))}${category}</span></div></div>${bio}<div class="public-profile-meta">${location}<span><b>${posts}</b> publicações</span><span><b>${count}</b> seguidores</span></div><div class="public-profile-actions">${followButton}${contactButton}</div>${postsButton}</div>`);
-}
-
 function opportunityCard(o){
   const saved=state.favorites.has(String(o.id)),liked=state.likedOpportunities.has(String(o.id));
   const mine=state.user&&o.user_id===state.user.id;
@@ -298,7 +257,7 @@ function opportunityCard(o){
   const media=cover?(cover.type==='video'
     ?`<div class="card-media-wrap" onclick="event.stopPropagation();openOpportunityDetail('${o.id}',0)"><video class="card-media" src="${esc(cover.url)}" controls playsinline preload="metadata" onclick="event.stopPropagation()"></video>${items.length>1?`<span class="media-count-badge">1/${items.length}</span>`:''}</div>`
     :`<div class="card-media-wrap" onclick="event.stopPropagation();openOpportunityDetail('${o.id}',0)"><img class="card-media" src="${esc(cover.url)}" alt="Imagem da publicação" loading="lazy">${items.length>1?`<span class="media-count-badge">📷 ${items.length}</span>`:''}</div>`):'';
-  return `<article class="card opportunity-clickable" onclick="openOpportunityDetail('${o.id}')">${sellerHeader(o,true)}${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3>${price?`<b class="opportunity-price">${esc(price)}</b>`:''}<p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="opportunity-stats"><span>👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length}${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><div class="social-actions" onclick="event.stopPropagation()"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span></button><button class="social-btn" onclick="shareOpportunity('${o.id}')" aria-label="Compartilhar esta publicação">↗ <span>Compartilhar</span></button></div><div class="card-actions" onclick="event.stopPropagation()"><button class="btn secondary view-details-btn" onclick="openOpportunityDetail('${o.id}')">Ver detalhes ›</button>${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`;
+  return `<article class="card opportunity-clickable" onclick="openOpportunityDetail('${o.id}')">${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3>${price?`<b class="opportunity-price">${esc(price)}</b>`:''}<p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="opportunity-stats"><span>👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length}${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><div class="social-actions" onclick="event.stopPropagation()"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span></button><button class="social-btn" onclick="shareOpportunity('${o.id}')" aria-label="Compartilhar esta publicação">↗ <span>Compartilhar</span></button></div><div class="card-actions" onclick="event.stopPropagation()"><button class="btn secondary view-details-btn" onclick="openOpportunityDetail('${o.id}')">Ver detalhes ›</button>${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`;
 }
 function openOpportunityDetail(id,index=0){
   const o=state.opportunities.find(x=>String(x.id)===String(id));if(!o)return;
@@ -315,7 +274,7 @@ function openOpportunityDetail(id,index=0){
     gallery=`<div class="post-detail-gallery">${main}${items.length>1?`<button class="post-detail-nav prev" type="button" onclick="openOpportunityDetail('${o.id}',${prev})">‹</button><button class="post-detail-nav next" type="button" onclick="openOpportunityDetail('${o.id}',${next})">›</button><span class="post-detail-counter">${i+1} / ${items.length}</span>`:''}</div>${items.length>1?`<div class="post-detail-thumbs">${thumbs}</div>`:''}`;
   }
   const price=opportunityPrice(o),views=opportunityViews(o);
-  openModal(`<div class="post-detail">${sellerHeader(o)}${gallery}<div class="post-detail-copy"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category||'')}</span><h2>${esc(o.title||'Publicação')}</h2>${price?`<div class="post-detail-price">${esc(price)}</div>`:''}<div class="post-detail-meta"><span>📍 ${esc(o.location||'Moçambique')}</span><span>⏱ ${formatDate(o.created_at)}</span><span class="post-detail-views">👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length} foto(s)${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><p>${esc(o.description||'')}</p><div class="post-detail-actions"><button class="btn secondary" onclick="toggleLike('${o.id}');openOpportunityDetail('${o.id}',${i})">♥ ${likeCount(o.id)}</button><button class="btn secondary" onclick="shareOpportunity('${o.id}')">↗ Compartilhar</button>${mine?`<button class="btn primary full" onclick="manageOpportunity('${o.id}')">Gerir anúncio</button>`:`<button class="btn primary full" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="btn ghost full ${saved?'saved':''}" onclick="toggleFavorite('${o.id}');openOpportunityDetail('${o.id}',${i})">★ ${saved?'Guardado':'Guardar'}</button></div></div></div>`);
+  openModal(`<div class="post-detail">${gallery}<div class="post-detail-copy"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category||'')}</span><h2>${esc(o.title||'Publicação')}</h2>${price?`<div class="post-detail-price">${esc(price)}</div>`:''}<div class="post-detail-meta"><span>📍 ${esc(o.location||'Moçambique')}</span><span>⏱ ${formatDate(o.created_at)}</span><span class="post-detail-views">👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length} foto(s)${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><p>${esc(o.description||'')}</p><div class="post-detail-actions"><button class="btn secondary" onclick="toggleLike('${o.id}');openOpportunityDetail('${o.id}',${i})">♥ ${likeCount(o.id)}</button><button class="btn secondary" onclick="shareOpportunity('${o.id}')">↗ Compartilhar</button>${mine?`<button class="btn primary full" onclick="manageOpportunity('${o.id}')">Gerir anúncio</button>`:`<button class="btn primary full" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="btn ghost full ${saved?'saved':''}" onclick="toggleFavorite('${o.id}');openOpportunityDetail('${o.id}',${i})">★ ${saved?'Guardado':'Guardar'}</button></div></div></div>`);
 }
 function renderHome(){$('homeFeed').innerHTML=state.opportunities.slice(0,6).map(opportunityCard).join('')||'<div class="empty">Ainda não existem oportunidades.</div>';$('homeAd').innerHTML=state.ads[0]?adCard(state.ads[0]):'';if($('statOpps'))$('statOpps').textContent=state.opportunities.length;if($('statAds'))$('statAds').textContent=state.discoverProfiles.length||state.ads.length;renderForYou()}
 function quickCategory(category){$('searchCategory').value=category;renderSearch()}
@@ -486,7 +445,7 @@ async function loadDiscover(showLoading=false){
     state.discoverFollows=followsR.status==='fulfilled'?(followsR.value||[]):[];
     state.discoverFollowing=new Set(state.user?state.discoverFollows.filter(x=>String(x.follower_id)===String(state.user.id)).map(x=>String(x.following_id)):[]);
     if($('statAds'))$('statAds').textContent=state.discoverProfiles.length;
-    renderDiscover();renderHome();renderSearch();
+    renderDiscover();
   }catch(err){
     console.error('discover',err);
     if(feed)feed.innerHTML='<div class="discover-empty"><b>Comunidade ainda não disponível.</b><span>Executa o ficheiro ATIVAR_V16_7_DESCOBRIR.sql no Supabase.</span></div>';
