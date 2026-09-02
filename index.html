@@ -154,6 +154,17 @@
 .post-detail-views{display:inline-flex;align-items:center;gap:5px}
 @media(max-width:520px){.opportunity-price{font-size:19px}.post-detail-price{font-size:23px}}
 </style>
+
+<style id="seller-profile-v32">
+.post-seller{width:100%;border:0;background:transparent;color:inherit;display:flex;align-items:center;gap:10px;text-align:left;padding:12px 14px 9px;cursor:pointer}
+.post-seller.compact{border-bottom:1px solid rgba(255,255,255,.06)}
+.post-seller-avatar,.public-profile-avatar{flex:0 0 auto;width:42px;height:42px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:800}
+.post-seller-avatar img,.public-profile-avatar img{width:100%;height:100%;object-fit:cover}
+.post-seller-copy{min-width:0;flex:1}.post-seller-copy b{display:flex;align-items:center;gap:5px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.post-seller-copy small{display:block;color:var(--muted,#8d968f);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-seller-open{font-size:24px;color:var(--muted,#8d968f)}
+.post-detail>.post-seller{padding:4px 2px 14px}.post-detail>.post-seller .post-seller-avatar{width:48px;height:48px}
+.public-profile-modal{padding-top:4px}.public-profile-top{display:flex;align-items:center;gap:14px}.public-profile-avatar{width:68px;height:68px;font-size:20px}.public-profile-top h2{margin:0 0 4px;display:flex;align-items:center;gap:6px}.public-profile-top span{color:var(--muted,#8d968f);font-size:13px}.public-profile-bio{line-height:1.5;margin:16px 0}.public-profile-meta{display:flex;flex-wrap:wrap;gap:8px 14px;padding:12px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);font-size:13px}.public-profile-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.public-profile-actions .link-btn{display:flex;align-items:center;justify-content:center;text-decoration:none}.full{width:100%}
+</style>
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
