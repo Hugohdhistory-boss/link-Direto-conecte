@@ -1,7 +1,7 @@
 const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
 const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
 const CATEGORIES=['Agricultura','Alimentação','Comércio','Construção','Educação','Eventos','Finanças','Saúde','Serviços','Tecnologia','Transporte','Turismo'];
-const state={session:null,user:null,profile:null,profileEditing:false,opportunities:[],ads:[],favorites:new Set(),likes:[],comments:[],likedOpportunities:new Set(),proposals:[],messages:[],unreadMessages:0,notificationTimer:null,deferredInstallPrompt:null,news:[],newsCategory:'',market:[],trendingMode:'all',adClicks:[],notifications:[],discoverProfiles:[],discoverFollows:[],discoverFollowing:new Set(),discoverFilter:'all',jobs:[],jobType:'',viewedOpportunities:new Set()};
+const state={session:null,user:null,profile:null,profileEditing:false,opportunities:[],ads:[],favorites:new Set(),likes:[],comments:[],likedOpportunities:new Set(),proposals:[],messages:[],unreadMessages:0,notificationTimer:null,deferredInstallPrompt:null,news:[],newsCategory:'',market:[],trendingMode:'all',adClicks:[],notifications:[],discoverProfiles:[],discoverFollows:[],discoverFollowing:new Set(),discoverFilter:'all',jobs:[],jobType:'',viewedOpportunities:new Set(),postProfiles:{}};
 const $=id=>document.getElementById(id);
 const esc=(v='')=>String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'})[c]);
 const sessionKey='link_direto_session_v2';
@@ -203,7 +203,7 @@ async function loadPublicData(){
     api('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
     api('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
     api('opportunity_comments','?select=*&order=created_at.asc&limit=5000'),
-    api('profiles','?select=id,business_name,avatar_url&limit=500')
+    api('profiles','?select=id,business_name,avatar_url&limit=5000')
   ];
   const [oppsR,adsR,likesR,commentsR,profilesR]=await Promise.allSettled(requests);
   state.opportunities=oppsR.status==='fulfilled'?(oppsR.value||[]):[];
@@ -212,7 +212,8 @@ async function loadPublicData(){
   state.ads=ads.filter(a=>!a.expires_at||new Date(a.expires_at).getTime()>now);
   state.likes=likesR.status==='fulfilled'?(likesR.value||[]):[];
   state.comments=commentsR.status==='fulfilled'?(commentsR.value||[]):[];
-  if(profilesR.status==='fulfilled')state.discoverProfiles=profilesR.value||state.discoverProfiles;
+  const postProfiles=profilesR.status==='fulfilled'?(profilesR.value||[]):[];
+  state.postProfiles=Object.fromEntries(postProfiles.map(p=>[String(p.id),p]));
   state.likedOpportunities=new Set(state.user?state.likes.filter(x=>x.user_id===state.user.id).map(x=>String(x.opportunity_id)):[]);
   if(state.user)await loadFavorites();
   renderHome();renderSearch();renderAds();
@@ -241,18 +242,6 @@ function opportunityMediaItems(o){
 }
 function opportunityPrice(o){const n=Number(o?.price);return Number.isFinite(n)&&n>0?new Intl.NumberFormat('pt-MZ',{style:'currency',currency:'MZN',maximumFractionDigits:0}).format(n):'';}
 function opportunityViews(o){const n=Number(o?.views);return Number.isFinite(n)&&n>0?Math.floor(n):0;}
-function opportunityAuthor(o){
-  const p=state.discoverProfiles.find(x=>String(x.id)===String(o?.user_id));
-  const name=p?.business_name||((state.user&&String(state.user.id)===String(o?.user_id))?state.profile?.business_name:'')||'Utilizador Link Direto';
-  const avatar=p?.avatar_url||((state.user&&String(state.user.id)===String(o?.user_id))?state.profile?.avatar_url:'')||'';
-  return {name,avatar};
-}
-function opportunityAuthorMarkup(o){
-  const a=opportunityAuthor(o);
-  const initials=String(a.name||'LD').trim().split(/\s+/).map(x=>x[0]).filter(Boolean).slice(0,2).join('').toUpperCase()||'LD';
-  const avatar=a.avatar?`<img src="${esc(a.avatar)}" alt="" loading="lazy">`:`<span>${esc(initials)}</span>`;
-  return `<div class="post-author"><div class="post-author-avatar">${avatar}</div><div class="post-author-copy"><b>${esc(a.name)}</b><small>Publicação</small></div></div>`;
-}
 async function registerOpportunityView(o){
   if(!o||state.viewedOpportunities.has(String(o.id)))return;
   state.viewedOpportunities.add(String(o.id));
@@ -264,6 +253,16 @@ async function registerOpportunityView(o){
     renderHome();renderSearch();
   }catch(err){console.warn('view count',err);state.viewedOpportunities.delete(String(o.id));}
 }
+function postSeller(o){
+  const p=state.postProfiles?.[String(o.user_id)]||{};
+  const name=p.business_name||'Utilizador Link Direto';
+  const initials=(name||'LD').split(/\s+/).filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase()||'LD';
+  const avatar=p.avatar_url
+    ?`<span class="post-author-avatar has-photo" style="background-image:url('${esc(String(p.avatar_url).replace(/'/g,'%27'))}')"></span>`
+    :`<span class="post-author-avatar">${esc(initials)}</span>`;
+  return `<div class="post-author" onclick="event.stopPropagation()">${avatar}<div class="post-author-copy"><b>${esc(name)}</b><small>${esc(o.location||'Moçambique')}</small></div></div>`;
+}
+
 function opportunityCard(o){
   const saved=state.favorites.has(String(o.id)),liked=state.likedOpportunities.has(String(o.id));
   const mine=state.user&&o.user_id===state.user.id;
@@ -271,7 +270,7 @@ function opportunityCard(o){
   const media=cover?(cover.type==='video'
     ?`<div class="card-media-wrap" onclick="event.stopPropagation();openOpportunityDetail('${o.id}',0)"><video class="card-media" src="${esc(cover.url)}" controls playsinline preload="metadata" onclick="event.stopPropagation()"></video>${items.length>1?`<span class="media-count-badge">1/${items.length}</span>`:''}</div>`
     :`<div class="card-media-wrap" onclick="event.stopPropagation();openOpportunityDetail('${o.id}',0)"><img class="card-media" src="${esc(cover.url)}" alt="Imagem da publicação" loading="lazy">${items.length>1?`<span class="media-count-badge">📷 ${items.length}</span>`:''}</div>`):'';
-  return `<article class="card opportunity-clickable" onclick="openOpportunityDetail('${o.id}')">${opportunityAuthorMarkup(o)}${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3>${price?`<b class="opportunity-price">${esc(price)}</b>`:''}<p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="opportunity-stats"><span>👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length}${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><div class="social-actions" onclick="event.stopPropagation()"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span></button><button class="social-btn" onclick="shareOpportunity('${o.id}')" aria-label="Compartilhar esta publicação">↗ <span>Compartilhar</span></button></div><div class="card-actions" onclick="event.stopPropagation()"><button class="btn secondary view-details-btn" onclick="openOpportunityDetail('${o.id}')">Ver detalhes ›</button>${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`;
+  return `<article class="card opportunity-clickable" onclick="openOpportunityDetail('${o.id}')">${postSeller(o)}${media}<div class="card-body"><div class="card-top"><span class="tag ${o.type==='tenho'?'green':''}">${esc((o.type||'preciso').toUpperCase())} • ${esc(o.category)}</span>${o.status==='closed'?'<span class="tag">Fechado</span>':''}</div><h3>${esc(o.title)}</h3>${price?`<b class="opportunity-price">${esc(price)}</b>`:''}<p>${esc(o.description)}</p><div class="meta"><span>📍 ${esc(o.location)}</span><span>⏱ ${formatDate(o.created_at)}</span></div><div class="opportunity-stats"><span>👁 ${views} visualizaç${views===1?'ão':'ões'}</span>${items.length?`<span>📷 ${items.filter(x=>x.type==='image').length}${items.some(x=>x.type==='video')?' + vídeo':''}</span>`:''}</div><div class="social-actions" onclick="event.stopPropagation()"><button class="social-btn ${liked?'active':''}" onclick="toggleLike('${o.id}')" aria-label="Gostar desta publicação">♥ <span>${likeCount(o.id)}</span></button><button class="social-btn" onclick="openComments('${o.id}')" aria-label="Abrir comentários">◌ <span>${commentCount(o.id)}</span></button><button class="social-btn" onclick="shareOpportunity('${o.id}')" aria-label="Compartilhar esta publicação">↗ <span>Compartilhar</span></button></div><div class="card-actions" onclick="event.stopPropagation()"><button class="btn secondary view-details-btn" onclick="openOpportunityDetail('${o.id}')">Ver detalhes ›</button>${mine?`<button class="btn secondary" onclick="manageOpportunity('${o.id}')">Gerir</button>`:`<button class="btn primary" onclick="openProposal('${o.id}','${o.user_id||''}')">Enviar proposta</button>`}<button class="icon-btn ${saved?'saved':''}" onclick="toggleFavorite('${o.id}')">★</button></div></div></article>`;
 }
 function openOpportunityDetail(id,index=0){
   const o=state.opportunities.find(x=>String(x.id)===String(id));if(!o)return;
