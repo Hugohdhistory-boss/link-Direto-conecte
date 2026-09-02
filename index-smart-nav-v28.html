@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#050806"><title>Link Direto Connect</title><link rel="manifest" href="manifest.json?v=19.3"><link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-v193.png"><link rel="icon" type="image/png" href="brand-icon-v193.png"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="cover-v5.css"><link rel="stylesheet" href="v6-enhancements.css"><link rel="stylesheet" href="v7-auth.css"><link rel="stylesheet" href="v8-notifications.css"><link rel="stylesheet" href="v9-tech.css"><link rel="stylesheet" href="v10-black.css"><link rel="stylesheet" href="v11-social.css"><link rel="stylesheet" href="v12-profile.css"><link rel="stylesheet" href="v14-install-chat.css"><link rel="stylesheet" href="v15-commercial-news.css"><link rel="stylesheet" href="v16-growth-market.css"><link rel="stylesheet" href="v16-smart-news.css"><link rel="stylesheet" href="v16-7-discover.css"><link rel="stylesheet" href="v17-jobs.css"><link rel="stylesheet" href="v18-brand.css"><link rel="stylesheet" href="v19-jobs.css"><link rel="stylesheet" href="ai-ads.css">
+
+
+<style id="nav-v17-reference-v24">
+.bottom-nav.v15-nav.v16-nav{
+  display:grid!important;
+  grid-template-columns:repeat(10,minmax(0,1fr))!important;
+  justify-content:stretch!important;
+  overflow:visible!important;
+}
+.bottom-nav.v15-nav.v16-nav button{
+  min-width:0!important;
+  padding-left:1px!important;
+  padding-right:1px!important;
+}
+.bottom-nav.v15-nav.v16-nav button b{
+  font-size:17px!important;
+}
+.bottom-nav.v15-nav.v16-nav button span{
+  font-size:6.8px!important;
+  white-space:nowrap!important;
+}
+.bottom-nav.v15-nav.v16-nav .publish-nav b{
+  margin-top:0!important;
+}
+@media(max-width:370px){
+  .bottom-nav.v15-nav.v16-nav button span{font-size:6.2px!important}
+  .bottom-nav.v15-nav.v16-nav button b{font-size:16px!important}
+}
+</style>
+
+
+<style id="search-only-v25">
+.bottom-nav.v15-nav.v16-nav .search-nav b{
+  font-size:18px!important;
+  line-height:1!important;
+  filter:none!important;
+}
+.bottom-nav.v15-nav.v16-nav .search-nav span{
+  font-size:6.8px!important;
+  white-space:nowrap!important;
+}
+</style>
+
+
+<style id="match-only-v26">
+.bottom-nav.v15-nav.v16-nav .match-nav b{
+  font-size:18px!important;
+  line-height:1!important;
+}
+.bottom-nav.v15-nav.v16-nav .match-nav span{
+  font-size:6.8px!important;
+  white-space:nowrap!important;
+}
+</style>
+
+
+<style id="hero-plus-search-v27">
+.hero-actions .choice{
+  position:relative!important;
+}
+.hero-actions .choice .hero-choice-icon{
+  position:absolute!important;
+  top:18px!important;
+  right:18px!important;
+  width:48px!important;
+  height:48px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-style:normal!important;
+  font-weight:800!important;
+  font-size:28px!important;
+  line-height:1!important;
+  color:#fff!important;
+  background:rgba(255,255,255,.16)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  backdrop-filter:blur(4px)!important;
+  -webkit-backdrop-filter:blur(4px)!important;
+  pointer-events:none!important;
+}
+.hero-actions .choice.preciso .hero-choice-icon{
+  font-size:25px!important;
+}
+</style>
+
+
+<style id="smart-scroll-nav-v28">
+/* Barra inferior inteligente: esconde durante o scroll e reaparece quando o utilizador para. */
+.bottom-nav.v15-nav.v16-nav{
+  transition:transform .24s ease, opacity .2s ease!important;
+  will-change:transform,opacity;
+}
+.bottom-nav.v15-nav.v16-nav.nav-scrolling{
+  transform:translateY(calc(100% + env(safe-area-inset-bottom) + 12px))!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.bottom-nav.v15-nav.v16-nav .publish-nav b{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:34px!important;height:34px!important;margin:-12px auto 1px!important;
+  border-radius:50%!important;background:#fff!important;color:#050806!important;
+  font-size:25px!important;box-shadow:0 5px 16px rgba(0,0,0,.28)!important;
+}
+</style>
+
+</head>
+<body>
+<div id="toast" class="toast" aria-live="polite"></div>
+<section id="splash" class="splash splash-v5"><div class="splash-brand"><div class="brand-row"><div class="logo-mark brand-logo-image"><img src="brand-icon-v193.png" alt="Link Direto"></div><div><b>LINK DIRETO <span>CONNECT</span></b><small>Encontra. Liga. Faz negócio.</small></div></div><h1>Oportunidades não se procuram. <span>Conectam-se.</span></h1><p>Liga negócios, fornecedores e clientes numa rede criada para crescer em Moçambique.</p></div><div class="cover-art"><img src="capa-link-direto-v5.png" alt="Empreendedores moçambicanos ligados por oportunidades de negócio"><div class="cover-shade"></div><div class="cover-badges"><span>TENHO</span><span>PRECISO</span><span>MATCH DIRETO</span></div><div class="cover-caption"><b>Uma ligação certa pode mudar um negócio.</b><small>Começa pela tua.</small></div></div><div class="splash-card"><button class="btn primary" onclick="enterApp()">Continuar</button><small>Publica, encontra e conversa diretamente.</small></div></section>
+<section id="installGate" class="install-gate hidden" aria-label="Instalar Link Direto"><div class="install-gate-card"><div class="install-gate-logo brand-install-logo"><img src="brand-icon-v193.png" alt="Link Direto"></div><span class="eyebrow">LINK DIRETO CONNECT</span><h1>Tenha o Link Direto no seu celular.</h1><p>Instale para abrir mais rápido e ter uma experiência igual a um aplicativo.</p><div class="install-benefits"><span>✓ Acesso pela tela inicial</span><span>✓ Experiência em tela cheia</span><span>✓ Acesso rápido às mensagens e oportunidades</span></div><button id="installAppButton" class="btn install-app install-gate-primary" type="button" onclick="installLinkDireto()">📲 INSTALAR APP</button><button class="install-skip" type="button" onclick="continueWithoutInstall()">Agora não</button><small id="installAppHint">A instalação é gratuita.</small></div></section>
+<div id="app" class="app hidden">
+<header class="topbar"><div class="topbar-brand"><img class="topbar-logo" src="brand-icon-v193.png" alt=""><div><b>LINK DIRETO <span>CONNECT</span></b><small id="headerSubtitle">Oportunidades perto de ti</small><i class="black-edition">BLACK EDITION</i></div></div><div class="top-actions"><button id="notificationCenterButton" class="notification-bell" onclick="openNotificationCenter()" aria-label="Notificações">🔔<i id="notificationCenterBadge" class="nav-badge hidden">0</i></button><button id="accountButton" class="account" onclick="handleAccountClick()">Entrar</button></div></header>
+<main>
+<section id="view-home" class="view active"><div class="hero home-hero"><div class="hero-glass"><span class="eyebrow">REDE EMPRESARIAL MOÇAMBICANA</span><h2>O teu próximo negócio pode estar perto de ti.</h2><p>Publica o que tens ou precisas. O Match Direto encontra ligações compatíveis.</p></div><div class="hero-actions"><button class="choice tenho" onclick="openPublish('tenho')"><i class="hero-choice-icon" aria-hidden="true">＋</i><b>TENHO</b><small>Produto ou serviço disponível</small></button><button class="choice preciso" onclick="openPublish('preciso')"><i class="hero-choice-icon" aria-hidden="true">⌕</i><b>PRECISO</b><small>Fornecedor, cliente ou solução</small></button></div></div><div class="quick-stats"><div><b id="statOpps">0</b><span>Oportunidades</span></div><div><b id="statAds">0</b><span>Perfis</span></div><div><b>12</b><span>Categorias</span></div></div><div id="homeAd" class="ad-slot"></div><div class="section-head v16-section"><div><span class="eyebrow">PARA TI</span><h3>Escolhidas para o teu negócio</h3></div><button onclick="showView('trending')">Ver tendências</button></div><div id="forYouFeed" class="for-you-rail"><div class="loading">A preparar recomendações...</div></div><div class="section-head"><h3>Oportunidades recentes</h3><button onclick="showView('search')">Ver todas</button></div><div id="homeFeed" class="stack"><div class="loading">A carregar oportunidades...</div></div></section>
+<section id="view-search" class="view"><div class="page-title visual-title"><span class="visual-icon">⌕</span><div><h2>Explorar oportunidades</h2><p>Pesquisa por necessidade, categoria ou localização.</p></div></div><div class="category-rail"><button onclick="quickCategory('Agricultura')">🌱 Agricultura</button><button onclick="quickCategory('Alimentação')">🍲 Alimentação</button><button onclick="quickCategory('Construção')">🏗 Construção</button><button onclick="quickCategory('Tecnologia')">💻 Tecnologia</button><button onclick="quickCategory('Transporte')">🚚 Transporte</button></div><div class="filters"><input id="searchText" placeholder="Pesquisar..." oninput="renderSearch()"><select id="searchType" onchange="renderSearch()"><option value="">TENHO e PRECISO</option><option value="tenho">TENHO</option><option value="preciso">PRECISO</option></select><select id="searchCategory" onchange="renderSearch()"><option value="">Todas categorias</option></select></div><div id="searchFeed" class="stack"></div></section>
+<section id="view-publish" class="view"><div class="page-title visual-title"><span class="visual-icon green">＋</span><div><h2>Nova publicação</h2><p>Cria uma oportunidade clara e fácil de encontrar.</p></div></div><div class="publish-steps"><span class="done">1 Tipo</span><span>2 Detalhes</span><span>3 Publicar</span></div><div id="publishPreview" class="publish-preview"><small>PRÉ-VISUALIZAÇÃO</small><b>O teu anúncio aparecerá aqui</b><span>Adiciona título, categoria e localização.</span></div><form id="publishForm" class="panel" onsubmit="submitOpportunity(event)"><div class="segmented"><label><input type="radio" name="ptype" value="tenho" checked onchange="updatePublishPreview()"><span>TENHO</span></label><label><input type="radio" name="ptype" value="preciso" onchange="updatePublishPreview()"><span>PRECISO</span></label></div><label>Título<input id="pTitle" required maxlength="100" placeholder="Ex.: Hortícolas disponíveis" oninput="updatePublishPreview()"></label><label>Categoria<select id="pCategory" required onchange="updatePublishPreview()"></select></label><label>Descrição<textarea id="pDescription" required maxlength="700" placeholder="Quantidade, prazo e condições..."></textarea></label><label>Localização<input id="pLocation" required placeholder="Bairro / Cidade" oninput="updatePublishPreview()"></label><label>Fotografia ou vídeo<input id="pMedia" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" onchange="previewOpportunityMedia(event)"><small id="mediaHint" class="field-hint">Vídeos até 60 segundos e 50 MB.</small></label><button class="btn primary" type="submit">Publicar agora</button></form></section>
+<section id="view-connect" class="view"><div class="connect-showcase"><div class="match-orbit"><b>92%</b><span>Match</span></div><div><span class="eyebrow">MATCH DIRETO</span><h2>Conexões que fazem sentido.</h2><p>As propostas mais compatíveis chegam primeiro.</p></div></div><div id="notificationPanel" class="notification-panel hidden"><div><b>🔔 Alertas de conversa</b><small>Recebe avisos quando chegar uma mensagem nova.</small></div><button id="notificationButton" onclick="enableNotifications()">Ativar</button></div><div class="metric-grid"><div class="metric"><b id="pendingCount">0</b><span>Pendentes</span></div><div class="metric"><b id="acceptedCount">0</b><span>Aceites</span></div><div class="metric"><b id="messageCount">0</b><span>Conversas</span></div></div><div id="connectContent" class="stack"><div class="empty">Entra na tua conta para veres propostas e conversas.</div></div></section>
+
+  <section id="view-ai-ads" class="view">
+  <div class="ai-ads-page">
+
+    <div class="ai-ads-header">
+      <h2>✨ IA Anúncios</h2>
+      <p>Crie um anúncio profissional em poucos segundos.</p>
+    </div>
+
+    <div class="ai-ads-card">
+
+      <div class="ai-ads-field">
+        <label>Tipo de anúncio</label>
+        <select id="ai-tipo">
+          <option value="produto">Produto</option>
+          <option value="servico">Serviço</option>
+          <option value="emprego">Emprego</option>
+          <option value="imovel">Imóvel</option>
+        </select>
+      </div>
+
+      <div class="ai-ads-field">
+        <label>O que quer anunciar?</label>
+        <input id="ai-nome" placeholder="Ex: iPhone 13, fotógrafo, vendedor...">
+      </div>
+
+      <div class="ai-ads-field">
+        <label>Preço</label>
+        <input id="ai-preco" placeholder="Ex: 25.000 MT">
+      </div>
+
+      <div class="ai-ads-field">
+        <label>Localização</label>
+        <input id="ai-local" placeholder="Ex: Maputo">
+      </div>
+
+      <div class="ai-ads-field">
+        <label>Detalhes</label>
+        <textarea id="ai-detalhes" placeholder="Escreva alguns detalhes importantes..."></textarea>
+      </div>
+
+      <button class="ai-generate-btn" onclick="gerarAnuncioIA()">
+        ✨ Gerar anúncio
+      </button>
+
+      <div id="ai-resultado" class="ai-result">
+        <strong>Anúncio criado</strong>
+
+        <div id="ai-resultado-texto" class="ai-result-text"></div>
+
+        <div class="ai-result-actions">
+          <button onclick="copiarAnuncioIA()">📋 Copiar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="view-trending" class="view"><div class="trend-hero"><div><span class="eyebrow">🔥 TRENDING</span><h2>O que está a mexer no Link Direto.</h2><p>Publicações e notícias com mais interação e relevância agora.</p></div><div class="trend-pulse">AO VIVO</div></div><div class="trend-tabs"><button class="active" onclick="setTrendingMode('all',this)">Tudo</button><button onclick="setTrendingMode('opportunities',this)">Oportunidades</button><button onclick="setTrendingMode('news',this)">Notícias</button></div><div id="trendingFeed" class="stack"><div class="loading">A calcular tendências...</div></div></section>
+<section id="view-market" class="view"><div class="market-hero"><div><span class="eyebrow">🛍 LINK MARKET</span><h2>Compra e vende diretamente.</h2><p>Produtos, equipamento e serviços de negócios locais.</p></div><button class="btn primary" onclick="openMarketForm()">+ Vender</button></div><div class="market-toolbar"><input id="marketSearch" placeholder="Pesquisar produto ou loja..." oninput="renderMarket()"><select id="marketCategory" onchange="renderMarket()"><option value="">Todas categorias</option><option>Tecnologia</option><option>Telefones</option><option>Câmaras e Lentes</option><option>Equipamento</option><option>Serviços</option><option>Outros</option></select></div><div id="marketFeed" class="market-grid"><div class="loading">A carregar mercado...</div></div></section>
+<section id="view-jobs" class="view"><div class="jobs-hero"><div><span class="eyebrow">💼 LINK EMPREGOS</span><h2>O teu próximo emprego pode estar aqui.</h2><p>Vagas publicadas diretamente por empresas e organizações no Link Direto.</p></div><button class="btn primary jobs-publish" onclick="openJobForm()">+ Publicar vaga</button></div><div class="jobs-toolbar"><div class="jobs-search"><span>⌕</span><input id="jobSearch" type="search" placeholder="Cargo, empresa ou localização..." oninput="renderJobs()"></div><select id="jobCategory" onchange="renderJobs()"><option value="">Todas categorias</option><option>Administração</option><option>Atendimento</option><option>Audiovisual</option><option>Comercial e Vendas</option><option>Construção</option><option>Contabilidade e Finanças</option><option>Educação</option><option>Hotelaria e Turismo</option><option>Logística e Transporte</option><option>Marketing</option><option>Saúde</option><option>Tecnologia</option><option>Outros</option></select></div><div class="jobs-chips"><button class="active" data-job-type="" onclick="setJobType('',this)">Todas</button><button data-job-type="full_time" onclick="setJobType('full_time',this)">Tempo inteiro</button><button data-job-type="part_time" onclick="setJobType('part_time',this)">Part-time</button><button data-job-type="internship" onclick="setJobType('internship',this)">Estágio</button><button data-job-type="contract" onclick="setJobType('contract',this)">Contrato</button></div><div class="jobs-section-head"><div><span class="eyebrow">OPORTUNIDADES</span><h3>Vagas recentes</h3></div><button onclick="loadJobs(true)">Atualizar</button></div><div id="jobsFeed" class="jobs-feed"><div class="loading">A carregar vagas...</div></div></section><section id="view-ads" class="view"><div class="ads-hero"><div><span class="eyebrow">LINK ADS</span><h2>A tua marca no lugar certo.</h2><p>Publicidade visual, local e ligada a interesses reais.</p><button class="btn primary" onclick="openAdForm()">Criar publicidade</button></div></div><div class="section-head"><h3>Campanhas em destaque</h3><span class="tag yellow">PATROCINADO</span></div><div id="adsFeed" class="stack"></div><div id="advertiserDashboard" class="advertiser-dashboard hidden"></div><div class="package-grid"><div class="package"><b>Impulso</b><span>Destaque no feed</span></div><div class="package featured"><b>Vitrine</b><span>Imagem, contacto e prioridade</span></div><div class="package"><b>Campanha</b><span>Segmentação local</span></div></div></section>
+<section id="view-discover" class="view"><div class="discover-hero"><div><span class="eyebrow">REDE LINK DIRETO</span><h2>Descobre pessoas e empresas.</h2><p>Encontra profissionais, negócios e organizações registadas na plataforma.</p></div><div class="discover-count"><b id="discoverTotal">0</b><span>perfis</span></div></div><div class="discover-toolbar"><div class="discover-searchbox"><span>⌕</span><input id="discoverSearch" type="search" placeholder="Pesquisar nome, categoria ou localização..." oninput="renderDiscover()"></div><div class="discover-tabs"><button class="active" data-discover-filter="all" onclick="setDiscoverFilter('all',this)">Todos</button><button data-discover-filter="person" onclick="setDiscoverFilter('person',this)">Pessoas</button><button data-discover-filter="company" onclick="setDiscoverFilter('company',this)">Empresas</button><button data-discover-filter="organization" onclick="setDiscoverFilter('organization',this)">Organizações</button></div></div><div class="discover-section-head"><div><span class="eyebrow">COMUNIDADE</span><h3 id="discoverHeading">Novos no Link Direto</h3></div><button onclick="loadDiscover(true)">Atualizar</button></div><div id="discoverFeed" class="discover-grid"><div class="loading">A carregar perfis...</div></div></section><section id="view-profile" class="view"><div class="page-title visual-title"><span class="visual-icon">●</span><div><h2>Cartão Link</h2><p>A identidade digital do teu negócio.</p></div></div><div id="profileGuest" class="panel center profile-guest"><div class="avatar large">LD</div><h3>Cria o teu perfil empresarial</h3><p>Publica, recebe propostas e constrói o teu Link Score.</p><div class="guest-benefits"><span>✓ Publicações reais</span><span>✓ Propostas diretas</span><span>✓ Perfil empresarial</span></div><button class="btn primary" onclick="openAuth('signup')">Criar conta gratuita</button><button class="btn ghost" onclick="openAuth('login')">Já tenho conta</button></div><div id="profileSummary" class="panel profile-summary hidden"><div class="profile-complete-badge">✓ PERFIL CONCLUÍDO</div><div class="summary-identity"><div id="profileSummaryAvatar" class="avatar large">LD</div><div><h3 id="summaryName">Meu negócio</h3><span id="summaryScore" class="score">Link Score 40</span></div></div><div class="summary-tags"><span id="summaryCategory">Categoria</span><span>📍 <b id="summaryLocation">Moçambique</b></span></div><p id="summaryBio" class="summary-bio"></p><div class="summary-contact"><small>CONTACTO</small><b id="summaryPhone">Contacto não informado</b></div><button class="btn primary" onclick="editProfile()">Editar perfil</button><button class="btn ghost" onclick="logout()">Terminar sessão</button></div><form id="profileForm" class="panel hidden" onsubmit="saveProfile(event)"><div class="business-card"><div class="profile-heading"><div id="profileAvatar" class="avatar large">LD</div><div><h3 id="profileName">Meu negócio</h3><span id="profileScore" class="score">Link Score 40</span></div></div><div class="profile-progress"><i id="profileProgress"></i></div><div class="card-stripe"><span id="cardCategory">Categoria</span><span id="cardLocation">Moçambique</span></div></div><div class="account-status"><div><small>CONTA ATIVA</small><b id="profileEmail">—</b></div><span id="profileVerified">✓ Segura</span></div><label>Tipo de perfil<select id="businessAccountType"><option value="company">Empresa</option><option value="person">Pessoa / Profissional</option><option value="organization">Organização</option></select></label><label>Logótipo ou fotografia<input id="businessAvatar" type="file" accept="image/*" onchange="previewBusinessAvatar(event)"></label><label>Nome do negócio<input id="businessName" required maxlength="80"></label><label>Categoria<select id="businessCategory"></select></label><label>Localização<input id="businessLocation" required></label><label>WhatsApp ou telefone<input id="businessPhone" inputmode="tel" placeholder="Ex.: +258 84 000 0000"></label><label>Sobre o negócio<textarea id="businessBio" required maxlength="400" placeholder="Explica o que a tua empresa oferece..."></textarea></label><button class="btn primary" type="submit">Concluir e guardar perfil</button><button class="btn ghost" type="button" onclick="cancelProfileEdit()">Fechar edição</button><button class="btn ghost" type="button" onclick="logout()">Terminar sessão</button></form></section>
+</main>
+<nav class="bottom-nav v15-nav v16-nav">
+<button data-view="home" class="active" onclick="showView('home',this)"><b>⌂</b><span>Início</span></button>
+<button type="button" class="match-nav" onclick="openMatchDirect(this)"><b>↔</b><span>Match</span></button>
+<button data-view="trending" onclick="showView('trending',this)"><b>🔥</b><span>Trending</span></button>
+<button data-view="publish" class="publish-nav" onclick="showView('publish',this)"><b>＋</b><span>Publicar</span></button>
+<button data-view="ai-ads" onclick="showView('ai-ads',this)"><b>✨</b><span>IA</span></button>
+<button data-view="market" onclick="showView('market',this)"><b>▣</b><span>Mercado</span></button>
+<button data-view="jobs" onclick="showView('jobs',this)"><b>💼</b><span>Empregos</span></button>
+<button data-view="discover" onclick="showView('discover',this)"><b>⌕</b><span>Descobrir</span></button>
+<button data-view="connect" class="connect-nav" onclick="showView('connect',this)"><b>↔</b><span>Connect</span><i id="connectBadge" class="nav-badge hidden">0</i></button>
+<button data-view="profile" onclick="showView('profile',this)"><b>●</b><span>Perfil</span></button>
+</nav>
+</div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card"><button class="modal-close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+
+<script>
+function openMoreMenu(){
+  const modal=document.getElementById('modal');
+  const box=document.getElementById('modalContent');
+  if(!modal||!box) return;
+  box.innerHTML=`
+    <div style="padding:8px 0 4px">
+      <h2 style="margin:0 0 14px">Mais</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn ghost" onclick="closeModal();showView('search')">🔍 Pesquisar</button>
+        <button class="btn ghost" onclick="closeModal();showView('trending')">🔥 Trending</button>
+        <button class="btn ghost" onclick="closeModal();showView('ai-ads')">✨ IA Anúncios</button>
+        <button class="btn ghost" onclick="closeModal();showView('market')">▣ Mercado</button>
+        <button class="btn ghost" onclick="closeModal();showView('jobs')">💼 Empregos</button>
+        <button class="btn ghost" onclick="closeModal();showView('discover')">⌕ Descobrir</button>
+        <button class="btn ghost" onclick="closeModal();showView('profile')">● Perfil</button>
+      </div>
+    </div>`;
+  modal.classList.remove('hidden');
+}
+</script>
+
+<script id="video-autoplay-v20">
+(function(){
+  const observed=new WeakSet();
+  let observer=null;
+  function prepare(video){
+    if(!video || observed.has(video)) return;
+    observed.add(video);
+    video.muted=true;
+    video.defaultMuted=true;
+    video.playsInline=true;
+    video.setAttribute('muted','');
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.preload='metadata';
+    observer.observe(video);
+  }
+  observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const v=entry.target;
+      if(entry.isIntersecting && entry.intersectionRatio>=0.65){
+        document.querySelectorAll('video').forEach(other=>{if(other!==v && !other.paused) other.pause();});
+        const p=v.play();
+        if(p && typeof p.catch==='function') p.catch(()=>{});
+      }else if(!v.paused){
+        v.pause();
+      }
+    });
+  },{threshold:[0,0.25,0.65,1]});
+  function scan(root=document){
+    if(root.matches && root.matches('video')) prepare(root);
+    if(root.querySelectorAll) root.querySelectorAll('video').forEach(prepare);
+  }
+  document.addEventListener('DOMContentLoaded',()=>scan(document));
+  const mo=new MutationObserver(muts=>muts.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1) scan(n);})));
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden) document.querySelectorAll('video').forEach(v=>v.pause());});
+})();
+</script>
+
+<script id="match-direct-nav-v26">
+function openMatchDirect(button){
+  showView('home');
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  button?.classList.add('active');
+  setTimeout(()=>{
+    const target=document.getElementById('forYouFeed') || document.querySelector('.v16-section');
+    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+  },80);
+}
+</script>
+
+
+<script id="smart-scroll-nav-v28">
+(function(){
+  const STOP_DELAY=500;
+  let timer=null;
+  let lastY=window.scrollY;
+  function nav(){ return document.querySelector('.bottom-nav.v15-nav.v16-nav'); }
+  function show(){ const n=nav(); if(n) n.classList.remove('nav-scrolling'); }
+  function hide(){ const n=nav(); if(n) n.classList.add('nav-scrolling'); }
+  function onScroll(){
+    const y=window.scrollY;
+    if(Math.abs(y-lastY)>2) hide();
+    lastY=y;
+    clearTimeout(timer);
+    timer=setTimeout(show,STOP_DELAY);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('touchend',()=>{ clearTimeout(timer); timer=setTimeout(show,180); },{passive:true});
+  document.addEventListener('DOMContentLoaded',show);
+})();
+</script>
+
+<script src="app.js"></script><script src="ai-ads.js"></script></body></html>
