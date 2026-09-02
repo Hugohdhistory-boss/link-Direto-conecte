@@ -269,12 +269,28 @@ function sellerHeader(o,compact=false){
 function openPublicProfile(profileId){
   if(!profileId)return;
   const p=sellerProfileFor(profileId);
-  if(!p){toast('Perfil ainda a carregar. Tenta novamente.');loadDiscover(false);return}
-  const type=discoverType(p),count=followerCount(p.id),mine=state.user&&String(state.user.id)===String(p.id),following=isFollowing(p.id);
-  const avatar=sellerAvatarMarkup(p),contact=String(p.phone||'').replace(/[^+\d]/g,''),wa=contact?`https://wa.me/${contact.replace('+','')}`:'';
+  if(!p){toast('Perfil ainda a carregar. Tenta novamente.');loadDiscover(false);return;}
+  const type=discoverType(p);
+  const count=followerCount(p.id);
+  const mine=!!(state.user&&String(state.user.id)===String(p.id));
+  const following=isFollowing(p.id);
+  const avatar=sellerAvatarMarkup(p);
+  const contact=String(p.phone||'').replace(/[^+\d]/g,'');
+  const wa=contact?`https://wa.me/${contact.replace('+','')}`:'';
   const posts=state.opportunities.filter(o=>String(o.user_id)===String(p.id)&&o.status!=='closed').length;
-  openModal(`<div class="public-profile-modal"><div class="public-profile-top"><div class="public-profile-avatar">${avatar}</div><div><h2 class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Perfil Link Direto')}${p.verified?verifiedBadge('large'):''}</h2><span>${type==='company'?'🏢':type==='organization'?'◉':'●'} ${esc(discoverTypeLabel(type))}${p.category?` · ${esc(p.category)}`:''}</span></div></div>${p.bio?`<p class="public-profile-bio">${esc(p.bio)}</p>`:''}<div class="public-profile-meta">${p.location?`<span>📍 ${esc(p.location)}</span>`:''}<span><b>${posts}</b> publicações</span><span><b>${count}</b> seguidores</span></div><div class="public-profile-actions">${!mine?`<button class="btn secondary" onclick="toggleDiscoverFollow('${p.id}',this);setTimeout(()=>openPublicProfile('${p.id}'),250)">${following?'A seguir':'Seguir'}</button>`:'<button class="btn secondary" onclick="closeModal();showView('profile')">O meu perfil</button>'}${wa?`<a class="btn primary link-btn" href="${wa}" target="_blank" rel="noopener">Contactar</a>`:''}</div>${posts?`<button class="btn ghost full" onclick="closeModal();showView('search');setTimeout(()=>{const e=$('searchText');if(e){e.value='${esc(p.business_name||'')}';renderSearch()}},50)">Ver publicações</button>`:''}</div>`);
+  const badge=p.verified?verifiedBadge('large'):'';
+  const typeIcon=type==='company'?'🏢':type==='organization'?'◉':'●';
+  const category=p.category?` · ${esc(p.category)}`:'';
+  const bio=p.bio?`<p class="public-profile-bio">${esc(p.bio)}</p>`:'';
+  const location=p.location?`<span>📍 ${esc(p.location)}</span>`:'';
+  const followButton=!mine
+    ?`<button class="btn secondary" onclick="toggleDiscoverFollow('${p.id}',this);setTimeout(()=>openPublicProfile('${p.id}'),250)">${following?'A seguir':'Seguir'}</button>`
+    :`<button class="btn secondary" onclick="closeModal();showView('profile')">O meu perfil</button>`;
+  const contactButton=wa?`<a class="btn primary link-btn" href="${wa}" target="_blank" rel="noopener">Contactar</a>`:'';
+  const postsButton=posts?`<button class="btn ghost full" onclick="closeModal();showView('search')">Ver publicações</button>`:'';
+  openModal(`<div class="public-profile-modal"><div class="public-profile-top"><div class="public-profile-avatar">${avatar}</div><div><h2 class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Perfil Link Direto')}${badge}</h2><span>${typeIcon} ${esc(discoverTypeLabel(type))}${category}</span></div></div>${bio}<div class="public-profile-meta">${location}<span><b>${posts}</b> publicações</span><span><b>${count}</b> seguidores</span></div><div class="public-profile-actions">${followButton}${contactButton}</div>${postsButton}</div>`);
 }
+
 function opportunityCard(o){
   const saved=state.favorites.has(String(o.id)),liked=state.likedOpportunities.has(String(o.id));
   const mine=state.user&&o.user_id===state.user.id;
