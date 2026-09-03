@@ -293,6 +293,70 @@
 }
 </style>
 
+
+<style id="ld-bottom-nav-uniform-v2">
+.bottom-nav.v15-nav.v16-nav{
+  background:rgba(4,8,7,.96)!important;
+  border-top:1px solid rgba(45,245,176,.13)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+}
+.bottom-nav.v15-nav.v16-nav button{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+.bottom-nav.v15-nav.v16-nav button b{
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  margin:0 auto 4px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  text-shadow:none!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-style:normal!important;
+  font-weight:600!important;
+  font-size:19px!important;
+  line-height:1!important;
+  color:#72807a!important;
+}
+.bottom-nav.v15-nav.v16-nav button span{
+  color:#72807a!important;
+  font-size:7.8px!important;
+  font-weight:600!important;
+}
+.bottom-nav.v15-nav.v16-nav button.active b,
+.bottom-nav.v15-nav.v16-nav button.active span{
+  color:#35e9ae!important;
+}
+.bottom-nav.v15-nav.v16-nav .publish-nav b{
+  width:auto!important;
+  height:auto!important;
+  margin:0 auto 4px!important;
+  padding:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  color:#72807a!important;
+  font-size:22px!important;
+}
+.bottom-nav.v15-nav.v16-nav .publish-nav.active b{
+  color:#35e9ae!important;
+}
+.bottom-nav.v15-nav.v16-nav .nav-badge{
+  transform:scale(.85)!important;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -371,15 +435,15 @@
 </main>
 <nav class="bottom-nav v15-nav v16-nav">
 <button data-view="home" class="active" onclick="showView('home',this)"><b>⌂</b><span>Início</span></button>
-<button type="button" class="match-nav" onclick="openMatchDirect(this)"><b>↔</b><span>Match</span></button>
-<button data-view="trending" onclick="showView('trending',this)"><b>🔥</b><span>Trending</span></button>
+<button type="button" class="match-nav" onclick="openMatchDirect(this)"><b>⇄</b><span>Match</span></button>
+<button data-view="trending" onclick="showView('trending',this)"><b>⌁</b><span>Trending</span></button>
 <button data-view="publish" class="publish-nav" onclick="showView('publish',this)"><b>＋</b><span>Publicar</span></button>
-<button data-view="ai-ads" onclick="showView('ai-ads',this)"><b>✨</b><span>IA</span></button>
-<button data-view="market" onclick="showView('market',this)"><b>▣</b><span>Mercado</span></button>
-<button data-view="jobs" onclick="showView('jobs',this)"><b>💼</b><span>Empregos</span></button>
+<button data-view="ai-ads" onclick="showView('ai-ads',this)"><b>✦</b><span>IA</span></button>
+<button data-view="market" onclick="showView('market',this)"><b>▱</b><span>Mercado</span></button>
+<button data-view="jobs" onclick="showView('jobs',this)"><b>□</b><span>Empregos</span></button>
 <button data-view="discover" onclick="showView('discover',this)"><b>⌕</b><span>Descobrir</span></button>
 <button data-view="connect" class="connect-nav" onclick="showView('connect',this)"><b>↔</b><span>Connect</span><i id="connectBadge" class="nav-badge hidden">0</i></button>
-<button data-view="profile" onclick="showView('profile',this)"><b>●</b><span>Perfil</span></button>
+<button data-view="profile" onclick="showView('profile',this)"><b>○</b><span>Perfil</span></button>
 </nav>
 </div>
 <div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card"><button class="modal-close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
