@@ -1345,6 +1345,10 @@ function openMatchDirect(button){
 }
 .ld-mt-support-icon span{position:relative;z-index:1}
 .ld-view-live{display:inline-flex!important;align-items:center!important;gap:4px!important}
+
+/* V39: elimina o antigo botão isolado do coração/MT quando não tem contador */
+.card [aria-hidden="true"],
+.opportunity-card [aria-hidden="true"]{display:none!important}
 </style>
 
 <script id="ld-mt-views-v38">
@@ -1401,34 +1405,65 @@ function openMatchDirect(button){
 
   function replaceHeartIn(root){
     const cards=root.matches && isPost(root) ? [root] : [...(root.querySelectorAll?.('.card,.opportunity-card')||[])].filter(isPost);
+
     cards.forEach(card=>{
-      const nodes=[...card.querySelectorAll('button,a,[role="button"]')];
-      // Segurança: nunca deixa mais de um saco MT no mesmo cartão.
-      const extras=[...card.querySelectorAll('.ld-mt-support-icon')];
-      if(extras.length>1) extras.slice(1).forEach(x=>x.remove());
-      nodes.forEach(el=>{
-        if(el.closest('.ld-mt-support-icon')) return;
-        if(el.children.length>4) return;
+      const controls=[...card.querySelectorAll('button,a,[role="button"]')].filter(el=>{
+        if(el.closest('.ld-mt-support-icon')) return false;
         const t=cleanText(el.textContent);
         const aria=cleanText(el.getAttribute?.('aria-label'));
         const title=cleanText(el.getAttribute?.('title'));
         const cls=String(el.className||'');
-        const looksLikeLike=/\b(like|likes|gosto|curtir|apoio|apoiou)\b/i.test([t,aria,title,cls].join(' '));
-        const hasHeart=/[♥♡❤❤️]/.test(t) || /heart/i.test(cls);
-        if(!looksLikeLike && !hasHeart) return;
+        return /\b(like|likes|gosto|curtir|apoio|apoiou)\b/i.test([t,aria,title,cls].join(' '))
+          || /[♥♡❤❤️]/.test(t)
+          || /heart/i.test(cls);
+      });
 
-        // Substitui apenas o símbolo, preservando número/contador e clique original.
+      if(!controls.length) return;
+
+      // Quando o layout tem um ícone separado + um botão com contador,
+      // usa SOMENTE o botão que contém o número.
+      let target = controls.find(el=>/\d/.test(cleanText(el.textContent)));
+      if(!target) target = controls.find(el=>/\b(like|likes|gosto|apoio|apoiou)\b/i.test(
+        cleanText(el.textContent)+' '+cleanText(el.getAttribute?.('aria-label'))+' '+String(el.className||'')
+      ));
+      if(!target) target = controls[controls.length-1];
+
+      controls.forEach(el=>{
+        // Limpa coração/ícone antigo de todos os controlos.
         for(const n of [...el.childNodes]){
           if(n.nodeType===3 && /[♥♡❤]/.test(n.nodeValue||'')){
             n.nodeValue=(n.nodeValue||'').replace(/[♥♡❤]/g,'');
           }
         }
         [...el.querySelectorAll('svg,i')].forEach(icon=>{
-          if(/heart|like/i.test(String(icon.className?.baseVal||icon.className||''))) icon.style.display='none';
+          const c=String(icon.className?.baseVal||icon.className||'');
+          if(/heart|like/i.test(c)) icon.style.display='none';
         });
-        if(!el.querySelector('.ld-mt-support-icon')){
-          el.insertBefore(moneyBag(),el.firstChild);
+
+        if(el !== target){
+          // Este é o pequeno botão de ícone solto que estava a criar a 2ª saqueta.
+          el.querySelectorAll('.ld-mt-support-icon').forEach(x=>x.remove());
+          const txt=cleanText(el.textContent);
+          if(!/\d/.test(txt) && (
+             /heart|like|gosto|curtir|apoio/i.test(String(el.className||'')+' '+cleanText(el.getAttribute?.('aria-label'))+' '+cleanText(el.getAttribute?.('title')))
+             || txt==='' || /^[♥♡❤❤️]*$/.test(txt)
+          )){
+            el.style.display='none';
+            el.setAttribute('aria-hidden','true');
+          }
+          return;
         }
+
+        // Só uma saqueta MT: dentro do botão que tem a contagem.
+        target.querySelectorAll('.ld-mt-support-icon').forEach((x,i)=>{ if(i>0) x.remove(); });
+        if(!target.querySelector('.ld-mt-support-icon')){
+          target.insertBefore(moneyBag(),target.firstChild);
+        }
+      });
+
+      // Segurança extra: se por qualquer motivo restar MT fora do botão escolhido, remove.
+      [...card.querySelectorAll('.ld-mt-support-icon')].forEach(icon=>{
+        if(!target.contains(icon)) icon.remove();
       });
     });
   }
