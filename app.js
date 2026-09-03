@@ -201,13 +201,40 @@ async function setProfileVerifiedAdmin(profileId,newVerified){
   document.head.appendChild(st);
 })();
 
+
+(function addReputationStyles(){
+  if(document.getElementById('ld-reputation-styles'))return;
+  const st=document.createElement('style');st.id='ld-reputation-styles';st.textContent=`
+    .ld-profile-reputation{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .ld-profile-reputation>span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(45,245,176,.16);font-size:11px;color:#dfe9e4}
+    .ld-profile-reputation small{opacity:.72}
+    .ld-rating-stars{display:flex;gap:5px;margin-top:8px}
+    .ld-rating-stars button{border:0;background:transparent;padding:0;font-size:32px;line-height:1;color:#4f5753}
+    .ld-rating-stars button.on{color:#ffd85a}
+    .ld-review-head{display:flex;gap:10px;align-items:center}.ld-review-head>span{font-size:30px}.ld-review-head h2{margin:0}.ld-review-head p{margin:3px 0 0;opacity:.72}
+  `;document.head.appendChild(st);
+})();
+
 async function loadProfile(){if(!state.user)return;try{const d=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=d?.[0]||null;if(!state.profile){await api('profiles','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({id:state.user.id,business_name:state.user.user_metadata?.business_name||'Meu negócio',account_type:'company'})});const p=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=p?.[0]}}catch(err){console.error(err)}}
 function setAvatar(element,url,name='LD'){if(!element)return;const initials=(name||'LD').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();element.textContent=initials;if(url){element.style.backgroundImage=`url("${String(url).replace(/["\\]/g,'')}")`;element.classList.add('has-image')}else{element.style.backgroundImage='';element.classList.remove('has-image')}}
 function previewBusinessAvatar(e){const file=e.target.files?.[0];if(!file)return;if(file.size>5*1024*1024){toast('A imagem deve ter menos de 5 MB.',true);e.target.value='';return}setAvatar($('profileAvatar'),URL.createObjectURL(file),$('businessName').value)}
 function profileComplete(p={}){return Boolean(p.business_name&&p.business_name!=='Meu negócio'&&p.category&&p.location&&p.bio)}
 function editProfile(){state.profileEditing=true;renderProfile();setTimeout(()=>$('businessName')?.focus(),80)}
 function cancelProfileEdit(){if(!profileComplete(state.profile||{})){toast('Preenche os campos obrigatórios e guarda o perfil primeiro.',true);return}state.profileEditing=false;renderProfile()}
-function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';if($('businessAccountType'))$('businessAccountType').value=p.account_type||'company';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('small'):''}</span>`;setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified')){$('profileVerified').innerHTML=p.verified?`${verifiedBadge('small')} Verificado`:(state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar');$('profileVerified').classList.toggle('ld-verified-name',!!p.verified)}if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('large'):''}</span>`;if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`;injectAdminControl()}
+function renderProfile(){const logged=!!state.user,p=state.profile||{},complete=profileComplete(p),showSummary=logged&&complete&&!state.profileEditing;$('profileGuest').classList.toggle('hidden',logged);$('profileSummary').classList.toggle('hidden',!showSummary);$('profileForm').classList.toggle('hidden',!logged||showSummary);if(!logged)return;$('businessName').value=p.business_name||'';if($('businessAccountType'))$('businessAccountType').value=p.account_type||'company';$('businessCategory').value=p.category||CATEGORIES[0];$('businessLocation').value=p.location||'';$('businessPhone').value=p.phone||'';$('businessBio').value=p.bio||'';$('profileName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('small'):''}</span>`;setAvatar($('profileAvatar'),p.avatar_url,p.business_name);setAvatar($('profileSummaryAvatar'),p.avatar_url,p.business_name);if($('profileEmail'))$('profileEmail').textContent=state.user?.email||'Conta empresarial';if($('profileVerified')){$('profileVerified').innerHTML=p.verified?`${verifiedBadge('small')} Verificado`:(state.user?.email_confirmed_at?'✓ E-mail confirmado':'E-mail por confirmar');$('profileVerified').classList.toggle('ld-verified-name',!!p.verified)}if($('cardCategory'))$('cardCategory').textContent=p.category||'Categoria';if($('cardLocation'))$('cardLocation').textContent=p.location||'Moçambique';if($('summaryName'))$('summaryName').innerHTML=`<span class="${p.verified?'ld-verified-name':''}">${esc(p.business_name||'Meu negócio')}${p.verified?verifiedBadge('large'):''}</span>`;if($('summaryCategory'))$('summaryCategory').textContent=p.category||'Categoria';if($('summaryLocation'))$('summaryLocation').textContent=p.location||'Moçambique';if($('summaryBio'))$('summaryBio').textContent=p.bio||'Adiciona uma descrição do teu negócio.';
+const summary=$('profileSummary');
+if(summary){
+  let rep=document.getElementById('ldProfileReputation');
+  if(!rep){
+    rep=document.createElement('div');
+    rep.id='ldProfileReputation';
+    rep.className='ld-profile-reputation';
+    const bio=$('summaryBio');
+    if(bio)bio.insertAdjacentElement('afterend',rep);else summary.appendChild(rep);
+  }
+  const count=Number(p.rating_count||0),avg=Number(p.rating_avg||0),deals=Number(p.completed_deals||0);
+  rep.innerHTML=`<span>⭐ <b>${count?avg.toFixed(1):'Novo'}</b>${count?` <small>(${count} avaliação${count===1?'':'ões'})</small>`:''}</span><span>✓ <b>${deals}</b> negócio${deals===1?'':'s'} realizado${deals===1?'':'s'}</span>`;
+}if($('summaryPhone')){$('summaryPhone').textContent=p.phone||'Contacto não informado';$('summaryPhone').classList.toggle('muted',!p.phone)}const score=40+(p.category?10:0)+(p.location?10:0)+(p.phone?10:0)+(p.bio?10:0)+(p.avatar_url?10:0);$('profileScore').textContent=`Link Score ${score}`;if($('profileProgress'))$('profileProgress').style.width=`${score}%`;if($('summaryScore'))$('summaryScore').textContent=`Link Score ${score}`;injectAdminControl()}
 async function saveProfile(e){e.preventDefault();if(!requireAuth())return;const button=e.submitter;button.disabled=true;button.textContent='A guardar...';try{let avatar_url=state.profile?.avatar_url||null;const avatarFile=$('businessAvatar').files?.[0];if(avatarFile)avatar_url=await uploadImage(avatarFile);const body={business_name:$('businessName').value.trim(),account_type:$('businessAccountType')?.value||'company',category:$('businessCategory').value,location:$('businessLocation').value.trim(),phone:$('businessPhone').value.trim(),bio:$('businessBio').value.trim(),avatar_url,updated_at:new Date().toISOString()};await api('profiles',`?id=eq.${state.user.id}`,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(body)});state.profile={...state.profile,...body};state.profileEditing=false;$('businessAvatar').value='';updateAccountUI();renderProfile();toast('Perfil concluído e guardado.')}catch(err){console.error(err);toast('Não foi possível guardar o perfil.',true)}finally{button.disabled=false;button.textContent='Concluir e guardar perfil'}}
 function requireAuth(){if(state.user)return true;openAuth();toast('Entra primeiro na tua conta.');return false}
 
@@ -217,7 +244,7 @@ async function loadPublicData(){
     api('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
     api('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
     api('opportunity_comments','?select=*&order=created_at.asc&limit=5000'),
-    api('profiles','?select=id,business_name,avatar_url,verified&limit=5000')
+    api('profiles','?select=id,business_name,avatar_url,verified,rating_avg,rating_count,completed_deals&limit=5000')
   ];
   const [oppsR,adsR,likesR,commentsR,profilesR]=await Promise.allSettled(requests);
   state.opportunities=oppsR.status==='fulfilled'?(oppsR.value||[]):[];
@@ -277,7 +304,10 @@ function postSeller(o){
   const verified=p.verified
     ?` <span class="ld-post-verified">${verifiedBadge('small')}<span class="ld-post-verified-text">Verificado</span></span>`
     :'';
-  return `<div class="post-author" onclick="event.stopPropagation()">${avatar}<div class="post-author-copy"><b>${esc(name)}${verified}</b><small>${esc(o.location||'Moçambique')}</small></div></div>`;
+  const rep=[];
+  if(Number(p.rating_count)>0)rep.push(`⭐ ${Number(p.rating_avg||0).toFixed(1)}`);
+  if(Number(p.completed_deals)>0)rep.push(`✓ ${Number(p.completed_deals)} negócio${Number(p.completed_deals)===1?'':'s'}`);
+  return `<div class="post-author" onclick="event.stopPropagation()">${avatar}<div class="post-author-copy"><b>${esc(name)}${verified}</b><small>${esc(o.location||'Moçambique')}${rep.length?` · ${rep.join(' · ')}`:''}</small></div></div>`;
 }
 
 function opportunityCard(o){
@@ -382,7 +412,65 @@ async function showMessageNotification(message){const text=(message.body||'Receb
 async function pollNotifications(silent=false){if(!state.user)return;try{const seen=localStorage.getItem(seenMessagesKey())||new Date().toISOString();const checked=localStorage.getItem(checkedMessagesKey())||seen;const [unread,newItems]=await Promise.all([api('messages',`?receiver_id=eq.${state.user.id}&created_at=gt.${encodeURIComponent(seen)}&select=id&order=created_at.asc&limit=100`),api('messages',`?receiver_id=eq.${state.user.id}&created_at=gt.${encodeURIComponent(checked)}&select=id,body,created_at&order=created_at.asc&limit=20`)]);state.unreadMessages=(unread||[]).length;updateNotificationBadge();if(!silent&&newItems?.length)await showMessageNotification(newItems[newItems.length-1]);localStorage.setItem(checkedMessagesKey(),new Date().toISOString())}catch(err){console.error('notification check',err)}}
 function markMessagesSeen(){if(!state.user)return;const now=new Date().toISOString();localStorage.setItem(seenMessagesKey(),now);localStorage.setItem(checkedMessagesKey(),now);state.unreadMessages=0;updateNotificationBadge()}
 async function loadConnect(){if(!state.user){$('connectContent').innerHTML='<div class="empty">Entra na tua conta para veres propostas e conversas.</div>';return}try{state.proposals=await api('proposals',`?or=(sender_id.eq.${state.user.id},owner_id.eq.${state.user.id})&order=created_at.desc` )||[];$('pendingCount').textContent=state.proposals.filter(p=>p.status==='pending').length;$('acceptedCount').textContent=state.proposals.filter(p=>p.status==='accepted').length;$('messageCount').textContent=state.proposals.filter(p=>p.status==='accepted').length;$('connectContent').innerHTML=state.proposals.map(proposalCard).join('')||'<div class="empty">Ainda não existem propostas.</div>'}catch(err){console.error(err);$('connectContent').innerHTML='<div class="empty">Não foi possível carregar as propostas.</div>'}}
-function proposalCard(p){const incoming=p.owner_id===state.user.id;return `<article class="card"><div class="card-body"><div class="card-top"><span class="tag ${p.status==='accepted'?'green':p.status==='pending'?'yellow':''}">${p.status==='pending'?'PENDENTE':p.status==='accepted'?'ACEITE':'RECUSADA'}</span><small>${incoming?'Recebida':'Enviada'}</small></div><h3>${esc(p.opportunity_title)}</h3><p>${esc(p.message)}</p><div class="meta"><span>${esc(p.price||'Valor a combinar')}</span><span>${esc(p.deadline||'Prazo a combinar')}</span></div><div class="card-actions">${incoming&&p.status==='pending'?`<button class="btn primary" onclick="updateProposal('${p.id}','accepted')">Aceitar</button><button class="icon-btn" onclick="updateProposal('${p.id}','rejected')">×</button>`:p.status==='accepted'?`<button class="btn primary" onclick="openChat('${p.id}','${incoming?p.sender_id:p.owner_id}')">Abrir conversa</button>`:'<button class="btn secondary" disabled>A aguardar resposta</button>'}</div></div></article>`}
+
+function reviewStarsInput(selected=5){
+  return `<div class="ld-rating-stars">${[1,2,3,4,5].map(n=>`<button type="button" class="${n<=selected?'on':''}" onclick="selectReviewRating(${n})" aria-label="${n} estrela${n===1?'':'s'}">★</button>`).join('')}</div><input id="reviewRating" type="hidden" value="${selected}">`;
+}
+function selectReviewRating(n){
+  const input=$('reviewRating');if(input)input.value=String(n);
+  document.querySelectorAll('.ld-rating-stars button').forEach((b,i)=>b.classList.toggle('on',i<n));
+}
+async function completeDeal(proposalId){
+  if(!requireAuth())return;
+  const p=state.proposals.find(x=>String(x.id)===String(proposalId));
+  if(!p||p.status!=='accepted')return;
+  const isParty=p.owner_id===state.user.id||p.sender_id===state.user.id;
+  if(!isParty)return;
+  if(!confirm('Marcar este negócio como concluído?'))return;
+  try{
+    await api('proposals',`?id=eq.${proposalId}`,{method:'PATCH',body:JSON.stringify({deal_completed:true,completed_at:new Date().toISOString()})});
+    toast('Negócio concluído. Agora já podem avaliar.');
+    await loadConnect();
+    await loadProfile();
+    renderProfile();
+    loadPublicData();
+  }catch(err){console.error(err);toast('Não foi possível concluir o negócio. Executa primeiro o SQL de reputação.',true)}
+}
+function openDealReview(proposalId){
+  if(!requireAuth())return;
+  const p=state.proposals.find(x=>String(x.id)===String(proposalId));
+  if(!p||!p.deal_completed){toast('O negócio precisa estar concluído antes da avaliação.',true);return}
+  const reviewedId=p.owner_id===state.user.id?p.sender_id:p.owner_id;
+  openModal(`<div class="ld-review-head"><span>⭐</span><div><h2>Avaliar negócio</h2><p>${esc(p.opportunity_title||'Negócio concluído')}</p></div></div><form onsubmit="submitDealReview(event,'${proposalId}','${reviewedId}')"><label>Classificação${reviewStarsInput(5)}</label><label>Comentário<textarea id="reviewComment" maxlength="400" placeholder="Como foi fazer negócio com este perfil?"></textarea></label><button class="btn primary">Publicar avaliação</button><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button></form>`);
+}
+async function submitDealReview(e,proposalId,reviewedId){
+  e.preventDefault();
+  const button=e.submitter,rating=Math.max(1,Math.min(5,Number($('reviewRating')?.value||5))),comment=$('reviewComment')?.value.trim()||'';
+  button.disabled=true;button.textContent='A publicar...';
+  try{
+    await api('profile_reviews','',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({proposal_id:proposalId,reviewer_id:state.user.id,reviewed_id:reviewedId,rating,comment})});
+    closeModal();toast('Avaliação publicada. Obrigado.');
+    await loadConnect();await loadProfile();renderProfile();loadPublicData();
+  }catch(err){console.error(err);toast('Não foi possível publicar a avaliação. Executa primeiro o SQL de reputação.',true);button.disabled=false;button.textContent='Publicar avaliação'}
+}
+
+function proposalCard(p){
+  const incoming=p.owner_id===state.user.id;
+  const otherId=incoming?p.sender_id:p.owner_id;
+  const statusLabel=p.deal_completed?'NEGÓCIO CONCLUÍDO':p.status==='pending'?'PENDENTE':p.status==='accepted'?'ACEITE':'RECUSADA';
+  const tagClass=p.deal_completed||p.status==='accepted'?'green':p.status==='pending'?'yellow':'';
+  let actions='';
+  if(incoming&&p.status==='pending'){
+    actions=`<button class="btn primary" onclick="updateProposal('${p.id}','accepted')">Aceitar</button><button class="icon-btn" onclick="updateProposal('${p.id}','rejected')">×</button>`;
+  }else if(p.status==='accepted'&&!p.deal_completed){
+    actions=`<button class="btn primary" onclick="openChat('${p.id}','${otherId}')">Abrir conversa</button><button class="btn secondary" onclick="completeDeal('${p.id}')">✓ Concluir negócio</button>`;
+  }else if(p.deal_completed){
+    actions=`<button class="btn secondary" onclick="openChat('${p.id}','${otherId}')">Ver conversa</button><button class="btn primary" onclick="openDealReview('${p.id}')">⭐ Avaliar</button>`;
+  }else{
+    actions='<button class="btn secondary" disabled>A aguardar resposta</button>';
+  }
+  return `<article class="card"><div class="card-body"><div class="card-top"><span class="tag ${tagClass}">${statusLabel}</span><small>${incoming?'Recebida':'Enviada'}</small></div><h3>${esc(p.opportunity_title)}</h3><p>${esc(p.message)}</p><div class="meta"><span>${esc(p.price||'Valor a combinar')}</span><span>${esc(p.deadline||'Prazo a combinar')}</span></div><div class="card-actions">${actions}</div></div></article>`;
+}
 async function updateProposal(id,status){try{await api('proposals',`?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({status})});toast(status==='accepted'?'Proposta aceite. Chat aberto.':'Proposta recusada.');loadConnect()}catch{toast('Não foi possível atualizar.',true)}}
 async function openChat(proposalId,otherId){const proposal=state.proposals.find(p=>String(p.id)===String(proposalId));try{state.messages=await api('messages',`?proposal_id=eq.${proposalId}&order=created_at.asc`)||[];openModal(`<h2>Sala de Negócio</h2><p>${esc(proposal?.opportunity_title||'Conversa')}</p><div class="chat-note">As mensagens ficam guardadas até serem apagadas.</div><div id="chatMessages" class="chat">${renderMessages(proposalId,otherId)}</div><form onsubmit="sendMessage(event,'${proposalId}','${otherId}')"><label>Mensagem<input id="chatInput" required autocomplete="off" maxlength="2000" placeholder="Escreve uma mensagem..."></label><button class="btn primary">Enviar</button></form>`);setTimeout(()=>{const c=$('chatMessages');if(c)c.scrollTop=c.scrollHeight},0)}catch(err){console.error(err);toast('Não foi possível abrir a conversa. Executa o SQL da V14 no Supabase.',true)}}
 function messageVisibleToMe(m){if(m.deleted_for_everyone)return false;if(m.sender_id===state.user.id&&m.deleted_by_sender)return false;if(m.receiver_id===state.user.id&&m.deleted_by_receiver)return false;return true}
