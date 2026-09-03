@@ -1402,7 +1402,10 @@ function openMatchDirect(button){
   function replaceHeartIn(root){
     const cards=root.matches && isPost(root) ? [root] : [...(root.querySelectorAll?.('.card,.opportunity-card')||[])].filter(isPost);
     cards.forEach(card=>{
-      const nodes=[...card.querySelectorAll('button,a,span,div')];
+      const nodes=[...card.querySelectorAll('button,a,[role="button"]')];
+      // Segurança: nunca deixa mais de um saco MT no mesmo cartão.
+      const extras=[...card.querySelectorAll('.ld-mt-support-icon')];
+      if(extras.length>1) extras.slice(1).forEach(x=>x.remove());
       nodes.forEach(el=>{
         if(el.closest('.ld-mt-support-icon')) return;
         if(el.children.length>4) return;
@@ -1512,6 +1515,13 @@ function openMatchDirect(button){
   function scan(root=document){
     replaceHeartIn(root);
     setupViews(root);
+    const cards=root.matches && isPost(root) ? [root] : [...(root.querySelectorAll?.('.card,.opportunity-card')||[])].filter(isPost);
+    cards.forEach(card=>{
+      const icons=[...card.querySelectorAll('.ld-mt-support-icon')];
+      if(icons.length<=1) return;
+      const insideClickable=icons.find(x=>x.closest('button,a,[role="button"]'));
+      icons.forEach(x=>{ if(x!==insideClickable) x.remove(); });
+    });
   }
 
   const mo=new MutationObserver(muts=>{
