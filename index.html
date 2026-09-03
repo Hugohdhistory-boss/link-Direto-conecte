@@ -164,28 +164,80 @@
 .post-author-copy small{color:#7f918b;font-size:11px;margin-top:4px}
 </style>
 
-<style id="ld-verified-focused-v10">
-.ld-verified-inline{
-  display:inline-flex!important;
-  align-items:center!important;
-  gap:4px!important;
-  margin-left:6px!important;
-  vertical-align:middle!important;
-  white-space:nowrap!important;
+<style id="ld-top-round-actions-v1">
+/* Topo TENHO / PRECISO / MATCH em estilo circular */
+.home-hero .hero-actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;
+  align-items:start!important;
+  margin-top:18px!important;
 }
-.ld-verified-inline .ld-verified-badge{
-  width:15px!important;
-  height:15px!important;
-  min-width:15px!important;
-  min-height:15px!important;
-  margin:0!important;
+.home-hero .hero-actions .choice,
+.home-hero .hero-actions .match-choice{
+  min-height:auto!important;
   padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:6px!important;
+  text-align:center!important;
 }
-.ld-verified-inline .ld-verified-text{
-  font-size:10px!important;
+.home-hero .hero-actions .choice .hero-choice-icon,
+.home-hero .hero-actions .match-choice .hero-choice-icon{
+  position:static!important;
+  width:64px!important;
+  height:64px!important;
+  border-radius:50%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0 auto 2px!important;
+  font-size:30px!important;
   line-height:1!important;
-  font-weight:800!important;
-  color:#7fffd4!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:0 10px 22px rgba(0,0,0,.24)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.home-hero .hero-actions .choice.tenho .hero-choice-icon{
+  background:linear-gradient(180deg,#1777ff,#0e58d3)!important;
+}
+.home-hero .hero-actions .choice.preciso .hero-choice-icon{
+  background:linear-gradient(180deg,#2dcf6f,#159345)!important;
+}
+.home-hero .hero-actions .match-choice .hero-choice-icon{
+  background:linear-gradient(180deg,#6655d9,#4637ad)!important;
+}
+.home-hero .hero-actions .choice b,
+.home-hero .hero-actions .match-choice b{
+  font-size:12px!important;
+  line-height:1.05!important;
+  margin:0!important;
+  color:#fff!important;
+}
+.home-hero .hero-actions .choice small,
+.home-hero .hero-actions .match-choice small{
+  font-size:9.5px!important;
+  line-height:1.1!important;
+  margin:0!important;
+  color:rgba(255,255,255,.68)!important;
+}
+@media(max-width:390px){
+  .home-hero .hero-actions{gap:8px!important}
+  .home-hero .hero-actions .choice .hero-choice-icon,
+  .home-hero .hero-actions .match-choice .hero-choice-icon{
+    width:58px!important;height:58px!important;font-size:27px!important;
+  }
+  .home-hero .hero-actions .choice b,
+  .home-hero .hero-actions .match-choice b{font-size:11px!important}
+  .home-hero .hero-actions .choice small,
+  .home-hero .hero-actions .match-choice small{font-size:8.8px!important}
 }
 </style>
 
@@ -197,7 +249,7 @@
 <div id="app" class="app hidden">
 <header class="topbar"><div class="topbar-brand"><img class="topbar-logo" src="brand-icon-v193.png" alt=""><div><b>LINK DIRETO <span>CONNECT</span></b><small id="headerSubtitle">Oportunidades perto de ti</small><i class="black-edition">BLACK EDITION</i></div></div><div class="top-actions"><button id="notificationCenterButton" class="notification-bell" onclick="openNotificationCenter()" aria-label="Notificações">🔔<i id="notificationCenterBadge" class="nav-badge hidden">0</i></button><button id="accountButton" class="account" onclick="handleAccountClick()">Entrar</button></div></header>
 <main>
-<section id="view-home" class="view active"><div class="hero home-hero"><div class="hero-glass"><span class="eyebrow">REDE EMPRESARIAL MOÇAMBICANA</span><h2>O teu próximo negócio pode estar perto de ti.</h2><p>Publica o que tens ou precisas. O Match Direto encontra ligações compatíveis.</p></div><div class="hero-actions"><button class="choice tenho" onclick="openPublish('tenho')"><i class="hero-choice-icon" aria-hidden="true">＋</i><b>TENHO</b><small>Produto ou serviço disponível</small></button><button class="choice preciso" onclick="openPublish('preciso')"><i class="hero-choice-icon" aria-hidden="true">⌕</i><b>PRECISO</b><small>Fornecedor, cliente ou solução</small></button></div></div><div class="quick-stats"><div><b id="statOpps">0</b><span>Oportunidades</span></div><div><b id="statAds">0</b><span>Perfis</span></div><div><b>12</b><span>Categorias</span></div></div><div id="homeAd" class="ad-slot"></div><div class="section-head v16-section"><div><span class="eyebrow">PARA TI</span><h3>Escolhidas para o teu negócio</h3></div><button onclick="showView('trending')">Ver tendências</button></div><div id="forYouFeed" class="for-you-rail"><div class="loading">A preparar recomendações...</div></div><div class="section-head"><h3>Oportunidades recentes</h3><button onclick="showView('search')">Ver todas</button></div><div id="homeFeed" class="stack"><div class="loading">A carregar oportunidades...</div></div></section>
+<section id="view-home" class="view active"><div class="hero home-hero"><div class="hero-glass"><span class="eyebrow">REDE EMPRESARIAL MOÇAMBICANA</span><h2>O teu próximo negócio pode estar perto de ti.</h2><p>Publica o que tens ou precisas. O Match Direto encontra ligações compatíveis.</p></div><div class="hero-actions"><button class="choice tenho" onclick="openPublish('tenho')"><i class="hero-choice-icon" aria-hidden="true">📦</i><b>TENHO</b><small>Publicar</small></button><button class="choice preciso" onclick="openPublish('preciso')"><i class="hero-choice-icon" aria-hidden="true">🔍</i><b>PRECISO</b><small>Encontrar</small></button><button class="match-choice" type="button" onclick="openMatchDirect(this)"><i class="hero-choice-icon" aria-hidden="true">🤝</i><b>MATCH</b><small>Conectar</small></button></div></div><div class="quick-stats"><div><b id="statOpps">0</b><span>Oportunidades</span></div><div><b id="statAds">0</b><span>Perfis</span></div><div><b>12</b><span>Categorias</span></div></div><div id="homeAd" class="ad-slot"></div><div class="section-head v16-section"><div><span class="eyebrow">PARA TI</span><h3>Escolhidas para o teu negócio</h3></div><button onclick="showView('trending')">Ver tendências</button></div><div id="forYouFeed" class="for-you-rail"><div class="loading">A preparar recomendações...</div></div><div class="section-head"><h3>Oportunidades recentes</h3><button onclick="showView('search')">Ver todas</button></div><div id="homeFeed" class="stack"><div class="loading">A carregar oportunidades...</div></div></section>
 <section id="view-search" class="view"><div class="page-title visual-title"><span class="visual-icon">⌕</span><div><h2>Explorar oportunidades</h2><p>Pesquisa por necessidade, categoria ou localização.</p></div></div><div class="category-rail"><button onclick="quickCategory('Agricultura')">🌱 Agricultura</button><button onclick="quickCategory('Alimentação')">🍲 Alimentação</button><button onclick="quickCategory('Construção')">🏗 Construção</button><button onclick="quickCategory('Tecnologia')">💻 Tecnologia</button><button onclick="quickCategory('Transporte')">🚚 Transporte</button></div><div class="filters"><input id="searchText" placeholder="Pesquisar..." oninput="renderSearch()"><select id="searchType" onchange="renderSearch()"><option value="">TENHO e PRECISO</option><option value="tenho">TENHO</option><option value="preciso">PRECISO</option></select><select id="searchCategory" onchange="renderSearch()"><option value="">Todas categorias</option></select></div><div id="searchFeed" class="stack"></div></section>
 <section id="view-publish" class="view"><div class="page-title visual-title"><span class="visual-icon green">＋</span><div><h2>Nova publicação</h2><p>Cria uma oportunidade clara e fácil de encontrar.</p></div></div><div class="publish-steps"><span class="done">1 Tipo</span><span>2 Detalhes</span><span>3 Publicar</span></div><div id="publishPreview" class="publish-preview"><small>PRÉ-VISUALIZAÇÃO</small><b>O teu anúncio aparecerá aqui</b><span>Adiciona título, categoria e localização.</span></div><form id="publishForm" class="panel" onsubmit="submitOpportunity(event)"><div class="segmented"><label><input type="radio" name="ptype" value="tenho" checked onchange="updatePublishPreview()"><span>TENHO</span></label><label><input type="radio" name="ptype" value="preciso" onchange="updatePublishPreview()"><span>PRECISO</span></label></div><label>Título<input id="pTitle" required maxlength="100" placeholder="Ex.: Hortícolas disponíveis" oninput="updatePublishPreview()"></label><label>Categoria<select id="pCategory" required onchange="updatePublishPreview()"></select></label><label>Descrição<textarea id="pDescription" required maxlength="700" placeholder="Quantidade, prazo e condições..."></textarea></label><label>Preço / orçamento (MZN)<input id="pPrice" type="number" min="0" step="1" inputmode="decimal" placeholder="Ex.: 25 000" oninput="updatePublishPreview()"><small class="field-hint">Opcional. Em PRECISO, pode ser o orçamento disponível.</small></label><label>Localização<input id="pLocation" required placeholder="Bairro / Cidade" oninput="updatePublishPreview()"></label><label>Fotos ou vídeo<input id="pMedia" type="file" multiple accept="image/*,video/mp4,video/webm,video/quicktime" onchange="previewOpportunityMedia(event)"><small id="mediaHint" class="field-hint">Até 8 fotos + 1 vídeo de até 60 segundos.</small></label><button class="btn primary" type="submit">Publicar agora</button></form></section>
 <section id="view-connect" class="view"><div class="connect-showcase"><div class="match-orbit"><b>92%</b><span>Match</span></div><div><span class="eyebrow">MATCH DIRETO</span><h2>Conexões que fazem sentido.</h2><p>As propostas mais compatíveis chegam primeiro.</p></div></div><div id="notificationPanel" class="notification-panel hidden"><div><b>🔔 Alertas de conversa</b><small>Recebe avisos quando chegar uma mensagem nova.</small></div><button id="notificationButton" onclick="enableNotifications()">Ativar</button></div><div class="metric-grid"><div class="metric"><b id="pendingCount">0</b><span>Pendentes</span></div><div class="metric"><b id="acceptedCount">0</b><span>Aceites</span></div><div class="metric"><b id="messageCount">0</b><span>Conversas</span></div></div><div id="connectContent" class="stack"><div class="empty">Entra na tua conta para veres propostas e conversas.</div></div></section>
@@ -394,95 +446,4 @@ function openMatchDirect(button){
 })();
 </script>
 
-<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
-<script id="ld-verified-focused-v10">
-(function(){
-  function norm(v){return String(v||'').trim().toLowerCase();}
-  function isVerifiedCurrent(){
-    try{
-      const u = (window.currentUser || window.user || null);
-      const email = norm(u && u.email);
-      if(window.LinkDiretoVerify && typeof window.LinkDiretoVerify.isVerified==='function' && email){
-        return !!window.LinkDiretoVerify.isVerified(email);
-      }
-      const raw = localStorage.getItem('verifiedUsers') || localStorage.getItem('verified_emails') || '';
-      return email && raw.toLowerCase().includes(email);
-    }catch(e){ return false; }
-  }
-  function currentProfileName(){
-    const candidates = [
-      document.getElementById('summaryName'),
-      document.getElementById('profileName'),
-      document.querySelector('[data-current-profile-name]')
-    ].filter(Boolean);
-    for(const el of candidates){
-      const t = norm(el.childNodes && el.childNodes[0] ? el.childNodes[0].textContent : el.textContent);
-      if(t) return t;
-    }
-    try{
-      const p = JSON.parse(localStorage.getItem('profile')||'null');
-      if(p && p.name) return norm(p.name);
-    }catch(e){}
-    return '';
-  }
-  function plainName(el){
-    if(!el) return '';
-    const clone = el.cloneNode(true);
-    clone.querySelectorAll('.ld-verified-inline,.ld-verified-badge,.ld-verified-text').forEach(x=>x.remove());
-    return norm(clone.textContent);
-  }
-  function addInline(el){
-    if(!el || el.querySelector(':scope > .ld-verified-inline')) return;
-    const wrap=document.createElement('span');
-    wrap.className='ld-verified-inline';
-
-    const badge=document.createElement('span');
-    badge.className='ld-verified-badge small';
-    badge.title='Conta verificada no Link Direto Connect';
-    badge.setAttribute('aria-label','Conta verificada');
-
-    const text=document.createElement('span');
-    text.className='ld-verified-text';
-    text.textContent='Verificado';
-
-    wrap.appendChild(badge);
-    wrap.appendChild(text);
-    el.appendChild(wrap);
-  }
-  function run(){
-    if(!isVerifiedCurrent()) return;
-    const pname=currentProfileName();
-    if(!pname) return;
-
-    const sels = [
-      '.post-author-copy b',
-      '.post-author-copy strong',
-      '.card-author b',
-      '.card-author strong',
-      '.opportunity-card b',
-      '.opportunity-card strong',
-      '.profile-name',
-      '.user-name',
-      '.author-name',
-      '[data-profile-name]',
-      '[data-author-name]'
-    ];
-
-    document.querySelectorAll(sels.join(',')).forEach(el=>{
-      if(plainName(el)===pname) addInline(el);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded',()=>{
-    run();
-    setTimeout(run,300);
-    setTimeout(run,900);
-    setTimeout(run,1800);
-  });
-  window.addEventListener('load',run);
-  window.addEventListener('pageshow',run);
-  new MutationObserver(()=>run()).observe(document.documentElement,{childList:true,subtree:true});
-})();
-</script>
-
-</body></html>
+<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script></body></html>
