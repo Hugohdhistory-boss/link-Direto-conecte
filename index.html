@@ -596,86 +596,103 @@ function openMatchDirect(button){
 </script>
 
 <script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
-<style id="photo-scroll-click-v34">
-/* V34: efeito visual direto nas fotografias grandes do feed. */
-.ld-photo-auto-pressed{transform-origin:center center!important;will-change:transform,filter!important;}
+
+
+<style id="photo-center-highlight-v35">
+/* V35: publicação com foto ganha profundidade quando ocupa o centro do ecrã. */
+.ld-center-media{
+  transition:transform .32s cubic-bezier(.2,.75,.25,1),
+             filter .32s ease,
+             box-shadow .32s ease,
+             opacity .32s ease!important;
+  transform-origin:center center!important;
+  will-change:transform,filter!important;
+}
+.ld-center-media.ld-center-active{
+  transform:scale(1.018)!important;
+  filter:brightness(1.055) contrast(1.025)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.18)!important;
+  position:relative;
+  z-index:2;
+}
+@media (prefers-reduced-motion:reduce){
+  .ld-center-media{transition:filter .18s ease!important}
+  .ld-center-media.ld-center-active{transform:none!important}
+}
 </style>
-<script id="photo-scroll-click-v34">
+<script id="photo-center-highlight-v35">
 (function(){
-  const state=new WeakMap();
-  let ticking=false, stopTimer=0;
-  const CENTER_TOP=.22, CENTER_BOTTOM=.78;
+  let current=null;
+  let ticking=false;
 
-  function isCandidate(img){
-    if(!img || img.tagName!=='IMG') return false;
-    const r=img.getBoundingClientRect();
-    if(r.width < 180 || r.height < 120) return false; // ignora avatar, logo, ícones
-    if(r.bottom <= 0 || r.top >= innerHeight) return false;
-    const cs=getComputedStyle(img);
-    if(cs.display==='none' || cs.visibility==='hidden' || Number(cs.opacity)===0) return false;
-    if(img.closest('header,.bottom-nav,.modal,.auth-modal,.hero-actions,.business-card,.profile-summary,.discover-grid,.jobs-feed')) return false;
-    return true;
+  function visible(el){
+    if(!el || !el.getBoundingClientRect) return false;
+    const r=el.getBoundingClientRect();
+    if(r.width<170 || r.height<115) return false;
+    if(r.bottom<=0 || r.top>=innerHeight) return false;
+    const cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && Number(cs.opacity)!==0;
   }
 
-  function score(img){
-    const r=img.getBoundingClientRect();
-    const viewportCenter=innerHeight*.5;
-    const imageCenter=(r.top+r.bottom)/2;
-    const visible=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0));
-    const ratio=visible/Math.max(1,r.height);
-    if(r.bottom < innerHeight*CENTER_TOP || r.top > innerHeight*CENTER_BOTTOM) return -1;
-    return ratio*1000-Math.abs(imageCenter-viewportCenter);
+  function mediaFromCard(card){
+    if(!card) return null;
+    return card.querySelector('.card-media img,.card-media video,.card-media-wrap img,.card-media-wrap video,.card-media,[data-media] img,[data-media] video,img:not(.avatar):not(.topbar-logo),video');
   }
 
-  function pulse(img){
-    const now=performance.now();
-    const prev=state.get(img)||0;
-    if(now-prev<1100) return;
-    state.set(img,now);
-    img.classList.add('ld-photo-auto-pressed');
-    // Web Animations API: independe das classes/estilos já existentes no app.
-    try{
-      img.animate([
-        {transform:'scale(1)',filter:'brightness(1)'},
-        {transform:'scale(.965)',filter:'brightness(.90)',offset:.30},
-        {transform:'scale(1.025)',filter:'brightness(1.07)',offset:.62},
-        {transform:'scale(1)',filter:'brightness(1)'}
-      ],{duration:440,easing:'cubic-bezier(.22,.8,.25,1)'});
-    }catch(e){
-      img.style.transition='transform .16s ease,filter .16s ease';
-      img.style.transform='scale(.965)'; img.style.filter='brightness(.9)';
-      setTimeout(()=>{img.style.transform='scale(1.02)';img.style.filter='brightness(1.05)';},140);
-      setTimeout(()=>{img.style.transform='scale(1)';img.style.filter='brightness(1)';},300);
+  function candidates(){
+    const cards=[...document.querySelectorAll('#homeFeed .card,#forYouFeed .card,.feed .card,.stack .card,.opportunity-card')];
+    const found=[];
+    cards.forEach(card=>{
+      const m=mediaFromCard(card);
+      if(m && visible(m)) found.push(m);
+    });
+    // fallback para feeds cuja publicação não usa .card
+    if(!found.length){
+      document.querySelectorAll('#homeFeed img,#homeFeed video,#forYouFeed img,#forYouFeed video').forEach(m=>{
+        if(visible(m)) found.push(m);
+      });
+    }
+    return [...new Set(found)];
+  }
+
+  function choose(){
+    ticking=false;
+    const center=innerHeight*.5;
+    let best=null, bestScore=Infinity;
+    candidates().forEach(el=>{
+      const r=el.getBoundingClientRect();
+      const mid=(r.top+r.bottom)/2;
+      const visiblePx=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0));
+      const ratio=visiblePx/Math.max(1,r.height);
+      if(ratio<.36) return;
+      const score=Math.abs(mid-center) - ratio*90;
+      if(score<bestScore){bestScore=score;best=el;}
+    });
+
+    if(current!==best){
+      if(current) current.classList.remove('ld-center-active');
+      current=best;
+      if(current){
+        current.classList.add('ld-center-media');
+        // força o browser a reconhecer o estado-base antes do destaque
+        requestAnimationFrame(()=>current && current.classList.add('ld-center-active'));
+      }
     }
   }
 
-  function check(){
-    ticking=false;
-    let best=null,bestScore=-1;
-    document.querySelectorAll('img').forEach(img=>{
-      if(!isCandidate(img)) return;
-      const s=score(img);
-      if(s>bestScore){bestScore=s;best=img;}
-    });
-    if(best) pulse(best);
-  }
-
   function schedule(){
-    if(!ticking){ticking=true;requestAnimationFrame(check);}
-    clearTimeout(stopTimer);
-    stopTimer=setTimeout(check,90); // também dispara quando o dedo pára de rolar
+    if(!ticking){ticking=true;requestAnimationFrame(choose);}
   }
 
   addEventListener('scroll',schedule,{passive:true});
   addEventListener('touchmove',schedule,{passive:true});
-  addEventListener('touchend',()=>setTimeout(check,40),{passive:true});
+  addEventListener('touchend',schedule,{passive:true});
   addEventListener('resize',schedule,{passive:true});
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(check,350));
-
-  // Posts podem chegar depois do Supabase: verifica quando novas imagens entram no DOM.
-  const mo=new MutationObserver(()=>schedule());
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(choose,450));
+  const mo=new MutationObserver(schedule);
   mo.observe(document.documentElement,{childList:true,subtree:true});
-  window.LinkDiretoPhotoPulse={check,pulse};
+
+  window.LinkDiretoCenterHighlight={refresh:choose};
 })();
 </script>
 </body></html>
