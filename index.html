@@ -127,43 +127,6 @@
 .ld-verified-badge.large{width:22px!important;height:22px!important;min-width:22px!important;}
 </style>
 
-<style id="link-direto-verificado-texto-v31">
-/* V31: selo + texto "Verificado" ao lado do nome */
-.ld-verified-label{
-  display:inline-block!important;
-  font-size:10px!important;
-  font-weight:800!important;
-  letter-spacing:.1px!important;
-  color:#7fffd4!important;
-  white-space:nowrap!important;
-  vertical-align:middle!important;
-}
-.post-author-copy b.ld-verified-name,
-.profile-name.ld-verified-name,
-.user-name.ld-verified-name,
-.author-name.ld-verified-name,
-.discover-name.ld-verified-name,
-.job-company.ld-verified-name{
-  display:flex!important;
-  align-items:center!important;
-  min-width:0!important;
-}
-.ld-manage-compact{
-  width:auto!important;
-  min-width:0!important;
-  min-height:30px!important;
-  padding:5px 9px!important;
-  border-radius:999px!important;
-  font-size:10px!important;
-  font-weight:800!important;
-  line-height:1!important;
-  opacity:.78!important;
-}
-.ld-isolated-star{
-  display:none!important;
-}
-</style>
-
 <style id="post-detail-gallery-v30">
 /* V30: posts clicáveis + galeria de várias fotos */
 .card.opportunity-clickable{cursor:pointer}
@@ -200,6 +163,32 @@
 .post-author-copy b{color:#f5f7f6;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .post-author-copy small{color:#7f918b;font-size:11px;margin-top:4px}
 </style>
+
+<style id="ld-verified-focused-v10">
+.ld-verified-inline{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  margin-left:6px!important;
+  vertical-align:middle!important;
+  white-space:nowrap!important;
+}
+.ld-verified-inline .ld-verified-badge{
+  width:15px!important;
+  height:15px!important;
+  min-width:15px!important;
+  min-height:15px!important;
+  margin:0!important;
+  padding:0!important;
+}
+.ld-verified-inline .ld-verified-text{
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  color:#7fffd4!important;
+}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -405,67 +394,95 @@ function openMatchDirect(button){
 })();
 </script>
 
-<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el) return;\n    el.classList.add('ld-verified-name');\n    if(!el.querySelector(':scope > .ld-verified-badge')){\n      const b=document.createElement('span');\n      b.className='ld-verified-badge'+(size?' '+size:'');\n      b.title='Conta verificada no Link Direto Connect';\n      b.setAttribute('aria-label','Conta verificada');\n      el.appendChild(b);\n    }\n    if(!el.querySelector(':scope > .ld-verified-label')){\n      const t=document.createElement('span');\n      t.className='ld-verified-label';\n      t.textContent='Verificado';\n      el.appendChild(t);\n    }\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge,:scope > .ld-verified-label').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    verifyOwnRenderedPosts(root);\n    tidyPostControls(root);\n  }\n  function tidyPostControls(root=document){
-    if(!root.querySelectorAll) return;
-    root.querySelectorAll('button').forEach(btn=>{
-      const txt=String(btn.textContent||'').trim();
-      if(/^Gerir$/i.test(txt)){
-        btn.classList.add('ld-manage-compact');
-        btn.setAttribute('aria-label','Gerir publicação');
-        btn.title='Gerir publicação';
-      }
-      if(txt==='★' || txt==='☆'){
-        const actionParent=btn.closest('.post-actions,.card-actions,.opportunity-actions,.actions,.social-actions');
-        if(!actionParent) btn.classList.add('ld-isolated-star');
-      }
-    });
-  }
-
-  function verifyOwnRenderedPosts(root=document){
-    const email=currentEmail();
-    if(!email || !isVerified(email)) return;
-    const profileName=(document.getElementById('summaryName')?.childNodes?.[0]?.textContent ||
-                       document.getElementById('profileName')?.childNodes?.[0]?.textContent || '').trim().toLowerCase();
-    if(!profileName || !root.querySelectorAll) return;
-    root.querySelectorAll('.post-author-copy b,[data-profile-name],.profile-name,.user-name,.author-name').forEach(name=>{
-      const raw=[...name.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim().toLowerCase()
-                || String(name.textContent||'').replace(/Verificado/ig,'').trim().toLowerCase();
-      if(raw===profileName) addBadge(name,'small');
-    });
-  }
-
-  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n
-<style id="ld-v32-final-fixes">
-/* Remove the loose blue star pill shown below cards. */
-.ld-hide-loose-star{display:none!important;}
-/* Keep verified text compact on mobile. */
-.ld-verified-name{flex-wrap:nowrap!important;}
-.ld-verified-label{margin-left:1px!important;}
-</style>
-<script id="ld-v32-final-fixes">
+<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
+<script id="ld-verified-focused-v10">
 (function(){
-  function cleanLooseStars(root=document){
-    if(!root.querySelectorAll) return;
-    root.querySelectorAll('button,[role="button"],.btn,.chip,.pill').forEach(el=>{
-      const t=String(el.textContent||'').trim();
-      if(t==='★' || t==='☆') el.classList.add('ld-hide-loose-star');
+  function norm(v){return String(v||'').trim().toLowerCase();}
+  function isVerifiedCurrent(){
+    try{
+      const u = (window.currentUser || window.user || null);
+      const email = norm(u && u.email);
+      if(window.LinkDiretoVerify && typeof window.LinkDiretoVerify.isVerified==='function' && email){
+        return !!window.LinkDiretoVerify.isVerified(email);
+      }
+      const raw = localStorage.getItem('verifiedUsers') || localStorage.getItem('verified_emails') || '';
+      return email && raw.toLowerCase().includes(email);
+    }catch(e){ return false; }
+  }
+  function currentProfileName(){
+    const candidates = [
+      document.getElementById('summaryName'),
+      document.getElementById('profileName'),
+      document.querySelector('[data-current-profile-name]')
+    ].filter(Boolean);
+    for(const el of candidates){
+      const t = norm(el.childNodes && el.childNodes[0] ? el.childNodes[0].textContent : el.textContent);
+      if(t) return t;
+    }
+    try{
+      const p = JSON.parse(localStorage.getItem('profile')||'null');
+      if(p && p.name) return norm(p.name);
+    }catch(e){}
+    return '';
+  }
+  function plainName(el){
+    if(!el) return '';
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('.ld-verified-inline,.ld-verified-badge,.ld-verified-text').forEach(x=>x.remove());
+    return norm(clone.textContent);
+  }
+  function addInline(el){
+    if(!el || el.querySelector(':scope > .ld-verified-inline')) return;
+    const wrap=document.createElement('span');
+    wrap.className='ld-verified-inline';
+
+    const badge=document.createElement('span');
+    badge.className='ld-verified-badge small';
+    badge.title='Conta verificada no Link Direto Connect';
+    badge.setAttribute('aria-label','Conta verificada');
+
+    const text=document.createElement('span');
+    text.className='ld-verified-text';
+    text.textContent='Verificado';
+
+    wrap.appendChild(badge);
+    wrap.appendChild(text);
+    el.appendChild(wrap);
+  }
+  function run(){
+    if(!isVerifiedCurrent()) return;
+    const pname=currentProfileName();
+    if(!pname) return;
+
+    const sels = [
+      '.post-author-copy b',
+      '.post-author-copy strong',
+      '.card-author b',
+      '.card-author strong',
+      '.opportunity-card b',
+      '.opportunity-card strong',
+      '.profile-name',
+      '.user-name',
+      '.author-name',
+      '[data-profile-name]',
+      '[data-author-name]'
+    ];
+
+    document.querySelectorAll(sels.join(',')).forEach(el=>{
+      if(plainName(el)===pname) addInline(el);
     });
   }
-  function refreshAll(){
-    try{ window.LinkDiretoVerify && window.LinkDiretoVerify.refresh(); }catch(e){}
-    cleanLooseStars(document);
-  }
+
   document.addEventListener('DOMContentLoaded',()=>{
-    refreshAll();
-    setTimeout(refreshAll,400);
-    setTimeout(refreshAll,1200);
+    run();
+    setTimeout(run,300);
+    setTimeout(run,900);
+    setTimeout(run,1800);
   });
-  const obs=new MutationObserver(()=>refreshAll());
-  window.addEventListener('load',()=>{
-    if(document.body) obs.observe(document.body,{childList:true,subtree:true,characterData:true});
-  });
-  window.addEventListener('pageshow',refreshAll);
+  window.addEventListener('load',run);
+  window.addEventListener('pageshow',run);
+  new MutationObserver(()=>run()).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 
-<script src="ai-ads.js"></script></body></html>
+</body></html>
