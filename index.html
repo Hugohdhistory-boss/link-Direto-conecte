@@ -128,28 +128,25 @@
 </style>
 
 
-<style id="photo-scroll-click-v32">
-/* V32: efeito de toque automático nas fotos do feed ao entrar na zona principal do ecrã. */
-#view-home .card-media-wrap img,
-#view-home .card-media img{
+<style id="photo-scroll-click-v33">
+/* V33: efeito de toque visível quando a foto do post cruza o centro do ecrã. */
+#view-home #homeFeed img.ld-feed-photo,
+#view-home #forYouFeed img.ld-feed-photo{
   transform:translateZ(0) scale(1);
   transform-origin:center center;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
+  will-change:transform,filter,box-shadow;
 }
-#view-home .card-media-wrap img.ld-scroll-click,
-#view-home .card-media img.ld-scroll-click{
-  animation:ldPhotoScrollClick .38s cubic-bezier(.22,.8,.3,1);
+#view-home #homeFeed img.ld-feed-photo.ld-scroll-click,
+#view-home #forYouFeed img.ld-feed-photo.ld-scroll-click{
+  animation:ldPhotoScrollClickV33 .62s cubic-bezier(.2,.82,.3,1) !important;
 }
-@keyframes ldPhotoScrollClick{
-  0%{transform:translateZ(0) scale(1);filter:brightness(1)}
-  32%{transform:translateZ(0) scale(.975);filter:brightness(.94)}
-  68%{transform:translateZ(0) scale(1.012);filter:brightness(1.035)}
-  100%{transform:translateZ(0) scale(1);filter:brightness(1)}
-}
-@media (prefers-reduced-motion:reduce){
-  #view-home .card-media-wrap img.ld-scroll-click,
-  #view-home .card-media img.ld-scroll-click{animation:none!important}
+@keyframes ldPhotoScrollClickV33{
+  0%{transform:translateZ(0) scale(1);filter:brightness(1);box-shadow:0 0 0 rgba(0,0,0,0)}
+  28%{transform:translateZ(0) scale(.94);filter:brightness(.88);box-shadow:0 8px 28px rgba(0,0,0,.34)}
+  62%{transform:translateZ(0) scale(1.028);filter:brightness(1.06);box-shadow:0 5px 20px rgba(0,0,0,.22)}
+  100%{transform:translateZ(0) scale(1);filter:brightness(1);box-shadow:0 0 0 rgba(0,0,0,0)}
 }
 </style>
 
@@ -567,56 +564,62 @@ function openMoreMenu(){
 </script>
 
 
-<script id="photo-scroll-click-v32">
+<script id="photo-scroll-click-v33">
 (function(){
-  const state=new WeakMap();
-  let observer;
+  const armed=new WeakMap();
+  let ticking=false;
 
-  function isFeedPhoto(img){
-    if(!img || img.tagName!=="IMG") return false;
-    if(!img.closest("#view-home")) return false;
-    if(img.closest(".post-detail, .post-detail-thumbs, .post-author")) return false;
-    return !!img.closest(".card-media, .card-media-wrap");
+  function candidates(){
+    return Array.from(document.querySelectorAll('#view-home #homeFeed img, #view-home #forYouFeed img')).filter(img=>{
+      if(img.closest('.avatar,.post-author,.profile-heading,.summary-identity,.topbar-brand')) return false;
+      const r=img.getBoundingClientRect();
+      return r.width>=140 && r.height>=100;
+    });
   }
 
   function pulse(img){
-    img.classList.remove("ld-scroll-click");
+    img.classList.add('ld-feed-photo');
+    img.classList.remove('ld-scroll-click');
     void img.offsetWidth;
-    img.classList.add("ld-scroll-click");
-    window.setTimeout(()=>img.classList.remove("ld-scroll-click"),430);
+    img.classList.add('ld-scroll-click');
+    setTimeout(()=>img.classList.remove('ld-scroll-click'),680);
   }
 
-  function prepare(img){
-    if(!isFeedPhoto(img) || state.has(img)) return;
-    state.set(img,{armed:true});
-    observer.observe(img);
-  }
-
-  observer=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      const img=entry.target;
-      const s=state.get(img);
-      if(!s) return;
-      if(entry.isIntersecting && entry.intersectionRatio>=0.72){
-        if(s.armed){
-          s.armed=false;
-          pulse(img);
-        }
-      }else if(!entry.isIntersecting || entry.intersectionRatio<0.18){
-        s.armed=true;
+  function check(){
+    ticking=false;
+    const vh=window.innerHeight || document.documentElement.clientHeight;
+    const center=vh*.53;
+    const zone=Math.max(65, vh*.09);
+    candidates().forEach(img=>{
+      const r=img.getBoundingClientRect();
+      const mid=r.top+r.height/2;
+      const visible=r.bottom>0 && r.top<vh;
+      const nearCenter=visible && Math.abs(mid-center)<=zone;
+      const was=armed.get(img) || false;
+      if(nearCenter && !was){
+        armed.set(img,true);
+        pulse(img);
+      }else if(!nearCenter && Math.abs(mid-center)>zone*1.8){
+        armed.set(img,false);
       }
     });
-  },{threshold:[0,.18,.5,.72,1],rootMargin:"-8% 0px -8% 0px"});
-
-  function scan(root=document){
-    if(root.matches && root.matches("img")) prepare(root);
-    if(root.querySelectorAll) root.querySelectorAll("#view-home .card-media img, #view-home .card-media-wrap img").forEach(prepare);
   }
 
-  document.addEventListener("DOMContentLoaded",()=>scan(document));
-  const mo=new MutationObserver(muts=>muts.forEach(m=>m.addedNodes.forEach(n=>{
-    if(n.nodeType===1) scan(n);
-  })));
+  function requestCheck(){
+    if(!ticking){
+      ticking=true;
+      requestAnimationFrame(check);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{ setTimeout(check,250); });
+  window.addEventListener('load',check);
+  window.addEventListener('pageshow',()=>setTimeout(check,120));
+  window.addEventListener('scroll',requestCheck,{passive:true});
+  window.addEventListener('touchmove',requestCheck,{passive:true});
+  window.addEventListener('resize',requestCheck,{passive:true});
+
+  const mo=new MutationObserver(()=>requestCheck());
   mo.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
