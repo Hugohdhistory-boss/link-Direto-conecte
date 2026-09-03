@@ -127,6 +127,32 @@
 .ld-verified-badge.large{width:22px!important;height:22px!important;min-width:22px!important;}
 </style>
 
+
+<style id="photo-scroll-click-v32">
+/* V32: efeito de toque automático nas fotos do feed ao entrar na zona principal do ecrã. */
+#view-home .card-media-wrap img,
+#view-home .card-media img{
+  transform:translateZ(0) scale(1);
+  transform-origin:center center;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+#view-home .card-media-wrap img.ld-scroll-click,
+#view-home .card-media img.ld-scroll-click{
+  animation:ldPhotoScrollClick .38s cubic-bezier(.22,.8,.3,1);
+}
+@keyframes ldPhotoScrollClick{
+  0%{transform:translateZ(0) scale(1);filter:brightness(1)}
+  32%{transform:translateZ(0) scale(.975);filter:brightness(.94)}
+  68%{transform:translateZ(0) scale(1.012);filter:brightness(1.035)}
+  100%{transform:translateZ(0) scale(1);filter:brightness(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  #view-home .card-media-wrap img.ld-scroll-click,
+  #view-home .card-media img.ld-scroll-click{animation:none!important}
+}
+</style>
+
 <style id="post-detail-gallery-v30">
 /* V30: posts clicáveis + galeria de várias fotos */
 .card.opportunity-clickable{cursor:pointer}
@@ -537,6 +563,61 @@ function openMoreMenu(){
   const mo=new MutationObserver(muts=>muts.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1) scan(n);})));
   mo.observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden) document.querySelectorAll('video').forEach(v=>v.pause());});
+})();
+</script>
+
+
+<script id="photo-scroll-click-v32">
+(function(){
+  const state=new WeakMap();
+  let observer;
+
+  function isFeedPhoto(img){
+    if(!img || img.tagName!=="IMG") return false;
+    if(!img.closest("#view-home")) return false;
+    if(img.closest(".post-detail, .post-detail-thumbs, .post-author")) return false;
+    return !!img.closest(".card-media, .card-media-wrap");
+  }
+
+  function pulse(img){
+    img.classList.remove("ld-scroll-click");
+    void img.offsetWidth;
+    img.classList.add("ld-scroll-click");
+    window.setTimeout(()=>img.classList.remove("ld-scroll-click"),430);
+  }
+
+  function prepare(img){
+    if(!isFeedPhoto(img) || state.has(img)) return;
+    state.set(img,{armed:true});
+    observer.observe(img);
+  }
+
+  observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const img=entry.target;
+      const s=state.get(img);
+      if(!s) return;
+      if(entry.isIntersecting && entry.intersectionRatio>=0.72){
+        if(s.armed){
+          s.armed=false;
+          pulse(img);
+        }
+      }else if(!entry.isIntersecting || entry.intersectionRatio<0.18){
+        s.armed=true;
+      }
+    });
+  },{threshold:[0,.18,.5,.72,1],rootMargin:"-8% 0px -8% 0px"});
+
+  function scan(root=document){
+    if(root.matches && root.matches("img")) prepare(root);
+    if(root.querySelectorAll) root.querySelectorAll("#view-home .card-media img, #view-home .card-media-wrap img").forEach(prepare);
+  }
+
+  document.addEventListener("DOMContentLoaded",()=>scan(document));
+  const mo=new MutationObserver(muts=>muts.forEach(m=>m.addedNodes.forEach(n=>{
+    if(n.nodeType===1) scan(n);
+  })));
+  mo.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 
