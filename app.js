@@ -187,6 +187,20 @@ async function setProfileVerifiedAdmin(profileId,newVerified){
 })();
 
 
+
+(function addPostVerifiedStyles(){
+  if(document.getElementById('ld-post-verified-styles'))return;
+  const st=document.createElement('style');
+  st.id='ld-post-verified-styles';
+  st.textContent=`
+    .post-author-copy b{display:flex;align-items:center;gap:5px;min-width:0}
+    .ld-post-verified{display:inline-flex;align-items:center;gap:3px;flex:none}
+    .ld-post-verified .ld-verified-badge{margin:0!important}
+    .ld-post-verified-text{font-size:10px;font-weight:800;color:#7fffd4;white-space:nowrap}
+  `;
+  document.head.appendChild(st);
+})();
+
 async function loadProfile(){if(!state.user)return;try{const d=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=d?.[0]||null;if(!state.profile){await api('profiles','',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({id:state.user.id,business_name:state.user.user_metadata?.business_name||'Meu negócio',account_type:'company'})});const p=await api('profiles',`?id=eq.${state.user.id}&select=*`);state.profile=p?.[0]}}catch(err){console.error(err)}}
 function setAvatar(element,url,name='LD'){if(!element)return;const initials=(name||'LD').split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();element.textContent=initials;if(url){element.style.backgroundImage=`url("${String(url).replace(/["\\]/g,'')}")`;element.classList.add('has-image')}else{element.style.backgroundImage='';element.classList.remove('has-image')}}
 function previewBusinessAvatar(e){const file=e.target.files?.[0];if(!file)return;if(file.size>5*1024*1024){toast('A imagem deve ter menos de 5 MB.',true);e.target.value='';return}setAvatar($('profileAvatar'),URL.createObjectURL(file),$('businessName').value)}
@@ -203,7 +217,7 @@ async function loadPublicData(){
     api('advertisements','?select=*&status=eq.active&order=created_at.desc&limit=20'),
     api('opportunity_likes','?select=user_id,opportunity_id&limit=5000'),
     api('opportunity_comments','?select=*&order=created_at.asc&limit=5000'),
-    api('profiles','?select=id,business_name,avatar_url&limit=5000')
+    api('profiles','?select=id,business_name,avatar_url,verified&limit=5000')
   ];
   const [oppsR,adsR,likesR,commentsR,profilesR]=await Promise.allSettled(requests);
   state.opportunities=oppsR.status==='fulfilled'?(oppsR.value||[]):[];
@@ -260,7 +274,10 @@ function postSeller(o){
   const avatar=p.avatar_url
     ?`<span class="post-author-avatar has-photo" style="background-image:url('${esc(String(p.avatar_url).replace(/'/g,'%27'))}')"></span>`
     :`<span class="post-author-avatar">${esc(initials)}</span>`;
-  return `<div class="post-author" onclick="event.stopPropagation()">${avatar}<div class="post-author-copy"><b>${esc(name)}</b><small>${esc(o.location||'Moçambique')}</small></div></div>`;
+  const verified=p.verified
+    ?` <span class="ld-post-verified">${verifiedBadge('small')}<span class="ld-post-verified-text">Verificado</span></span>`
+    :'';
+  return `<div class="post-author" onclick="event.stopPropagation()">${avatar}<div class="post-author-copy"><b>${esc(name)}${verified}</b><small>${esc(o.location||'Moçambique')}</small></div></div>`;
 }
 
 function opportunityCard(o){
