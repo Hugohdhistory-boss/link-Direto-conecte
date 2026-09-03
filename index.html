@@ -695,4 +695,149 @@ function openMatchDirect(button){
   window.LinkDiretoCenterHighlight={refresh:choose};
 })();
 </script>
+
+
+<style id="conexao-direta-v36">
+:root{--ld-electric:#d7ff39;--ld-ink:#07110c}
+.ld-smart-strip{margin:14px 16px 8px;padding:15px;border-radius:20px;background:linear-gradient(135deg,#0a1710,#10251a);color:#fff;border:1px solid rgba(215,255,57,.18);box-shadow:0 14px 34px rgba(0,0,0,.16);position:relative;overflow:hidden}
+.ld-smart-strip:after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(215,255,57,.08);right:-42px;top:-48px}
+.ld-smart-strip .ld-smart-kicker{font-size:10px;font-weight:900;letter-spacing:.11em;color:var(--ld-electric);text-transform:uppercase}
+.ld-smart-strip h3{margin:5px 0 5px;font-size:18px;line-height:1.1}
+.ld-smart-strip p{margin:0;color:rgba(255,255,255,.72);font-size:12px;max-width:78%}
+.ld-smart-strip .ld-smart-row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.ld-smart-strip button{border:0;border-radius:999px;padding:9px 12px;font-weight:900;font-size:11px;cursor:pointer}
+.ld-smart-strip .primary{background:var(--ld-electric);color:#07110c}
+.ld-smart-strip .ghost{background:rgba(255,255,255,.09);color:#fff}
+.ld-smart-count{position:absolute;right:15px;bottom:16px;min-width:42px;height:42px;border-radius:14px;background:var(--ld-electric);color:#07110c;display:grid;place-items:center;font-size:18px;font-weight:950;box-shadow:0 7px 20px rgba(215,255,57,.18)}
+.ld-match-panel{margin:0 0 14px;padding:14px;border-radius:18px;background:linear-gradient(180deg,rgba(215,255,57,.12),rgba(215,255,57,.035));border:1px solid rgba(139,181,24,.22)}
+.ld-match-panel-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.ld-match-panel-head b{font-size:15px}.ld-match-panel-head small{display:block;opacity:.65;margin-top:2px}
+.ld-auto-pill{font-size:9px;font-weight:900;padding:6px 8px;border-radius:99px;background:#101a12;color:#d7ff39;white-space:nowrap}
+.ld-match-list{display:grid;gap:9px}
+.ld-match-item{background:var(--card,#fff);border:1px solid rgba(120,130,120,.16);border-radius:15px;padding:11px;box-shadow:0 5px 16px rgba(0,0,0,.045)}
+.ld-match-line{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ld-match-item strong{font-size:13px;line-height:1.25}.ld-match-score{font-size:10px;font-weight:900;padding:4px 7px;border-radius:99px;background:#eaff9d;color:#172300;white-space:nowrap}
+.ld-match-meta{font-size:10px;opacity:.65;margin-top:5px}.ld-match-actions{display:flex;gap:7px;margin-top:9px}.ld-match-actions button{border:0;border-radius:10px;padding:7px 9px;font-size:10px;font-weight:900}.ld-match-actions .go{background:#101a12;color:#fff}.ld-match-actions .dismiss{background:rgba(100,100,100,.1)}
+.ld-watch-empty{padding:11px;border:1px dashed rgba(100,100,100,.2);border-radius:13px;font-size:11px;opacity:.68}
+.ld-match-flash{animation:ldMatchFlash 1.45s ease 1}
+@keyframes ldMatchFlash{0%,100%{box-shadow:0 0 0 0 rgba(215,255,57,0)}35%{box-shadow:0 0 0 7px rgba(215,255,57,.48)}}
+.ld-match-toast{position:fixed;left:12px;right:12px;bottom:90px;z-index:10050;background:#0b1510;color:#fff;border:1px solid rgba(215,255,57,.3);border-radius:18px;padding:13px 14px;box-shadow:0 16px 40px rgba(0,0,0,.34);display:flex;gap:10px;align-items:center;transform:translateY(140%);opacity:0;transition:.28s ease}
+.ld-match-toast.show{transform:translateY(0);opacity:1}.ld-match-toast b{display:block;font-size:12px}.ld-match-toast small{display:block;font-size:10px;opacity:.7;margin-top:2px}.ld-match-toast i{font-style:normal;font-size:20px}.ld-match-toast button{margin-left:auto;border:0;border-radius:10px;background:#d7ff39;color:#07110c;padding:8px 10px;font-size:10px;font-weight:900}
+</style>
+<script id="conexao-direta-v36">
+(function(){
+  const WATCH_KEY='linkDiretoSmartWatchesV36';
+  const SEEN_KEY='linkDiretoSmartSeenV36';
+  const DAYS=7*24*60*60*1000;
+  const STOP=new Set('de da do das dos e em para por com um uma o a os as que preciso tenho vendo vendo-se procuro procura disponível disponivel quero serviço servico serviços servicos'.split(' '));
+  let matches=[];
+  let nodeMap=new Map();
+  let scanTimer=0;
+
+  const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9çáéíóúãõâêô\s-]/gi,' ').replace(/\s+/g,' ').trim();
+  const words=s=>new Set(norm(s).split(' ').filter(x=>x.length>2&&!STOP.has(x)));
+  function read(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def));}catch(e){return def}}
+  function write(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  function getWatches(){const now=Date.now();const w=read(WATCH_KEY,[]).filter(x=>x&&now-(x.created||0)<DAYS);write(WATCH_KEY,w);return w}
+  function addWatch(data){
+    if(!data || !data.title) return;
+    let w=getWatches();
+    const key=norm([data.type,data.title,data.category,data.location].join('|'));
+    w=w.filter(x=>x.key!==key);
+    w.unshift({...data,key,created:Date.now(),active:true});
+    write(WATCH_KEY,w.slice(0,20));
+    setTimeout(scheduleScan,900);
+  }
+  function detectType(card){
+    const t=norm(card.innerText||'');
+    const c=norm(card.className||'');
+    const d=norm(card.dataset?.type||card.dataset?.ptype||'');
+    if(d.includes('preciso')||c.includes('preciso')||/^preciso\b/.test(t)||t.includes(' preciso ')) return 'preciso';
+    if(d.includes('tenho')||c.includes('tenho')||/^tenho\b/.test(t)||t.includes(' tenho ')) return 'tenho';
+    return '';
+  }
+  function cardTitle(card){
+    const e=card.querySelector('h2,h3,h4,.title,.card-title,.opportunity-title,strong');
+    return (e?.textContent||'').trim() || (card.innerText||'').trim().split('\n').find(x=>x.trim().length>5)||'Oportunidade';
+  }
+  function cardData(card){
+    const text=(card.innerText||'').trim();
+    const type=detectType(card);
+    return {card,type,title:cardTitle(card),text,hay:norm(text),tokens:words(text)};
+  }
+  function allCards(){
+    const sels=['#homeFeed .card','#forYouFeed .card','#searchFeed .card','#trendingFeed .card','.opportunity-card'];
+    return [...new Set([...document.querySelectorAll(sels.join(','))])].filter(x=>detectType(x));
+  }
+  function score(w,c){
+    if(!w||!c||w.type===c.type||!c.type) return 0;
+    const wt=words([w.title,w.category,w.description,w.location].join(' '));
+    let inter=0; wt.forEach(x=>{if(c.tokens.has(x)) inter++});
+    const denom=Math.max(2,Math.min(wt.size||2,c.tokens.size||2));
+    let s=(inter/denom)*72;
+    const cat=norm(w.category); if(cat && c.hay.includes(cat)) s+=15;
+    const loc=norm(w.location); if(loc && c.hay.includes(loc)) s+=9;
+    const titleWords=[...words(w.title)]; if(titleWords.some(x=>c.hay.includes(x))) s+=12;
+    return Math.min(98,Math.round(s));
+  }
+  function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+  function compute(){
+    nodeMap.clear(); const cards=allCards().map(cardData); const out=[];
+    getWatches().filter(w=>w.active!==false).forEach(w=>{
+      cards.forEach(c=>{const sc=score(w,c); if(sc<32)return; const id=hash(w.key+'|'+norm(c.text).slice(0,220)); nodeMap.set(id,c.card); out.push({id,score:sc,watch:w,title:c.title,type:c.type,text:c.text});});
+    });
+    const uniq=new Map();out.sort((a,b)=>b.score-a.score).forEach(m=>{if(!uniq.has(m.id))uniq.set(m.id,m)});matches=[...uniq.values()].slice(0,12);
+  }
+  function insertHomeStrip(){
+    const home=document.getElementById('view-home'); if(!home||document.getElementById('ldSmartStrip'))return;
+    const hero=home.querySelector('.hero'); const el=document.createElement('section'); el.id='ldSmartStrip';el.className='ld-smart-strip';
+    el.innerHTML='<div class="ld-smart-kicker">⚡ CONEXÃO DIRETA</div><h3 id="ldSmartTitle">O teu post procura por ti.</h3><p id="ldSmartText">Publica TENHO ou PRECISO e o Link Direto procura correspondências automaticamente.</p><div class="ld-smart-row"><button class="primary" onclick="LinkDiretoSmart.open()">Ver conexões</button><button class="ghost" onclick="showView(\'publish\')">Criar procura</button></div><div id="ldSmartCount" class="ld-smart-count">0</div>';
+    hero?.insertAdjacentElement('afterend',el);
+  }
+  function render(){
+    insertHomeStrip();
+    const count=document.getElementById('ldSmartCount'); if(count)count.textContent=matches.length;
+    const title=document.getElementById('ldSmartTitle'); if(title)title.textContent=matches.length?`${matches.length} conexão${matches.length===1?'':'ões'} possível${matches.length===1?'':'eis'} para ti`:'O teu post procura por ti.';
+    const badge=document.getElementById('connectBadge'); if(badge){if(matches.length){badge.textContent=matches.length;badge.classList.remove('hidden')} }
+    const host=document.getElementById('connectContent'); if(!host)return;
+    let panel=document.getElementById('ldMatchPanel'); if(!panel){panel=document.createElement('section');panel.id='ldMatchPanel';panel.className='ld-match-panel';host.prepend(panel)}
+    const watches=getWatches();
+    panel.innerHTML='<div class="ld-match-panel-head"><div><b>⚡ Conexão Direta</b><small>Posts ativos continuam a procurar durante 7 dias.</small></div><span class="ld-auto-pill">AUTO MATCH</span></div>'+
+      (matches.length?'<div class="ld-match-list">'+matches.slice(0,6).map(m=>`<div class="ld-match-item"><div class="ld-match-line"><strong>${escapeHtml(m.title)}</strong><span class="ld-match-score">${m.score}% compatível</span></div><div class="ld-match-meta">O teu “${escapeHtml(m.watch.title)}” encontrou um ${m.type.toUpperCase()} relacionado.</div><div class="ld-match-actions"><button class="go" onclick="LinkDiretoSmart.go(\'${m.id}\')">Ver publicação</button><button class="dismiss" onclick="LinkDiretoSmart.dismiss(\'${m.id}\')">Ignorar</button></div></div>`).join('')+'</div>':`<div class="ld-watch-empty">${watches.length?'Ainda não apareceu uma correspondência forte. A procura continua automaticamente.':'Publica um TENHO ou PRECISO para ativar a procura automática.'}</div>`);
+  }
+  function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,a=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[a]))}
+  function toast(m){
+    let t=document.getElementById('ldMatchToast'); if(!t){t=document.createElement('div');t.id='ldMatchToast';t.className='ld-match-toast';document.body.appendChild(t)}
+    t.innerHTML=`<i>⚡</i><div><b>Conexão encontrada</b><small>${escapeHtml(m.title)} · ${m.score}% compatível</small></div><button onclick="LinkDiretoSmart.open()">Ver</button>`;requestAnimationFrame(()=>t.classList.add('show'));setTimeout(()=>t.classList.remove('show'),5200);
+  }
+  function notifyNew(){
+    let seen=read(SEEN_KEY,{}), changed=false; const now=Date.now();
+    Object.keys(seen).forEach(k=>{if(now-seen[k]>DAYS*2)delete seen[k]});
+    const fresh=matches.find(m=>!seen[m.id]);
+    matches.forEach(m=>{if(!seen[m.id]){seen[m.id]=now;changed=true}}); if(changed)write(SEEN_KEY,seen); if(fresh)toast(fresh);
+  }
+  function scan(){clearTimeout(scanTimer);compute();render();notifyNew()}
+  function scheduleScan(){clearTimeout(scanTimer);scanTimer=setTimeout(scan,280)}
+  function hookPublish(){
+    const form=document.getElementById('publishForm'); if(!form||form.dataset.smartHook)return; form.dataset.smartHook='1';
+    form.addEventListener('submit',()=>{
+      const type=form.querySelector('input[name="ptype"]:checked')?.value||'tenho';
+      addWatch({type,title:document.getElementById('pTitle')?.value||'',category:document.getElementById('pCategory')?.value||'',description:document.getElementById('pDescription')?.value||'',location:document.getElementById('pLocation')?.value||''});
+    },true);
+  }
+  window.LinkDiretoSmart={
+    open(){showView('connect');setTimeout(()=>document.getElementById('ldMatchPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),100)},
+    go(id){const n=nodeMap.get(id); if(!n){showView('home');setTimeout(scheduleScan,500);return} n.scrollIntoView({behavior:'smooth',block:'center'});n.classList.remove('ld-match-flash');void n.offsetWidth;n.classList.add('ld-match-flash')},
+    dismiss(id){let seen=read(SEEN_KEY,{});seen[id]=Date.now()+DAYS*10;write(SEEN_KEY,seen);matches=matches.filter(m=>m.id!==id);render()},
+    addWatch,refresh:scan,watches:getWatches
+  };
+  document.addEventListener('DOMContentLoaded',()=>{hookPublish();insertHomeStrip();setTimeout(scan,900)});
+  window.addEventListener('pageshow',()=>setTimeout(scan,450));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleScan()});
+  const mo=new MutationObserver(()=>scheduleScan());
+  setTimeout(()=>{if(document.body)mo.observe(document.body,{childList:true,subtree:true});hookPublish()},400);
+  setInterval(()=>{if(!document.hidden)scan()},45000);
+})();
+</script>
+
 </body></html>
