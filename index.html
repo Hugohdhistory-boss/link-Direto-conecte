@@ -1090,4 +1090,227 @@ function openMatchDirect(button){
 })();
 </script>
 
+
+<!-- V37: alertas de novos posts + contador/badge -->
+<style id="ld-new-post-notifications-v37">
+  #notificationCenterButton{position:relative}
+  #notificationCenterBadge.ld-post-badge{
+    min-width:18px!important;height:18px!important;padding:0 5px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    border-radius:999px!important;font-size:10px!important;font-weight:900!important;
+  }
+</style>
+<script id="ld-new-post-notifications-v37">
+(function(){
+  const COUNT_KEY='ldNewPostUnreadV37';
+  const SEEN_KEY='ldNewPostSeenV37';
+  const MAX_SEEN=300;
+  let initialized=false, observer=null, scanTimer=null;
+
+  function readJSON(key,fallback){
+    try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback));}
+    catch(e){return fallback;}
+  }
+  function writeJSON(key,value){
+    try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}
+  }
+  function getCount(){
+    const n=parseInt(localStorage.getItem(COUNT_KEY)||'0',10);
+    return Number.isFinite(n)&&n>0?n:0;
+  }
+  function setCount(n){
+    n=Math.max(0,Number(n)||0);
+    try{localStorage.setItem(COUNT_KEY,String(n));}catch(e){}
+    renderBadge(n);
+  }
+  function renderBadge(count=getCount()){
+    const badge=document.getElementById('notificationCenterBadge');
+    if(badge){
+      badge.classList.add('ld-post-badge');
+      if(count>0){
+        badge.textContent=count>99?'99+':String(count);
+        badge.classList.remove('hidden');
+      }else{
+        // Não esconder se outra parte da app já estiver a usar o badge.
+        const current=parseInt(badge.textContent||'0',10)||0;
+        if(current<=0) badge.classList.add('hidden');
+      }
+    }
+    try{
+      if('setAppBadge' in navigator){
+        if(count>0) navigator.setAppBadge(count).catch(()=>{});
+        else if('clearAppBadge' in navigator) navigator.clearAppBadge().catch(()=>{});
+      }
+    }catch(e){}
+  }
+
+  function cardFingerprint(card){
+    const explicit=card.getAttribute('data-id')||
+      card.getAttribute('data-opportunity-id')||
+      card.dataset?.id||
+      card.dataset?.opportunityId;
+    if(explicit) return 'id:'+explicit;
+    const text=(card.innerText||card.textContent||'').replace(/\s+/g,' ').trim().slice(0,500);
+    let h=2166136261;
+    for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+    return 'txt:'+(h>>>0).toString(36);
+  }
+
+  function getCards(){
+    const roots=['homeFeed','searchFeed','forYouFeed'];
+    const out=[];
+    roots.forEach(id=>{
+      const root=document.getElementById(id);
+      if(!root) return;
+      root.querySelectorAll('.card,.opportunity-card,[data-opportunity-id]').forEach(c=>out.push(c));
+    });
+    return [...new Set(out)];
+  }
+
+  function titleFor(card){
+    return (
+      card.querySelector('h2,h3,h4,.card-title,.opportunity-title,strong')?.textContent ||
+      'Nova publicação'
+    ).trim().slice(0,90);
+  }
+
+  function authorFor(card){
+    return (
+      card.querySelector('.post-author-copy b,.author-name,.user-name,.profile-name')?.textContent ||
+      'Link Direto'
+    ).trim().slice(0,60);
+  }
+
+  function systemNotify(card){
+    if(!('Notification' in window) || Notification.permission!=='granted') return;
+    try{
+      const n=new Notification('🔔 Novo no Link Direto',{
+        body:`${authorFor(card)} publicou: ${titleFor(card)}`,
+        icon:'brand-icon-v193.png',
+        badge:'brand-icon-v193.png',
+        tag:'ld-post-'+cardFingerprint(card),
+        renotify:false
+      });
+      n.onclick=function(){
+        window.focus();
+        try{card.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+        try{n.close();}catch(e){}
+      };
+    }catch(e){}
+  }
+
+  function showToast(card){
+    let t=document.getElementById('ldNewPostToastV37');
+    if(!t){
+      t=document.createElement('div');
+      t.id='ldNewPostToastV37';
+      t.style.cssText='position:fixed;left:12px;right:12px;top:82px;z-index:10050;background:#0b1713;color:#fff;border:1px solid rgba(47,255,180,.35);border-radius:16px;padding:12px 14px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:none;align-items:center;gap:10px';
+      document.body.appendChild(t);
+    }
+    t.innerHTML='<div style="font-size:22px">🔔</div><div style="min-width:0"><b style="display:block">Nova publicação</b><small style="opacity:.8;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
+      escapeHtml(titleFor(card))+'</small></div>';
+    t.style.display='flex';
+    clearTimeout(t._hideTimer);
+    t._hideTimer=setTimeout(()=>{t.style.display='none';},4200);
+  }
+
+  function escapeHtml(s){
+    return String(s||'').replace(/[&<>"']/g,a=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[a]));
+  }
+
+  function scan(silent=false){
+    clearTimeout(scanTimer);
+    const cards=getCards();
+    if(!cards.length) return;
+    let seen=readJSON(SEEN_KEY,[]);
+    if(!Array.isArray(seen)) seen=[];
+    const set=new Set(seen);
+    const fresh=[];
+
+    cards.forEach(card=>{
+      const fp=cardFingerprint(card);
+      if(!set.has(fp)){
+        set.add(fp);
+        if(initialized && !silent) fresh.push(card);
+      }
+    });
+
+    const next=[...set].slice(-MAX_SEEN);
+    writeJSON(SEEN_KEY,next);
+
+    if(!initialized){
+      initialized=true;
+      renderBadge();
+      return;
+    }
+
+    if(fresh.length){
+      setCount(getCount()+fresh.length);
+      // Mostra apenas um alerta visual/sistema por ciclo para evitar spam.
+      const newest=fresh[0];
+      systemNotify(newest);
+      showToast(newest);
+    }
+  }
+
+  function scheduleScan(){
+    clearTimeout(scanTimer);
+    scanTimer=setTimeout(()=>scan(false),320);
+  }
+
+  async function requestPostNotifications(){
+    if(!('Notification' in window)) return false;
+    if(Notification.permission==='granted') return true;
+    if(Notification.permission==='denied') return false;
+    try{
+      const p=await Notification.requestPermission();
+      return p==='granted';
+    }catch(e){return false;}
+  }
+
+  function markPostsRead(){
+    setCount(0);
+  }
+
+  window.LinkDiretoPostNotifications={
+    enable:requestPostNotifications,
+    markRead:markPostsRead,
+    count:getCount,
+    refresh:scheduleScan
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderBadge();
+
+    // Primeiro carregamento: cria a linha de base sem gerar alertas antigos.
+    setTimeout(()=>scan(true),1200);
+    setTimeout(()=>{ initialized=true; },1500);
+
+    const targets=['homeFeed','searchFeed','forYouFeed']
+      .map(id=>document.getElementById(id)).filter(Boolean);
+    if(targets.length){
+      observer=new MutationObserver(scheduleScan);
+      targets.forEach(t=>observer.observe(t,{childList:true,subtree:true}));
+    }
+
+    // O clique no sino marca as novas publicações como vistas.
+    const bell=document.getElementById('notificationCenterButton');
+    if(bell){
+      bell.addEventListener('click',()=>setTimeout(markPostsRead,250),true);
+      // Pedido de permissão apenas após gesto do utilizador.
+      bell.addEventListener('click',()=>requestPostNotifications(),{once:true,capture:true});
+    }
+
+    // Ao clicar no botão "Ativar" já existente, também ativa alertas de posts.
+    const btn=document.getElementById('notificationButton');
+    if(btn) btn.addEventListener('click',()=>requestPostNotifications(),true);
+
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden) scheduleScan();
+    });
+    window.addEventListener('pageshow',scheduleScan);
+  });
+})();
+</script>
+
 </body></html>
