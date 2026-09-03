@@ -1313,4 +1313,224 @@ function openMatchDirect(button){
 })();
 </script>
 
+
+<!-- V38: MT no apoio + contador de visualizações -->
+<style id="ld-mt-views-v38">
+.ld-mt-support-icon{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:25px!important;
+  height:25px!important;
+  padding:0 5px!important;
+  border-radius:9px 9px 11px 11px!important;
+  background:linear-gradient(180deg,#ffd75a,#d89a13)!important;
+  color:#402700!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  letter-spacing:-.3px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 8px rgba(0,0,0,.22)!important;
+  vertical-align:middle!important;
+  position:relative!important;
+}
+.ld-mt-support-icon:before{
+  content:""!important;
+  position:absolute!important;
+  top:-4px!important;
+  width:13px!important;
+  height:6px!important;
+  border-radius:50% 50% 35% 35%!important;
+  background:#efb52a!important;
+  border-bottom:1px solid rgba(70,42,0,.18)!important;
+}
+.ld-mt-support-icon span{position:relative;z-index:1}
+.ld-view-live{display:inline-flex!important;align-items:center!important;gap:4px!important}
+</style>
+
+<script id="ld-mt-views-v38">
+(function(){
+  const VIEW_KEY='ldPostViewsV38';
+  const SESSION_KEY='ldPostViewedSessionV38';
+
+  function readJSON(key){
+    try{return JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){return{};}
+  }
+  function writeJSON(key,val){
+    try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}
+  }
+  function sessionRead(){
+    try{return JSON.parse(sessionStorage.getItem(SESSION_KEY)||'{}')||{};}catch(e){return{};}
+  }
+  function sessionWrite(val){
+    try{sessionStorage.setItem(SESSION_KEY,JSON.stringify(val));}catch(e){}
+  }
+  function cleanText(v){return String(v||'').replace(/\s+/g,' ').trim();}
+  function hash(s){
+    let h=2166136261;
+    for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+    return (h>>>0).toString(36);
+  }
+  function postKey(card){
+    const attrs=['data-id','data-post-id','data-opportunity-id','data-uuid','id'];
+    for(const a of attrs){
+      const v=card.getAttribute && card.getAttribute(a);
+      if(v) return 'id:'+v;
+    }
+    const title=cleanText(card.querySelector('h2,h3,h4,.opportunity-title,.card-title,strong')?.textContent);
+    const author=cleanText(card.querySelector('.post-author-copy b,.author-name,.user-name,.profile-name')?.textContent);
+    const body=cleanText(card.querySelector('p,.description,.opportunity-description')?.textContent).slice(0,180);
+    return 'fp:'+hash([title,author,body].join('|'));
+  }
+  function isPost(card){
+    if(!card || !card.querySelector) return false;
+    if(card.closest('#jobsFeed,#adsFeed,#discoverFeed')) return false;
+    return !!(
+      card.matches('.card,.opportunity-card') ||
+      card.querySelector('.opportunity-stats,.post-author,.card-media,.card-media-wrap')
+    );
+  }
+
+  function moneyBag(){
+    const el=document.createElement('span');
+    el.className='ld-mt-support-icon';
+    el.setAttribute('aria-label','Apoio em MT');
+    el.title='Apoiar';
+    el.innerHTML='<span>MT</span>';
+    return el;
+  }
+
+  function replaceHeartIn(root){
+    const cards=root.matches && isPost(root) ? [root] : [...(root.querySelectorAll?.('.card,.opportunity-card')||[])].filter(isPost);
+    cards.forEach(card=>{
+      const nodes=[...card.querySelectorAll('button,a,span,div')];
+      nodes.forEach(el=>{
+        if(el.closest('.ld-mt-support-icon')) return;
+        if(el.children.length>4) return;
+        const t=cleanText(el.textContent);
+        const aria=cleanText(el.getAttribute?.('aria-label'));
+        const title=cleanText(el.getAttribute?.('title'));
+        const cls=String(el.className||'');
+        const looksLikeLike=/\b(like|likes|gosto|curtir|apoio|apoiou)\b/i.test([t,aria,title,cls].join(' '));
+        const hasHeart=/[♥♡❤❤️]/.test(t) || /heart/i.test(cls);
+        if(!looksLikeLike && !hasHeart) return;
+
+        // Substitui apenas o símbolo, preservando número/contador e clique original.
+        for(const n of [...el.childNodes]){
+          if(n.nodeType===3 && /[♥♡❤]/.test(n.nodeValue||'')){
+            n.nodeValue=(n.nodeValue||'').replace(/[♥♡❤]/g,'');
+          }
+        }
+        [...el.querySelectorAll('svg,i')].forEach(icon=>{
+          if(/heart|like/i.test(String(icon.className?.baseVal||icon.className||''))) icon.style.display='none';
+        });
+        if(!el.querySelector('.ld-mt-support-icon')){
+          el.insertBefore(moneyBag(),el.firstChild);
+        }
+      });
+    });
+  }
+
+  function findViewDisplay(card){
+    const candidates=[...card.querySelectorAll('.opportunity-stats span,.opportunity-stats div,button,span,small')];
+    return candidates.find(el=>{
+      const s=cleanText(el.textContent)+' '+cleanText(el.getAttribute?.('aria-label'))+' '+String(el.className||'');
+      return /visual|view|👁/i.test(s);
+    }) || null;
+  }
+
+  function renderView(card,count){
+    let el=findViewDisplay(card);
+    if(!el){
+      let stats=card.querySelector('.opportunity-stats');
+      if(!stats){
+        stats=document.createElement('div');
+        stats.className='opportunity-stats';
+        const anchor=card.querySelector('.view-details-btn,.card-actions,.actions');
+        if(anchor?.parentNode) anchor.parentNode.insertBefore(stats,anchor);
+        else card.appendChild(stats);
+      }
+      el=document.createElement('span');
+      stats.appendChild(el);
+    }
+    el.classList.add('ld-view-live');
+    el.setAttribute('data-ld-view-key',postKey(card));
+    el.innerHTML='👁 <b>'+count+'</b> visualizaç'+(count===1?'ão':'ões');
+  }
+
+  const timers=new WeakMap();
+  function setupViews(root=document){
+    const cards=root.matches && isPost(root) ? [root] : [...(root.querySelectorAll?.('.card,.opportunity-card')||[])].filter(isPost);
+    const views=readJSON(VIEW_KEY);
+    cards.forEach(card=>{
+      const key=postKey(card);
+      if(!(key in views)) views[key]=0;
+      renderView(card,Number(views[key])||0);
+      if(card.dataset.ldViewObserved==='1') return;
+      card.dataset.ldViewObserved='1';
+      observer.observe(card);
+    });
+    writeJSON(VIEW_KEY,views);
+  }
+
+  const observer=new IntersectionObserver(entries=>{
+    const session=sessionRead();
+    const views=readJSON(VIEW_KEY);
+    entries.forEach(entry=>{
+      const card=entry.target;
+      const key=postKey(card);
+      if(entry.isIntersecting && entry.intersectionRatio>=0.55){
+        if(session[key]) return;
+        if(timers.has(card)) return;
+        const timer=setTimeout(()=>{
+          timers.delete(card);
+          const r=card.getBoundingClientRect();
+          const visible=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,0));
+          const ratio=visible/Math.max(1,r.height);
+          if(ratio<0.55) return;
+          const s=sessionRead();
+          if(s[key]) return;
+          const v=readJSON(VIEW_KEY);
+          v[key]=(Number(v[key])||0)+1;
+          s[key]=1;
+          writeJSON(VIEW_KEY,v);
+          sessionWrite(s);
+          renderView(card,v[key]);
+
+          // Evento para futura sincronização Supabase/app.js sem alterar esta lógica.
+          window.dispatchEvent(new CustomEvent('linkdireto:postview',{
+            detail:{postKey:key,views:v[key],card:card}
+          }));
+        },1200);
+        timers.set(card,timer);
+      }else{
+        const timer=timers.get(card);
+        if(timer){clearTimeout(timer);timers.delete(card);}
+      }
+    });
+  },{threshold:[0,.55,.75]});
+
+  function scan(root=document){
+    replaceHeartIn(root);
+    setupViews(root);
+  }
+
+  const mo=new MutationObserver(muts=>{
+    for(const m of muts){
+      for(const n of m.addedNodes){
+        if(n.nodeType===1) scan(n);
+      }
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    scan(document);
+    mo.observe(document.body,{childList:true,subtree:true});
+    setTimeout(()=>scan(document),700);
+    setTimeout(()=>scan(document),1800);
+  });
+  window.addEventListener('pageshow',()=>setTimeout(()=>scan(document),250));
+  window.LinkDiretoViewsV38={refresh:()=>scan(document)};
+})();
+</script>
+
 </body></html>
