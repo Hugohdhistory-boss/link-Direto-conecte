@@ -632,6 +632,153 @@
 }
 </style>
 
+
+<style id="ld-match-compact-v40">
+/* MATCH / “Escolhidas para o teu negócio” — cartões ~60–70% mais compactos, mantendo scroll horizontal */
+#forYouFeed.for-you-rail{
+  display:flex!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  gap:9px!important;
+  scroll-snap-type:x proximity!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding:2px 14px 8px 2px!important;
+}
+#forYouFeed.for-you-rail > .card,
+#forYouFeed.for-you-rail > .opportunity-card{
+  flex:0 0 min(68vw,270px)!important;
+  width:min(68vw,270px)!important;
+  max-width:270px!important;
+  min-width:220px!important;
+  scroll-snap-align:start!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+  padding:0!important;
+  margin:0!important;
+}
+/* Cabeçalho/perfil */
+#forYouFeed .post-author,
+#forYouFeed .card-author,
+#forYouFeed .author-row{
+  padding:8px 10px!important;
+  min-height:42px!important;
+  gap:7px!important;
+}
+#forYouFeed .post-author img,
+#forYouFeed .card-author img,
+#forYouFeed .author-row img,
+#forYouFeed img.avatar{
+  width:30px!important;
+  height:30px!important;
+}
+#forYouFeed .post-author strong,
+#forYouFeed .card-author strong,
+#forYouFeed .author-row strong{font-size:12px!important;line-height:1.1!important}
+#forYouFeed .post-author small,
+#forYouFeed .card-author small,
+#forYouFeed .author-row small{font-size:9px!important;line-height:1.1!important}
+/* Imagem/vídeo: grande redução de altura */
+#forYouFeed .card-media,
+#forYouFeed .card-media-wrap,
+#forYouFeed .opportunity-media{
+  height:108px!important;
+  min-height:108px!important;
+  max-height:108px!important;
+}
+#forYouFeed .card-media img,
+#forYouFeed .card-media video,
+#forYouFeed .card-media-wrap img,
+#forYouFeed .card-media-wrap video,
+#forYouFeed .opportunity-media img,
+#forYouFeed .opportunity-media video{
+  width:100%!important;
+  height:108px!important;
+  object-fit:cover!important;
+}
+/* Conteúdo */
+#forYouFeed .card-body,
+#forYouFeed .opportunity-body,
+#forYouFeed .card-content{padding:8px 10px!important}
+#forYouFeed .tag,
+#forYouFeed .type-pill{font-size:8px!important;padding:3px 7px!important}
+#forYouFeed h3,
+#forYouFeed h4,
+#forYouFeed .card-title,
+#forYouFeed .opportunity-title{
+  font-size:14px!important;
+  line-height:1.15!important;
+  margin:5px 0 3px!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:1!important;
+  -webkit-box-orient:vertical!important;
+  overflow:hidden!important;
+}
+#forYouFeed p,
+#forYouFeed .description,
+#forYouFeed .card-description{
+  font-size:10px!important;
+  line-height:1.25!important;
+  margin:3px 0 5px!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:1!important;
+  -webkit-box-orient:vertical!important;
+  overflow:hidden!important;
+}
+#forYouFeed .opportunity-stats,
+#forYouFeed .card-meta,
+#forYouFeed .meta-row{
+  font-size:9px!important;
+  line-height:1.2!important;
+  gap:7px!important;
+  margin:5px 0!important;
+  flex-wrap:nowrap!important;
+}
+/* Reações e ações em versão compacta */
+#forYouFeed .card-actions,
+#forYouFeed .actions,
+#forYouFeed .social-actions{
+  gap:5px!important;
+  padding:6px 8px!important;
+  margin-top:5px!important;
+}
+#forYouFeed .card-actions button,
+#forYouFeed .actions button,
+#forYouFeed .social-actions button,
+#forYouFeed .view-details-btn,
+#forYouFeed button{
+  min-height:31px!important;
+  padding:6px 8px!important;
+  border-radius:10px!important;
+  font-size:9px!important;
+  line-height:1.05!important;
+}
+/* Última linha: detalhes + proposta */
+#forYouFeed .proposal-actions,
+#forYouFeed .card-footer{
+  display:grid!important;
+  grid-template-columns:.8fr 1.2fr!important;
+  gap:6px!important;
+  padding:7px 8px 9px!important;
+}
+/* Evita margens verticais grandes herdadas do feed principal */
+#forYouFeed .card > *,
+#forYouFeed .opportunity-card > *{margin-top:0}
+@media(max-width:390px){
+  #forYouFeed.for-you-rail > .card,
+  #forYouFeed.for-you-rail > .opportunity-card{
+    flex-basis:64vw!important;
+    width:64vw!important;
+    min-width:205px!important;
+  }
+  #forYouFeed .card-media,
+  #forYouFeed .card-media-wrap,
+  #forYouFeed .opportunity-media,
+  #forYouFeed .card-media img,
+  #forYouFeed .card-media video,
+  #forYouFeed .card-media-wrap img,
+  #forYouFeed .card-media-wrap video{height:96px!important;min-height:96px!important;max-height:96px!important}
+}
+</style>
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
