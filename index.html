@@ -1725,4 +1725,113 @@ function openMatchDirect(button){
 })();
 </script>
 
+
+
+<!-- V40: LINK DIRETO PAY — botão nos anúncios + sala de negociação (protótipo local) -->
+<style id="link-direto-pay-v40">
+.ld-pay-entry{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;width:calc(100% - 20px)!important;margin:9px 10px 4px!important;padding:10px 12px!important;border:0!important;border-radius:13px!important;background:linear-gradient(135deg,#087cff,#2ca7ff)!important;color:#fff!important;font-weight:900!important;font-size:12px!important;line-height:1.1!important;box-shadow:0 6px 18px rgba(8,124,255,.24)!important;cursor:pointer!important}
+.ld-pay-entry:active{transform:scale(.985)}
+.ld-pay-entry .ld-pay-lock{font-size:14px}
+.ld-pay-entry small{font-size:9px!important;font-weight:700!important;opacity:.86!important}
+.ld-pay-room{padding:2px 0 8px;color:inherit}
+.ld-pay-brand{display:flex;align-items:center;gap:9px;margin-bottom:13px}.ld-pay-brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#087cff,#26b0ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:950;font-size:13px}.ld-pay-brand b{font-size:18px}.ld-pay-brand b span{color:#1497ff}.ld-pay-brand small{display:block;font-size:10px;opacity:.62;margin-top:2px}
+.ld-pay-demo{display:flex;align-items:center;gap:7px;background:rgba(255,190,25,.13);border:1px solid rgba(255,190,25,.32);padding:8px 10px;border-radius:11px;font-size:10px;font-weight:800;margin-bottom:12px}
+.ld-pay-product{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;padding:10px;border-radius:14px;background:rgba(127,127,127,.09);margin-bottom:12px}.ld-pay-product img,.ld-pay-product video{width:62px;height:62px;object-fit:cover;border-radius:10px;background:#111}.ld-pay-product .ld-pay-placeholder{width:62px;height:62px;border-radius:10px;background:linear-gradient(135deg,#0e2033,#173e68);display:flex;align-items:center;justify-content:center;font-size:25px}.ld-pay-product strong{display:block;font-size:13px}.ld-pay-product small{display:block;font-size:10px;opacity:.65;margin-top:3px}.ld-pay-product .price{display:block;font-size:17px;font-weight:950;color:#1497ff;margin-top:5px}
+.ld-pay-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:5px 0 14px}.ld-pay-step{text-align:center;font-size:8px;font-weight:800;opacity:.48}.ld-pay-step i{display:flex;width:25px;height:25px;border-radius:50%;margin:0 auto 4px;align-items:center;justify-content:center;background:rgba(127,127,127,.17);font-style:normal;font-size:10px}.ld-pay-step.active{opacity:1;color:#1497ff}.ld-pay-step.done{opacity:1;color:#14a95b}.ld-pay-step.done i{background:#14a95b;color:#fff}.ld-pay-step.active i{background:#1497ff;color:#fff}
+.ld-pay-chat{border:1px solid rgba(127,127,127,.18);border-radius:14px;padding:10px;margin-bottom:11px;max-height:190px;overflow:auto;background:rgba(127,127,127,.035)}.ld-pay-msg{max-width:82%;padding:8px 10px;border-radius:12px;margin:5px 0;font-size:11px;line-height:1.35}.ld-pay-msg.them{background:rgba(127,127,127,.14)}.ld-pay-msg.me{margin-left:auto;background:#0c82ff;color:#fff}.ld-pay-compose{display:grid;grid-template-columns:1fr 38px;gap:7px;margin-bottom:11px}.ld-pay-compose input{width:100%;min-width:0;padding:10px 11px;border-radius:12px;border:1px solid rgba(127,127,127,.2);background:rgba(127,127,127,.06);color:inherit;font-size:11px}.ld-pay-compose button{border:0;border-radius:12px;background:#0c82ff;color:#fff;font-weight:900}
+.ld-pay-deal{padding:11px;border-radius:14px;background:rgba(20,151,255,.08);border:1px solid rgba(20,151,255,.17);margin-bottom:11px}.ld-pay-deal label{font-size:9px;font-weight:800;opacity:.65}.ld-pay-value-row{display:flex;align-items:center;gap:8px;margin-top:5px}.ld-pay-value-row input{flex:1;min-width:0;padding:10px;border-radius:11px;border:1px solid rgba(127,127,127,.22);background:rgba(127,127,127,.07);color:inherit;font-size:16px;font-weight:900}.ld-pay-value-row span{font-weight:900;font-size:12px}.ld-pay-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ld-pay-actions button{padding:11px 8px;border-radius:12px;border:0;font-size:10px;font-weight:900}.ld-pay-actions .ghost{background:rgba(127,127,127,.12);color:inherit}.ld-pay-actions .primary{background:#0c82ff;color:#fff}.ld-pay-actions .success{grid-column:1/-1;background:#11a45a;color:#fff}.ld-pay-secure{margin-top:9px;text-align:center;font-size:8px;opacity:.58}.ld-pay-methods{display:grid;gap:7px;margin:10px 0}.ld-pay-method{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;border:1px solid rgba(127,127,127,.16);background:rgba(127,127,127,.05);font-size:11px;font-weight:850}.ld-pay-method span:first-child{display:flex;gap:8px;align-items:center}.ld-pay-method em{font-style:normal;font-size:9px;opacity:.55}.ld-pay-summary{display:flex;justify-content:space-between;align-items:flex-end;padding:10px 0;border-top:1px solid rgba(127,127,127,.14);margin-top:6px}.ld-pay-summary small{font-size:9px;opacity:.6}.ld-pay-summary strong{font-size:18px;color:#1497ff}
+@media(max-width:420px){.ld-pay-entry{font-size:11px!important;padding:9px!important}.ld-pay-room{padding-bottom:2px}}
+</style>
+<script id="link-direto-pay-v40">
+(function(){
+  const ROOM_KEY='linkDiretoPayRoomsV40';
+  const money=v=>Number(v||0).toLocaleString('pt-MZ')+' MT';
+  const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function read(){try{return JSON.parse(localStorage.getItem(ROOM_KEY)||'{}')||{}}catch(e){return{}}}
+  function write(v){try{localStorage.setItem(ROOM_KEY,JSON.stringify(v))}catch(e){}}
+  function text(el){return String(el?.textContent||'').replace(/\s+/g,' ').trim()}
+  function isOpportunity(card){
+    if(!card) return false;
+    if(card.closest('#jobsFeed,#adsFeed,#trendingFeed')) return false;
+    const t=text(card).toLowerCase();
+    return card.matches('.opportunity-card,[data-opportunity-id]') || /\btenho\b|\bpreciso\b/.test(t) || card.closest('#homeFeed,#searchFeed,#forYouFeed');
+  }
+  function titleOf(card){return text(card.querySelector('h2,h3,h4,.title,.card-title,.opportunity-title,strong'))||'Oportunidade Link Direto'}
+  function priceOf(card){
+    const t=text(card);
+    const m=t.match(/(?:MZN|MT)\s*([\d .,'’]+)|([\d .,'’]+)\s*(?:MZN|MT)/i);
+    if(!m) return 0;
+    const raw=(m[1]||m[2]||'').replace(/[^0-9]/g,'');
+    return Number(raw||0);
+  }
+  function idOf(card){return card.dataset.opportunityId||card.dataset.id||('post-'+titleOf(card).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,45));}
+  function dataOf(card){
+    const media=card.querySelector('img,video');
+    return {id:idOf(card),title:titleOf(card),price:priceOf(card),media:media?.currentSrc||media?.src||'',owner:text(card.querySelector('.author-name,.user-name,.profile-name,[data-profile-name]'))||'Vendedor'};
+  }
+  function addButton(card){
+    if(!isOpportunity(card)||card.querySelector('.ld-pay-entry')) return;
+    const d=dataOf(card);
+    const b=document.createElement('button');
+    b.type='button';b.className='ld-pay-entry';b.setAttribute('aria-label','Negociar no Link Direto Pay');
+    b.innerHTML='<span class="ld-pay-lock">🛡</span><span>Negociar no <b>Link Direto Pay</b><small> · sala privada</small></span>';
+    b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openRoom(d)});
+    const action=card.querySelector('.card-actions,.post-actions,.actions,.social-actions,.card-footer,.opportunity-actions');
+    if(action && action.parentNode) action.insertAdjacentElement('afterend',b); else card.appendChild(b);
+  }
+  function scan(root=document){
+    const cards=[];
+    if(root.matches?.('.card,.opportunity-card,[data-opportunity-id]')) cards.push(root);
+    root.querySelectorAll?.('.card,.opportunity-card,[data-opportunity-id]').forEach(c=>cards.push(c));
+    cards.forEach(addButton);
+  }
+  function getRoom(d){
+    const all=read();
+    if(!all[d.id]) all[d.id]={...d,value:d.price||0,status:'negotiating',messages:[{who:'system',text:'Sala criada para esta negociação.'}],created:Date.now()};
+    else all[d.id]={...all[d.id],...d,value:all[d.id].value||d.price||0};
+    write(all);return all[d.id];
+  }
+  function saveRoom(room){const all=read();all[room.id]=room;write(all)}
+  function modal(){return {m:document.getElementById('modal'),c:document.getElementById('modalContent')}}
+  function steps(status){
+    const order=['negotiating','agreed','payment_demo','delivered'];let i=Math.max(0,order.indexOf(status));
+    const names=['Acordo','Pagamento','Entrega','Conclusão'];
+    return '<div class="ld-pay-progress">'+names.map((n,x)=>'<div class="ld-pay-step '+(x<i?'done':x===i?'active':'')+'"><i>'+(x<i?'✓':x+1)+'</i>'+n+'</div>').join('')+'</div>';
+  }
+  function product(room){
+    const media=room.media?'<img src="'+esc(room.media)+'" alt="">':'<div class="ld-pay-placeholder">📦</div>';
+    return '<div class="ld-pay-product">'+media+'<div><strong>'+esc(room.title)+'</strong><small>'+esc(room.owner)+'</small><span class="price">'+(room.value?money(room.value):'Valor a combinar')+'</span></div></div>';
+  }
+  function chat(room){
+    const msgs=(room.messages||[]).filter(x=>x.who!=='system').slice(-8);
+    return '<div class="ld-pay-chat" id="ldPayChat">'+(msgs.length?msgs.map(x=>'<div class="ld-pay-msg '+(x.who==='me'?'me':'them')+'">'+esc(x.text)+'</div>').join(''):'<div style="font-size:10px;opacity:.55;text-align:center;padding:12px">Combina aqui o preço, entrega e condições.</div>')+'</div><div class="ld-pay-compose"><input id="ldPayMessage" placeholder="Escreve uma mensagem..."><button onclick="LinkDiretoPay.send()">➤</button></div>';
+  }
+  function render(d){
+    const room=getRoom(d), {m,c}=modal(); if(!m||!c) return;
+    let body='';
+    if(room.status==='negotiating') body=chat(room)+'<div class="ld-pay-deal"><label>VALOR ACORDADO</label><div class="ld-pay-value-row"><input id="ldPayValue" type="number" min="0" inputmode="decimal" value="'+(room.value||'')+'" placeholder="Ex.: 11000"><span>MT</span></div></div><div class="ld-pay-actions"><button class="ghost" onclick="closeModal()">Continuar depois</button><button class="primary" onclick="LinkDiretoPay.agree()">Confirmar acordo</button></div>';
+    else if(room.status==='agreed') body='<div class="ld-pay-methods"><div class="ld-pay-method"><span>📱 M-Pesa</span><em>Integração futura</em></div><div class="ld-pay-method"><span>🟠 e-Mola</span><em>Integração futura</em></div><div class="ld-pay-method"><span>🏦 Banco / cartão</span><em>Integração futura</em></div></div><div class="ld-pay-summary"><div><small>Valor acordado</small><br><b>Sem cobrança real nesta versão</b></div><strong>'+money(room.value)+'</strong></div><div class="ld-pay-actions"><button class="ghost" onclick="LinkDiretoPay.back()">← Negociação</button><button class="primary" onclick="LinkDiretoPay.demoPay()">Simular pagamento</button></div>';
+    else if(room.status==='payment_demo') body='<div style="text-align:center;padding:13px 4px"><div style="font-size:42px">🛡️</div><h3 style="margin:7px 0">Pagamento marcado como protegido</h3><p style="font-size:11px;opacity:.68">Demonstração visual. Nenhum dinheiro foi movimentado.</p></div><div class="ld-pay-actions"><button class="ghost" onclick="LinkDiretoPay.back()">Voltar</button><button class="success" onclick="LinkDiretoPay.deliver()">Confirmar entrega (demo)</button></div>';
+    else body='<div style="text-align:center;padding:15px 4px"><div style="font-size:48px">✅</div><h2 style="margin:7px 0">Negócio concluído!</h2><p style="font-size:11px;opacity:.68">A negociação foi concluída nesta demonstração do Link Direto Pay.</p><div style="font-size:22px;margin:10px">★★★★★</div></div><div class="ld-pay-actions"><button class="primary" style="grid-column:1/-1" onclick="closeModal()">Fechar</button></div>';
+    c.innerHTML='<div class="ld-pay-room"><div class="ld-pay-brand"><div class="ld-pay-brand-mark">LD</div><div><b>Link Direto <span>Pay</span></b><small>Sala privada de negociação</small></div></div><div class="ld-pay-demo">⚠️ PROTÓTIPO: pagamentos ainda não são processados.</div>'+steps(room.status)+product(room)+body+'<div class="ld-pay-secure">🔒 Sala ligada exclusivamente a este anúncio · Link Direto Connect</div></div>';
+    m.classList.remove('hidden');window.__ldPayRoom=room;
+  }
+  function current(){return window.__ldPayRoom}
+  window.openLinkDiretoPayRoom=openRoom;
+  function openRoom(d){render(d)}
+  window.LinkDiretoPay={
+    refresh:()=>scan(document),
+    send(){const r=current(),i=document.getElementById('ldPayMessage');const v=String(i?.value||'').trim();if(!r||!v)return;r.messages=r.messages||[];r.messages.push({who:'me',text:v,at:Date.now()});saveRoom(r);render(r)},
+    agree(){const r=current(),i=document.getElementById('ldPayValue');if(!r)return;const v=Number(i?.value||r.value||0);if(!v){i?.focus();return}r.value=v;r.status='agreed';saveRoom(r);render(r)},
+    back(){const r=current();if(!r)return;r.status='negotiating';saveRoom(r);render(r)},
+    demoPay(){const r=current();if(!r)return;r.status='payment_demo';saveRoom(r);render(r)},
+    deliver(){const r=current();if(!r)return;r.status='delivered';saveRoom(r);render(r)},
+    reset(){localStorage.removeItem(ROOM_KEY);scan(document)}
+  };
+  const mo=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)})));
+  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true});setTimeout(()=>scan(document),1000);setTimeout(()=>scan(document),2500)});
+  window.addEventListener('pageshow',()=>setTimeout(()=>scan(document),300));
+})();
+</script>
+
 </body></html>
