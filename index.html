@@ -2115,4 +2115,70 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
 })();
 </script>
 
+
+
+<!-- V45: posicionamento definitivo no cabeçalho da Sala de Negócio -->
+<style id="ld-calls-room-head-v45">
+.ld-room-call-head-v45{position:relative!important;padding-right:112px!important;min-height:46px!important}
+.ld-room-call-head-v45 .ld-call-actions{
+  position:absolute!important;
+  top:0!important;
+  right:46px!important;
+  display:flex!important;
+  gap:7px!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.ld-room-call-head-v45 .ld-call-btn{
+  width:38px!important;height:38px!important;min-width:38px!important;
+  border-radius:50%!important;
+  background:rgba(21,218,148,.14)!important;
+  border:1px solid rgba(41,238,168,.38)!important;
+  color:#2ce6a3!important;
+  font-size:18px!important;
+  box-shadow:none!important;
+}
+.ld-room-call-head-v45 .ld-call-btn:active{transform:scale(.94)!important;background:rgba(21,218,148,.25)!important}
+/* desfaz o espaço extra criado pela versão anterior quando os botões estavam em baixo */
+.ld-chat-top-host-v44.ld-room-v45{padding-top:0!important}
+@media(max-width:390px){
+ .ld-room-call-head-v45{padding-right:104px!important}
+ .ld-room-call-head-v45 .ld-call-actions{right:42px!important;gap:5px!important}
+ .ld-room-call-head-v45 .ld-call-btn{width:35px!important;height:35px!important;min-width:35px!important;font-size:17px!important}
+}
+</style>
+<script id="ld-calls-room-head-v45-script">
+(function(){
+  const norm=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+  function visible(el){return !!(el && (el.offsetWidth||el.offsetHeight||el.getClientRects().length));}
+  function scan(){
+    const inputs=[...document.querySelectorAll('input[placeholder*="mensagem" i],textarea[placeholder*="mensagem" i],input[placeholder*="message" i],textarea[placeholder*="message" i]')].filter(visible);
+    inputs.forEach(inp=>{
+      let room=inp.closest('[role="dialog"],.modal,.modal-card,.dialog,.sheet,.panel');
+      if(!room){
+        let n=inp.parentElement;
+        for(let i=0;n&&i<8;i++,n=n.parentElement){if(/sala de neg[oó]cio/i.test(norm(n.textContent))){room=n;break}}
+      }
+      if(!room)return;
+      const title=[...room.querySelectorAll('h1,h2,h3,h4,strong')].find(x=>/sala de neg[oó]cio/i.test(norm(x.textContent)));
+      if(!title)return;
+      let head=title.parentElement||room;
+      head.classList.add('ld-room-call-head-v45');
+      room.classList.add('ld-room-v45');
+      let box=room.querySelector('.ld-call-actions');
+      if(!box && window.LinkDiretoCalls?.refresh){window.LinkDiretoCalls.refresh();box=room.querySelector('.ld-call-actions')}
+      if(box && box.parentElement!==head)head.appendChild(box);
+    });
+  }
+  const run=()=>{scan();const mo=new MutationObserver(()=>scan());mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});setTimeout(scan,500);setTimeout(scan,1400)};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  document.addEventListener('click',()=>setTimeout(scan,80),true);
+  window.LinkDiretoCallsTopV45={refresh:scan};
+})();
+</script>
 </body></html>
