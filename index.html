@@ -2175,9 +2175,9 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
       if(box && box.parentElement!==head)head.appendChild(box);
     });
   }
-  const run=()=>{scan();const mo=new MutationObserver(()=>scan());mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});setTimeout(scan,500);setTimeout(scan,1400)};
+  const run=()=>{scan();let queued=false;const mo=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});mo.observe(document.body,{childList:true,subtree:true});setTimeout(scan,500);setTimeout(scan,1400)};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
-  document.addEventListener('click',()=>setTimeout(scan,80),true);
+  document.addEventListener('click',()=>setTimeout(scan,120),false);
   window.LinkDiretoCallsTopV45={refresh:scan};
 })();
 </script>
