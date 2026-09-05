@@ -2057,4 +2057,62 @@ function openMatchDirect(button){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
+
+<!-- V44: botões de chamada fixos no topo da conversa + modo demo -->
+<style id="ld-calls-top-v44">
+.ld-call-actions{
+  position:absolute!important;
+  top:calc(10px + env(safe-area-inset-top))!important;
+  right:12px!important;
+  z-index:120!important;
+  margin:0!important;
+  padding:4px!important;
+  border-radius:24px!important;
+  background:rgba(3,12,9,.78)!important;
+  border:1px solid rgba(58,235,171,.22)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.30)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+.ld-call-btn{
+  width:40px!important;height:40px!important;
+  background:linear-gradient(145deg,#17c982,#22e5a2)!important;
+  color:#04100b!important;border:0!important;
+  box-shadow:0 5px 14px rgba(29,224,153,.20)!important;
+}
+.ld-chat-top-host-v44{position:relative!important;padding-top:58px!important}
+.ld-demo-call-chip-v44{position:absolute;top:calc(14px + env(safe-area-inset-top));left:14px;z-index:121;display:none;padding:7px 10px;border-radius:999px;background:#d7ff39;color:#06100b;font-size:10px;font-weight:950;letter-spacing:.06em}
+body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
+@media(max-width:390px){.ld-call-actions{right:8px!important}.ld-call-btn{width:38px!important;height:38px!important}}
+</style>
+<div id="ldDemoChipV44" class="ld-demo-call-chip-v44">MODO DEMO</div>
+<script id="ld-calls-top-v44-script">
+(function(){
+  function locate(){
+    document.querySelectorAll('.ld-call-actions').forEach(box=>{
+      const host=box.closest('.modal,[role="dialog"],.panel,.card,section,div');
+      if(host){host.classList.add('ld-chat-top-host-v44'); if(box.parentElement!==host) host.appendChild(box)}
+    });
+  }
+  const qs=new URLSearchParams(location.search); const demo=qs.get('callDemo')==='1';
+  if(demo)document.body?.classList.add('ld-call-demo-v44');
+  function demoIncoming(kind='voice'){
+    const inc=document.getElementById('ldIncomingCall'); if(!inc)return;
+    document.getElementById('ldIncomingName').textContent='Cliente Demo';
+    document.getElementById('ldIncomingType').textContent=kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';
+    document.getElementById('ldIncomingAvatar').textContent='CD';
+    inc.classList.add('show');inc.setAttribute('aria-hidden','false');
+  }
+  document.addEventListener('click',e=>{
+    if(!demo)return; const b=e.target.closest('[data-ld-call],.ld-deal-quick-call'); if(!b)return;
+    // Em modo demo deixa o motor local V41 abrir a chamada mesmo com Supabase ativo.
+    e.stopImmediatePropagation(); e.preventDefault();
+    const kind=b.dataset.ldCall||'voice'; window.LinkDiretoCalls?.[kind==='video'?'startVideo':'startVoice']?.();
+  },true);
+  window.LinkDiretoCallDemo={incoming:demoIncoming,voice:()=>window.LinkDiretoCalls?.startVoice(),video:()=>window.LinkDiretoCalls?.startVideo()};
+  const run=()=>{locate(); const mo=new MutationObserver(locate);mo.observe(document.body,{childList:true,subtree:true})};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+</script>
+
 </body></html>
