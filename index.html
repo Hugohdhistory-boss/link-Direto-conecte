@@ -1900,4 +1900,48 @@ function openMatchDirect(button){
   document.addEventListener('DOMContentLoaded',()=>{addButtons(document);const mo=new MutationObserver(()=>addButtons(document));mo.observe(document.body,{childList:true,subtree:true})});
 })();
 </script>
+
+
+<!-- V42: chamada rápida nos cartões de negócio concluído -->
+<style id="ld-deal-quick-call-v42">
+.ld-deal-quick-call{width:54px!important;min-width:54px!important;height:48px!important;padding:0!important;border-radius:15px!important;border:1px solid rgba(40,225,160,.45)!important;background:rgba(24,214,145,.10)!important;color:#21e29d!important;font-size:21px!important;font-weight:900!important;display:inline-grid!important;place-items:center!important;box-shadow:none!important}
+.ld-deal-quick-call:active{transform:scale(.96)}
+.ld-deal-actions-v42{display:flex!important;align-items:center!important;gap:10px!important}
+.ld-deal-actions-v42 > *{margin:0!important}
+.ld-deal-actions-v42 .ld-chat-main-v42{flex:1 1 auto!important;min-width:0!important}
+.ld-deal-actions-v42 .ld-rate-v42{flex:0 0 auto!important}
+@media(max-width:390px){.ld-deal-quick-call{width:48px!important;min-width:48px!important}.ld-deal-actions-v42{gap:7px!important}}
+</style>
+<script id="ld-deal-quick-call-v42-script">
+(function(){
+  function txt(el){return String(el?.textContent||'').replace(/\s+/g,' ').trim()}
+  function scan(root=document){
+    const buttons=[...root.querySelectorAll?.('button,a,[role="button"]')||[]];
+    buttons.forEach(chatBtn=>{
+      if(!/^ver conversa$/i.test(txt(chatBtn))) return;
+      const card=chatBtn.closest('.card,.match-card,.connection-card,.proposal-card,.deal-card,[class*="card"],article,li,section,div');
+      if(!card || card.querySelector('.ld-deal-quick-call')) return;
+      const cardText=txt(card);
+      if(!/neg[oó]cio conclu[ií]do/i.test(cardText)) return;
+      const rateBtn=[...card.querySelectorAll('button,a,[role="button"]')].find(x=>/avaliar/i.test(txt(x)));
+      const parent=chatBtn.parentElement;
+      if(!parent) return;
+      parent.classList.add('ld-deal-actions-v42');
+      chatBtn.classList.add('ld-chat-main-v42');
+      if(rateBtn) rateBtn.classList.add('ld-rate-v42');
+      const call=document.createElement('button');
+      call.type='button';call.className='ld-deal-quick-call';call.setAttribute('aria-label','Ligar agora');call.title='Ligar agora';call.textContent='📞';
+      call.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();
+        if(window.LinkDiretoCalls?.startVoice) window.LinkDiretoCalls.startVoice();
+      });
+      if(rateBtn && rateBtn.parentElement===parent) parent.insertBefore(call,rateBtn); else chatBtn.insertAdjacentElement('afterend',call);
+    });
+  }
+  const mo=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)})));
+  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true});setTimeout(()=>scan(document),800);setTimeout(()=>scan(document),1800)});
+  window.addEventListener('pageshow',()=>setTimeout(()=>scan(document),250));
+  window.LinkDiretoDealCallV42={refresh:()=>scan(document)};
+})();
+</script>
+
 </body></html>
