@@ -1944,4 +1944,117 @@ function openMatchDirect(button){
 })();
 </script>
 
+
+
+<!-- V43: WebRTC + Supabase Realtime para chamadas entre utilizadores -->
+<style id="ld-live-calls-v43">
+.ld-incoming-call{position:fixed;inset:0;z-index:31000;background:rgba(0,0,0,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;padding:22px;color:#fff}.ld-incoming-call.show{display:flex}.ld-incoming-card{width:min(360px,100%);border:1px solid rgba(83,255,185,.24);border-radius:28px;padding:28px 22px;background:linear-gradient(180deg,#0b1712,#040807);text-align:center;box-shadow:0 26px 80px rgba(0,0,0,.55)}.ld-incoming-avatar{width:92px;height:92px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:linear-gradient(145deg,#d7ff39,#5cffaa);color:#07110c;font-size:28px;font-weight:1000}.ld-incoming-card small{opacity:.58;letter-spacing:.12em;font-size:10px}.ld-incoming-card h2{margin:8px 0 4px;font-size:24px}.ld-incoming-card p{margin:0 0 24px;opacity:.68}.ld-incoming-actions{display:flex;justify-content:center;gap:34px}.ld-incoming-actions button{width:64px;height:64px;border:0;border-radius:50%;font-size:25px;color:white}.ld-reject{background:#ff3b30}.ld-accept{background:#18d990}.ld-remote-media{position:absolute;inset:0;z-index:-2;display:none;background:#000}.ld-remote-media.show{display:block}.ld-remote-media video{width:100%;height:100%;object-fit:cover}.ld-mini-local{position:absolute;right:14px;top:calc(80px + env(safe-area-inset-top));width:104px;height:148px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 35px rgba(0,0,0,.4);display:none;background:#111}.ld-mini-local.show{display:block}.ld-mini-local video{width:100%;height:100%;object-fit:cover}.ld-call-net{font-size:10px;opacity:.52;margin-top:5px}
+</style>
+<div id="ldIncomingCall" class="ld-incoming-call" aria-hidden="true"><div class="ld-incoming-card"><div id="ldIncomingAvatar" class="ld-incoming-avatar">LD</div><small id="ldIncomingType">CHAMADA DE VOZ</small><h2 id="ldIncomingName">Link Direto</h2><p id="ldIncomingText">Está a ligar…</p><div class="ld-incoming-actions"><button id="ldRejectCall" class="ld-reject" type="button" aria-label="Rejeitar">☎</button><button id="ldAcceptCall" class="ld-accept" type="button" aria-label="Atender">📞</button></div></div></div>
+<script id="ld-live-calls-v43-script">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  let sb=null,myId=null,myName='Link Direto',signalChannel=null,pc=null,remoteStream=null,pendingIncoming=null,currentCall=null,callStartedAt=0;
+  const ICE={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]};
+  const uid=()=> (crypto&&crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(16).slice(2));
+  const initials=n=>String(n||'LD').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'LD';
+  function client(){
+    const cands=[window.supabaseClient,window.sb,window._supabase,window.supabaseApp,window.supabase];
+    return cands.find(x=>x&&x.auth&&typeof x.auth.getUser==='function'&&typeof x.channel==='function')||null;
+  }
+  function localName(){
+    return String(window.currentProfile?.name||window.currentProfile?.business_name||window.currentUser?.user_metadata?.name||document.getElementById('summaryName')?.textContent||'Link Direto').trim();
+  }
+  function targetFrom(el){
+    const roots=[]; let n=el; for(let i=0;n&&i<7;i++,n=n.parentElement) roots.push(n);
+    roots.push(document.getElementById('modal'));
+    const keys=['targetUserId','targetUserid','userId','userid','ownerId','recipientId','otherUserId','profileId','sellerId','buyerId'];
+    for(const r of roots){if(!r)continue;for(const k of keys){const v=r.dataset&&r.dataset[k];if(v&&v!==myId)return v}const tagged=r.querySelector&&r.querySelector('[data-user-id],[data-userid],[data-owner-id],[data-recipient-id],[data-other-user-id],[data-profile-id],[data-target-user-id]');if(tagged){for(const k of keys){const v=tagged.dataset&&tagged.dataset[k];if(v&&v!==myId)return v}}}
+    const objs=[window.activeConversation,window.currentConversation,window.selectedConversation,window.activeChat,window.currentChat];
+    for(const o of objs){if(!o)continue;for(const k of ['other_user_id','otherUserId','recipient_id','recipientId','user_id','userId','owner_id','ownerId','profile_id','profileId']){if(o[k]&&o[k]!==myId)return String(o[k])}}
+    return null;
+  }
+  function activeName(){
+    const h=[...document.querySelectorAll('.modal h1,.modal h2,.modal h3,.chat-name,.conversation-name')].find(x=>x.offsetParent!==null&&x.textContent.trim());
+    return h?h.textContent.trim():'Utilizador Link Direto';
+  }
+  async function boot(){
+    sb=client(); if(!sb){setTimeout(boot,1500);return}
+    try{const {data}=await sb.auth.getUser();myId=data?.user?.id||null;myName=localName();if(!myId)return;await subscribe()}catch(e){console.warn('Link Direto Calls: auth',e)}
+  }
+  async function subscribe(){
+    if(signalChannel||!sb||!myId)return;
+    signalChannel=sb.channel('ld-call:'+myId,{config:{broadcast:{self:false}}});
+    signalChannel.on('broadcast',{event:'signal'},({payload})=>handleSignal(payload));
+    await signalChannel.subscribe();
+    console.info('Link Direto Calls V43 pronto para',myId);
+  }
+  async function send(to,payload){
+    if(!sb||!to)return false;
+    const ch=sb.channel('ld-call:'+to,{config:{broadcast:{self:false}}});
+    await ch.subscribe();
+    const r=await ch.send({type:'broadcast',event:'signal',payload:{...payload,from:myId,fromName:myName,to,ts:Date.now()}});
+    setTimeout(()=>sb.removeChannel(ch),800);
+    return r==='ok'||r===true;
+  }
+  function ensureRemoteUI(kind){
+    const ov=$('ldCallOverlay'); if(!ov)return;
+    let rm=$('ldRemoteMedia');if(!rm){rm=document.createElement('div');rm.id='ldRemoteMedia';rm.className='ld-remote-media';rm.innerHTML='<video id="ldRemoteVideo" autoplay playsinline></video>';ov.prepend(rm)}
+    let ml=$('ldMiniLocal');if(!ml){ml=document.createElement('div');ml.id='ldMiniLocal';ml.className='ld-mini-local';ml.innerHTML='<video id="ldMiniLocalVideo" autoplay playsinline muted></video>';ov.appendChild(ml)}
+    if(kind==='video'){rm.classList.add('show');ml.classList.add('show')}else{rm.classList.remove('show');ml.classList.remove('show')}
+  }
+  async function getMedia(kind){return navigator.mediaDevices.getUserMedia({audio:true,video:kind==='video'})}
+  async function makePC(peerId,kind){
+    if(pc)try{pc.close()}catch(_){}; pc=new RTCPeerConnection(ICE);remoteStream=new MediaStream();ensureRemoteUI(kind);const rv=$('ldRemoteVideo');if(rv)rv.srcObject=remoteStream;
+    pc.ontrack=e=>e.streams[0]?.getTracks().forEach(t=>{if(!remoteStream.getTracks().find(x=>x.id===t.id))remoteStream.addTrack(t)});
+    pc.onicecandidate=e=>{if(e.candidate)send(peerId,{type:'ice',callId:currentCall?.id,candidate:e.candidate.toJSON()})};
+    pc.onconnectionstatechange=()=>{const st=pc?.connectionState;if($('ldCallStatus'))$('ldCallStatus').textContent=st==='connected'?'Ligado':st==='connecting'?'A ligar…':st==='failed'?'Falha na ligação':st==='disconnected'?'Ligação interrompida':$('ldCallStatus').textContent;if(st==='connected')callStartedAt=Date.now();if(['failed','closed'].includes(st))finish(false)};
+    return pc;
+  }
+  function showMain(kind,name,status){
+    const ov=$('ldCallOverlay');if(!ov)return;ov.classList.add('show');ov.setAttribute('aria-hidden','false');$('ldCallType').textContent=kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';$('ldCallName').textContent=name||'Utilizador';$('ldCallAvatar').textContent=initials(name);$('ldCallStatus').textContent=status||'A ligar…';$('ldCallTimer').textContent='00:00';
+  }
+  async function startOutgoing(kind,trigger){
+    if(!myId){alert('Entra na tua conta para fazer chamadas.');return false}
+    const to=targetFrom(trigger||document.activeElement);if(!to){alert('Abre uma conversa com o utilizador antes de ligar.');return false}
+    const name=activeName();const id=uid();currentCall={id,to,kind,name,direction:'out'};showMain(kind,name,'A chamar…');
+    try{
+      const stream=await getMedia(kind);window.__ldCallStream=stream;const lv=$('ldLocalVideo');if(lv)lv.srcObject=stream;const ml=$('ldMiniLocalVideo');if(ml)ml.srcObject=stream;
+      await makePC(to,kind);stream.getTracks().forEach(t=>pc.addTrack(t,stream));
+      const offer=await pc.createOffer();await pc.setLocalDescription(offer);
+      await send(to,{type:'offer',callId:id,kind,sdp:pc.localDescription,name:myName});
+      return true;
+    }catch(e){console.error(e);$('ldCallStatus').textContent='Não foi possível iniciar';setTimeout(()=>finish(false),1200);return false}
+  }
+  function showIncoming(p){pendingIncoming=p;$('ldIncomingName').textContent=p.fromName||p.name||'Utilizador';$('ldIncomingType').textContent=p.kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';$('ldIncomingAvatar').textContent=initials(p.fromName||p.name);$('ldIncomingCall').classList.add('show');$('ldIncomingCall').setAttribute('aria-hidden','false')}
+  async function acceptIncoming(){
+    const p=pendingIncoming;if(!p)return;pendingIncoming=null;$('ldIncomingCall').classList.remove('show');currentCall={id:p.callId,to:p.from,kind:p.kind,name:p.fromName,direction:'in'};showMain(p.kind,p.fromName,'A ligar…');
+    try{const stream=await getMedia(p.kind);window.__ldCallStream=stream;const lv=$('ldLocalVideo');if(lv)lv.srcObject=stream;const ml=$('ldMiniLocalVideo');if(ml)ml.srcObject=stream;await makePC(p.from,p.kind);stream.getTracks().forEach(t=>pc.addTrack(t,stream));await pc.setRemoteDescription(new RTCSessionDescription(p.sdp));const ans=await pc.createAnswer();await pc.setLocalDescription(ans);await send(p.from,{type:'answer',callId:p.callId,sdp:pc.localDescription,kind:p.kind});$('ldCallStatus').textContent='A ligar…'}catch(e){console.error(e);send(p.from,{type:'reject',callId:p.callId,reason:'media'});finish(false)}
+  }
+  function rejectIncoming(){const p=pendingIncoming;if(p)send(p.from,{type:'reject',callId:p.callId});pendingIncoming=null;$('ldIncomingCall').classList.remove('show')}
+  async function handleSignal(p){
+    if(!p||p.from===myId)return;
+    try{
+      if(p.type==='offer'){if(currentCall||pendingIncoming){send(p.from,{type:'busy',callId:p.callId});return}showIncoming(p);return}
+      if(!currentCall||p.callId!==currentCall.id)return;
+      if(p.type==='answer'){await pc.setRemoteDescription(new RTCSessionDescription(p.sdp));$('ldCallStatus').textContent='A ligar…'}
+      else if(p.type==='ice'&&p.candidate&&pc){try{await pc.addIceCandidate(new RTCIceCandidate(p.candidate))}catch(e){console.warn(e)}}
+      else if(p.type==='reject'){$('ldCallStatus').textContent='Chamada rejeitada';setTimeout(()=>finish(false),900)}
+      else if(p.type==='busy'){$('ldCallStatus').textContent='Utilizador ocupado';setTimeout(()=>finish(false),900)}
+      else if(p.type==='hangup'){$('ldCallStatus').textContent='Chamada terminada';setTimeout(()=>finish(false),500)}
+    }catch(e){console.error('Signal error',e)}
+  }
+  function finish(notify=true){
+    const c=currentCall;if(notify&&c?.to)send(c.to,{type:'hangup',callId:c.id});currentCall=null;pendingIncoming=null;
+    try{pc?.close()}catch(_){}pc=null;try{window.__ldCallStream?.getTracks().forEach(t=>t.stop())}catch(_){}window.__ldCallStream=null;remoteStream=null;
+    const ov=$('ldCallOverlay');if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}const inc=$('ldIncomingCall');if(inc)inc.classList.remove('show');const rv=$('ldRemoteVideo');if(rv)rv.srcObject=null;const lv=$('ldLocalVideo');if(lv)lv.srcObject=null;
+  }
+  // Intercepta os botões V41/V42 antes do modo local de demonstração.
+  document.addEventListener('click',function(e){const b=e.target.closest('[data-ld-call],.ld-deal-quick-call');if(!b)return;if(!sb||!myId)return;e.preventDefault();e.stopImmediatePropagation();const kind=b.dataset.ldCall||'voice';startOutgoing(kind,b)},true);
+  $('ldAcceptCall')?.addEventListener('click',acceptIncoming);$('ldRejectCall')?.addEventListener('click',rejectIncoming);$('ldEndBtn')?.addEventListener('click',function(e){if(currentCall){e.stopImmediatePropagation();finish(true)}},true);
+  window.LinkDiretoLiveCalls={boot,start:(kind='voice',el=null)=>startOutgoing(kind,el),accept:acceptIncoming,reject:rejectIncoming,end:()=>finish(true),setClient:c=>{sb=c;myId=null;signalChannel=null;boot()},setTarget:(id,name)=>{window.activeConversation={...(window.activeConversation||{}),otherUserId:id,name}}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
 </body></html>
