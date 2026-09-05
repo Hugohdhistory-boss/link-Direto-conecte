@@ -985,7 +985,7 @@ function openMatchDirect(button){
 })();
 </script>
 
-<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
+<script src="app_v32_chamadas.js?v=32.0"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
 
 
 <style id="photo-center-highlight-v35">
@@ -1835,350 +1835,33 @@ function openMatchDirect(button){
 </script>
 
 
-<style id="ld-calls-v41">
-.ld-call-actions{display:flex;gap:8px;align-items:center;margin-left:auto}
-.ld-call-btn{width:38px;height:38px;border:1px solid rgba(127,127,127,.20);border-radius:50%;background:rgba(127,127,127,.08);color:inherit;display:grid;place-items:center;font-size:18px;cursor:pointer}
-.ld-call-btn:active{transform:scale(.94)}
-.ld-call-overlay{position:fixed;inset:0;z-index:30000;background:radial-gradient(circle at 50% 22%,#183329 0,#07110d 42%,#020504 100%);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(24px + env(safe-area-inset-top)) 20px calc(30px + env(safe-area-inset-bottom));text-align:center}
-.ld-call-overlay.show{display:flex}
-.ld-call-top small{display:block;opacity:.62;font-size:11px;letter-spacing:.14em;margin-top:5px}.ld-call-top h2{margin:7px 0 0;font-size:22px}
-.ld-call-avatar{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#d7ff39,#5cffaa);color:#07110c;font-size:34px;font-weight:1000;box-shadow:0 0 0 10px rgba(215,255,57,.06),0 20px 60px rgba(0,0,0,.35)}
-.ld-call-status{font-size:13px;opacity:.72;margin-top:18px}.ld-call-timer{font-size:12px;opacity:.62;margin-top:7px}
-.ld-call-video-wrap{position:absolute;inset:0;overflow:hidden;z-index:-1}.ld-call-video-wrap video{width:100%;height:100%;object-fit:cover}.ld-call-video-shade{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.50))}
-.ld-call-controls{display:flex;gap:18px;align-items:center}.ld-call-control{width:56px;height:56px;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.15);color:#fff;font-size:21px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.ld-call-control.off{background:rgba(255,255,255,.28)}.ld-call-control.end{width:64px;height:64px;background:#ff3b30;font-size:25px;transform:rotate(135deg)}
-.ld-call-hint{font-size:10px;opacity:.52;max-width:300px;line-height:1.35}
-@media(max-width:420px){.ld-call-actions{gap:5px}.ld-call-btn{width:34px;height:34px;font-size:16px}}
-</style>
+
 <div id="ldCallOverlay" class="ld-call-overlay" aria-hidden="true">
   <div id="ldCallVideoWrap" class="ld-call-video-wrap" hidden><video id="ldLocalVideo" autoplay playsinline muted></video><div class="ld-call-video-shade"></div></div>
   <div class="ld-call-top"><small id="ldCallType">CHAMADA DE VOZ</small><h2 id="ldCallName">Link Direto</h2></div>
   <div><div id="ldCallAvatar" class="ld-call-avatar">LD</div><div id="ldCallStatus" class="ld-call-status">A preparar chamada…</div><div id="ldCallTimer" class="ld-call-timer">00:00</div></div>
   <div><div class="ld-call-controls"><button id="ldMuteBtn" class="ld-call-control" type="button" aria-label="Silenciar">🎙️</button><button id="ldEndBtn" class="ld-call-control end" type="button" aria-label="Terminar">☎</button><button id="ldCameraBtn" class="ld-call-control" type="button" aria-label="Câmara">📷</button></div><p class="ld-call-hint">Interface de chamadas preparada. A ligação entre duas contas será feita por WebRTC + sinalização Supabase.</p></div>
 </div>
-<script id="ld-calls-v41-script">
-(function(){
-  let stream=null,timer=null,started=0,isVideo=false;
-  const $=id=>document.getElementById(id);
-  function initials(name){return String(name||'LD').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'LD'}
-  function activeChatName(){
-    const candidates=[...document.querySelectorAll('.modal.show h1,.modal.show h2,.modal.show h3,.modal:not(.hidden) h1,.modal:not(.hidden) h2,.modal:not(.hidden) h3,[role="dialog"] h1,[role="dialog"] h2,[role="dialog"] h3')];
-    const t=candidates.map(x=>(x.textContent||'').trim()).find(x=>x && !/mensag|conversa|negocia|acordo/i.test(x));
-    return t||'Contacto Link Direto';
-  }
-  function tick(){if(!started)return;const s=Math.floor((Date.now()-started)/1000),m=Math.floor(s/60),r=s%60;$('ldCallTimer').textContent=String(m).padStart(2,'0')+':'+String(r).padStart(2,'0')}
-  async function start(kind){
-    isVideo=kind==='video'; const ov=$('ldCallOverlay'),name=activeChatName();
-    $('ldCallType').textContent=isVideo?'VIDEOCHAMADA':'CHAMADA DE VOZ';$('ldCallName').textContent=name;$('ldCallAvatar').textContent=initials(name);$('ldCallStatus').textContent='A pedir permissão…';$('ldCallTimer').textContent='00:00';$('ldCallVideoWrap').hidden=!isVideo;$('ldCameraBtn').style.visibility=isVideo?'visible':'hidden';ov.classList.add('show');ov.setAttribute('aria-hidden','false');
-    try{
-      stream=await navigator.mediaDevices.getUserMedia({audio:true,video:isVideo});
-      if(isVideo)$('ldLocalVideo').srcObject=stream;
-      started=Date.now();timer=setInterval(tick,1000);$('ldCallStatus').textContent='Chamada pronta';
-      // Evento público para app.js/Supabase ligar a sinalização WebRTC sem quebrar esta versão.
-      window.dispatchEvent(new CustomEvent('linkdireto:callstart',{detail:{kind,name,stream}}));
-    }catch(e){$('ldCallStatus').textContent='Permissão de microfone/câmara necessária';started=0;}
-  }
-  function end(){if(timer){clearInterval(timer);timer=null}if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('ldLocalVideo').srcObject=null;$('ldCallOverlay').classList.remove('show');$('ldCallOverlay').setAttribute('aria-hidden','true');window.dispatchEvent(new CustomEvent('linkdireto:callend'));}
-  function toggleMute(){if(!stream)return;const tracks=stream.getAudioTracks();if(!tracks.length)return;tracks.forEach(t=>t.enabled=!t.enabled);const muted=!tracks[0].enabled;$('ldMuteBtn').classList.toggle('off',muted);$('ldMuteBtn').textContent=muted?'🔇':'🎙️'}
-  function toggleCamera(){if(!stream)return;const tracks=stream.getVideoTracks();if(!tracks.length)return;tracks.forEach(t=>t.enabled=!t.enabled);const off=!tracks[0].enabled;$('ldCameraBtn').classList.toggle('off',off);$('ldCameraBtn').textContent=off?'🚫':'📷'}
-  function addButtons(root=document){
-    const inputs=[...root.querySelectorAll('input[placeholder*="mensagem" i],textarea[placeholder*="mensagem" i],input[placeholder*="message" i],textarea[placeholder*="message" i]')];
-    inputs.forEach(inp=>{
-      const area=inp.closest('.modal,[role="dialog"],.panel,.card,section,div'); if(!area||area.querySelector('.ld-call-actions'))return;
-      let header=area.querySelector('.modal-head,.modal-header,.chat-head,.chat-header,.conversation-head,.conversation-header,.panel-head');
-      if(!header){
-        const title=area.querySelector('h1,h2,h3,h4,strong');
-        if(title) header=title.parentElement;
-      }
-      if(!header)return;
-      const box=document.createElement('div');box.className='ld-call-actions';box.innerHTML='<button class="ld-call-btn" type="button" data-ld-call="voice" aria-label="Chamada de voz">📞</button><button class="ld-call-btn" type="button" data-ld-call="video" aria-label="Videochamada">🎥</button>';header.appendChild(box);
-    });
-  }
-  document.addEventListener('click',e=>{const b=e.target.closest('[data-ld-call]');if(b){e.preventDefault();start(b.dataset.ldCall)}});
-  $('ldEndBtn')?.addEventListener('click',end);$('ldMuteBtn')?.addEventListener('click',toggleMute);$('ldCameraBtn')?.addEventListener('click',toggleCamera);
-  window.LinkDiretoCalls={startVoice:()=>start('voice'),startVideo:()=>start('video'),end,refresh:()=>addButtons(document)};
-  document.addEventListener('DOMContentLoaded',()=>{addButtons(document);const mo=new MutationObserver(()=>addButtons(document));mo.observe(document.body,{childList:true,subtree:true})});
-})();
-</script>
+
 
 
 <!-- V42: chamada rápida nos cartões de negócio concluído -->
-<style id="ld-deal-quick-call-v42">
-.ld-deal-quick-call{width:54px!important;min-width:54px!important;height:48px!important;padding:0!important;border-radius:15px!important;border:1px solid rgba(40,225,160,.45)!important;background:rgba(24,214,145,.10)!important;color:#21e29d!important;font-size:21px!important;font-weight:900!important;display:inline-grid!important;place-items:center!important;box-shadow:none!important}
-.ld-deal-quick-call:active{transform:scale(.96)}
-.ld-deal-actions-v42{display:flex!important;align-items:center!important;gap:10px!important}
-.ld-deal-actions-v42 > *{margin:0!important}
-.ld-deal-actions-v42 .ld-chat-main-v42{flex:1 1 auto!important;min-width:0!important}
-.ld-deal-actions-v42 .ld-rate-v42{flex:0 0 auto!important}
-@media(max-width:390px){.ld-deal-quick-call{width:48px!important;min-width:48px!important}.ld-deal-actions-v42{gap:7px!important}}
-</style>
-<script id="ld-deal-quick-call-v42-script">
-(function(){
-  function txt(el){return String(el?.textContent||'').replace(/\s+/g,' ').trim()}
-  function scan(root=document){
-    const buttons=[...root.querySelectorAll?.('button,a,[role="button"]')||[]];
-    buttons.forEach(chatBtn=>{
-      if(!/^ver conversa$/i.test(txt(chatBtn))) return;
-      const card=chatBtn.closest('.card,.match-card,.connection-card,.proposal-card,.deal-card,[class*="card"],article,li,section,div');
-      if(!card || card.querySelector('.ld-deal-quick-call')) return;
-      const cardText=txt(card);
-      if(!/neg[oó]cio conclu[ií]do/i.test(cardText)) return;
-      const rateBtn=[...card.querySelectorAll('button,a,[role="button"]')].find(x=>/avaliar/i.test(txt(x)));
-      const parent=chatBtn.parentElement;
-      if(!parent) return;
-      parent.classList.add('ld-deal-actions-v42');
-      chatBtn.classList.add('ld-chat-main-v42');
-      if(rateBtn) rateBtn.classList.add('ld-rate-v42');
-      const call=document.createElement('button');
-      call.type='button';call.className='ld-deal-quick-call';call.setAttribute('aria-label','Ligar agora');call.title='Ligar agora';call.textContent='📞';
-      call.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();
-        if(window.LinkDiretoCalls?.startVoice) window.LinkDiretoCalls.startVoice();
-      });
-      if(rateBtn && rateBtn.parentElement===parent) parent.insertBefore(call,rateBtn); else chatBtn.insertAdjacentElement('afterend',call);
-    });
-  }
-  const mo=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)})));
-  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true});setTimeout(()=>scan(document),800);setTimeout(()=>scan(document),1800)});
-  window.addEventListener('pageshow',()=>setTimeout(()=>scan(document),250));
-  window.LinkDiretoDealCallV42={refresh:()=>scan(document)};
-})();
-</script>
+
+
 
 
 
 <!-- V43: WebRTC + Supabase Realtime para chamadas entre utilizadores -->
-<style id="ld-live-calls-v43">
-.ld-incoming-call{position:fixed;inset:0;z-index:31000;background:rgba(0,0,0,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;padding:22px;color:#fff}.ld-incoming-call.show{display:flex}.ld-incoming-card{width:min(360px,100%);border:1px solid rgba(83,255,185,.24);border-radius:28px;padding:28px 22px;background:linear-gradient(180deg,#0b1712,#040807);text-align:center;box-shadow:0 26px 80px rgba(0,0,0,.55)}.ld-incoming-avatar{width:92px;height:92px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;background:linear-gradient(145deg,#d7ff39,#5cffaa);color:#07110c;font-size:28px;font-weight:1000}.ld-incoming-card small{opacity:.58;letter-spacing:.12em;font-size:10px}.ld-incoming-card h2{margin:8px 0 4px;font-size:24px}.ld-incoming-card p{margin:0 0 24px;opacity:.68}.ld-incoming-actions{display:flex;justify-content:center;gap:34px}.ld-incoming-actions button{width:64px;height:64px;border:0;border-radius:50%;font-size:25px;color:white}.ld-reject{background:#ff3b30}.ld-accept{background:#18d990}.ld-remote-media{position:absolute;inset:0;z-index:-2;display:none;background:#000}.ld-remote-media.show{display:block}.ld-remote-media video{width:100%;height:100%;object-fit:cover}.ld-mini-local{position:absolute;right:14px;top:calc(80px + env(safe-area-inset-top));width:104px;height:148px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.28);box-shadow:0 10px 35px rgba(0,0,0,.4);display:none;background:#111}.ld-mini-local.show{display:block}.ld-mini-local video{width:100%;height:100%;object-fit:cover}.ld-call-net{font-size:10px;opacity:.52;margin-top:5px}
-</style>
+
 <div id="ldIncomingCall" class="ld-incoming-call" aria-hidden="true"><div class="ld-incoming-card"><div id="ldIncomingAvatar" class="ld-incoming-avatar">LD</div><small id="ldIncomingType">CHAMADA DE VOZ</small><h2 id="ldIncomingName">Link Direto</h2><p id="ldIncomingText">Está a ligar…</p><div class="ld-incoming-actions"><button id="ldRejectCall" class="ld-reject" type="button" aria-label="Rejeitar">☎</button><button id="ldAcceptCall" class="ld-accept" type="button" aria-label="Atender">📞</button></div></div></div>
-<script id="ld-live-calls-v43-script">
-(function(){
-  'use strict';
-  const $=id=>document.getElementById(id);
-  let sb=null,myId=null,myName='Link Direto',signalChannel=null,pc=null,remoteStream=null,pendingIncoming=null,currentCall=null,callStartedAt=0;
-  const ICE={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]};
-  const uid=()=> (crypto&&crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(16).slice(2));
-  const initials=n=>String(n||'LD').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()||'LD';
-  function client(){
-    const cands=[window.supabaseClient,window.sb,window._supabase,window.supabaseApp,window.supabase];
-    return cands.find(x=>x&&x.auth&&typeof x.auth.getUser==='function'&&typeof x.channel==='function')||null;
-  }
-  function localName(){
-    return String(window.currentProfile?.name||window.currentProfile?.business_name||window.currentUser?.user_metadata?.name||document.getElementById('summaryName')?.textContent||'Link Direto').trim();
-  }
-  function targetFrom(el){
-    const roots=[]; let n=el; for(let i=0;n&&i<7;i++,n=n.parentElement) roots.push(n);
-    roots.push(document.getElementById('modal'));
-    const keys=['targetUserId','targetUserid','userId','userid','ownerId','recipientId','otherUserId','profileId','sellerId','buyerId'];
-    for(const r of roots){if(!r)continue;for(const k of keys){const v=r.dataset&&r.dataset[k];if(v&&v!==myId)return v}const tagged=r.querySelector&&r.querySelector('[data-user-id],[data-userid],[data-owner-id],[data-recipient-id],[data-other-user-id],[data-profile-id],[data-target-user-id]');if(tagged){for(const k of keys){const v=tagged.dataset&&tagged.dataset[k];if(v&&v!==myId)return v}}}
-    const objs=[window.activeConversation,window.currentConversation,window.selectedConversation,window.activeChat,window.currentChat];
-    for(const o of objs){if(!o)continue;for(const k of ['other_user_id','otherUserId','recipient_id','recipientId','user_id','userId','owner_id','ownerId','profile_id','profileId']){if(o[k]&&o[k]!==myId)return String(o[k])}}
-    return null;
-  }
-  function activeName(){
-    const h=[...document.querySelectorAll('.modal h1,.modal h2,.modal h3,.chat-name,.conversation-name')].find(x=>x.offsetParent!==null&&x.textContent.trim());
-    return h?h.textContent.trim():'Utilizador Link Direto';
-  }
-  async function boot(){
-    sb=client(); if(!sb){setTimeout(boot,1500);return}
-    try{const {data}=await sb.auth.getUser();myId=data?.user?.id||null;myName=localName();if(!myId)return;await subscribe()}catch(e){console.warn('Link Direto Calls: auth',e)}
-  }
-  async function subscribe(){
-    if(signalChannel||!sb||!myId)return;
-    signalChannel=sb.channel('ld-call:'+myId,{config:{broadcast:{self:false}}});
-    signalChannel.on('broadcast',{event:'signal'},({payload})=>handleSignal(payload));
-    await signalChannel.subscribe();
-    console.info('Link Direto Calls V43 pronto para',myId);
-  }
-  async function send(to,payload){
-    if(!sb||!to)return false;
-    const ch=sb.channel('ld-call:'+to,{config:{broadcast:{self:false}}});
-    await ch.subscribe();
-    const r=await ch.send({type:'broadcast',event:'signal',payload:{...payload,from:myId,fromName:myName,to,ts:Date.now()}});
-    setTimeout(()=>sb.removeChannel(ch),800);
-    return r==='ok'||r===true;
-  }
-  function ensureRemoteUI(kind){
-    const ov=$('ldCallOverlay'); if(!ov)return;
-    let rm=$('ldRemoteMedia');if(!rm){rm=document.createElement('div');rm.id='ldRemoteMedia';rm.className='ld-remote-media';rm.innerHTML='<video id="ldRemoteVideo" autoplay playsinline></video>';ov.prepend(rm)}
-    let ml=$('ldMiniLocal');if(!ml){ml=document.createElement('div');ml.id='ldMiniLocal';ml.className='ld-mini-local';ml.innerHTML='<video id="ldMiniLocalVideo" autoplay playsinline muted></video>';ov.appendChild(ml)}
-    if(kind==='video'){rm.classList.add('show');ml.classList.add('show')}else{rm.classList.remove('show');ml.classList.remove('show')}
-  }
-  async function getMedia(kind){return navigator.mediaDevices.getUserMedia({audio:true,video:kind==='video'})}
-  async function makePC(peerId,kind){
-    if(pc)try{pc.close()}catch(_){}; pc=new RTCPeerConnection(ICE);remoteStream=new MediaStream();ensureRemoteUI(kind);const rv=$('ldRemoteVideo');if(rv)rv.srcObject=remoteStream;
-    pc.ontrack=e=>e.streams[0]?.getTracks().forEach(t=>{if(!remoteStream.getTracks().find(x=>x.id===t.id))remoteStream.addTrack(t)});
-    pc.onicecandidate=e=>{if(e.candidate)send(peerId,{type:'ice',callId:currentCall?.id,candidate:e.candidate.toJSON()})};
-    pc.onconnectionstatechange=()=>{const st=pc?.connectionState;if($('ldCallStatus'))$('ldCallStatus').textContent=st==='connected'?'Ligado':st==='connecting'?'A ligar…':st==='failed'?'Falha na ligação':st==='disconnected'?'Ligação interrompida':$('ldCallStatus').textContent;if(st==='connected')callStartedAt=Date.now();if(['failed','closed'].includes(st))finish(false)};
-    return pc;
-  }
-  function showMain(kind,name,status){
-    const ov=$('ldCallOverlay');if(!ov)return;ov.classList.add('show');ov.setAttribute('aria-hidden','false');$('ldCallType').textContent=kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';$('ldCallName').textContent=name||'Utilizador';$('ldCallAvatar').textContent=initials(name);$('ldCallStatus').textContent=status||'A ligar…';$('ldCallTimer').textContent='00:00';
-  }
-  async function startOutgoing(kind,trigger){
-    if(!myId){alert('Entra na tua conta para fazer chamadas.');return false}
-    const to=targetFrom(trigger||document.activeElement);if(!to){alert('Abre uma conversa com o utilizador antes de ligar.');return false}
-    const name=activeName();const id=uid();currentCall={id,to,kind,name,direction:'out'};showMain(kind,name,'A chamar…');
-    try{
-      const stream=await getMedia(kind);window.__ldCallStream=stream;const lv=$('ldLocalVideo');if(lv)lv.srcObject=stream;const ml=$('ldMiniLocalVideo');if(ml)ml.srcObject=stream;
-      await makePC(to,kind);stream.getTracks().forEach(t=>pc.addTrack(t,stream));
-      const offer=await pc.createOffer();await pc.setLocalDescription(offer);
-      await send(to,{type:'offer',callId:id,kind,sdp:pc.localDescription,name:myName});
-      return true;
-    }catch(e){console.error(e);$('ldCallStatus').textContent='Não foi possível iniciar';setTimeout(()=>finish(false),1200);return false}
-  }
-  function showIncoming(p){pendingIncoming=p;$('ldIncomingName').textContent=p.fromName||p.name||'Utilizador';$('ldIncomingType').textContent=p.kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';$('ldIncomingAvatar').textContent=initials(p.fromName||p.name);$('ldIncomingCall').classList.add('show');$('ldIncomingCall').setAttribute('aria-hidden','false')}
-  async function acceptIncoming(){
-    const p=pendingIncoming;if(!p)return;pendingIncoming=null;$('ldIncomingCall').classList.remove('show');currentCall={id:p.callId,to:p.from,kind:p.kind,name:p.fromName,direction:'in'};showMain(p.kind,p.fromName,'A ligar…');
-    try{const stream=await getMedia(p.kind);window.__ldCallStream=stream;const lv=$('ldLocalVideo');if(lv)lv.srcObject=stream;const ml=$('ldMiniLocalVideo');if(ml)ml.srcObject=stream;await makePC(p.from,p.kind);stream.getTracks().forEach(t=>pc.addTrack(t,stream));await pc.setRemoteDescription(new RTCSessionDescription(p.sdp));const ans=await pc.createAnswer();await pc.setLocalDescription(ans);await send(p.from,{type:'answer',callId:p.callId,sdp:pc.localDescription,kind:p.kind});$('ldCallStatus').textContent='A ligar…'}catch(e){console.error(e);send(p.from,{type:'reject',callId:p.callId,reason:'media'});finish(false)}
-  }
-  function rejectIncoming(){const p=pendingIncoming;if(p)send(p.from,{type:'reject',callId:p.callId});pendingIncoming=null;$('ldIncomingCall').classList.remove('show')}
-  async function handleSignal(p){
-    if(!p||p.from===myId)return;
-    try{
-      if(p.type==='offer'){if(currentCall||pendingIncoming){send(p.from,{type:'busy',callId:p.callId});return}showIncoming(p);return}
-      if(!currentCall||p.callId!==currentCall.id)return;
-      if(p.type==='answer'){await pc.setRemoteDescription(new RTCSessionDescription(p.sdp));$('ldCallStatus').textContent='A ligar…'}
-      else if(p.type==='ice'&&p.candidate&&pc){try{await pc.addIceCandidate(new RTCIceCandidate(p.candidate))}catch(e){console.warn(e)}}
-      else if(p.type==='reject'){$('ldCallStatus').textContent='Chamada rejeitada';setTimeout(()=>finish(false),900)}
-      else if(p.type==='busy'){$('ldCallStatus').textContent='Utilizador ocupado';setTimeout(()=>finish(false),900)}
-      else if(p.type==='hangup'){$('ldCallStatus').textContent='Chamada terminada';setTimeout(()=>finish(false),500)}
-    }catch(e){console.error('Signal error',e)}
-  }
-  function finish(notify=true){
-    const c=currentCall;if(notify&&c?.to)send(c.to,{type:'hangup',callId:c.id});currentCall=null;pendingIncoming=null;
-    try{pc?.close()}catch(_){}pc=null;try{window.__ldCallStream?.getTracks().forEach(t=>t.stop())}catch(_){}window.__ldCallStream=null;remoteStream=null;
-    const ov=$('ldCallOverlay');if(ov){ov.classList.remove('show');ov.setAttribute('aria-hidden','true')}const inc=$('ldIncomingCall');if(inc)inc.classList.remove('show');const rv=$('ldRemoteVideo');if(rv)rv.srcObject=null;const lv=$('ldLocalVideo');if(lv)lv.srcObject=null;
-  }
-  // Intercepta os botões V41/V42 antes do modo local de demonstração.
-  document.addEventListener('click',function(e){const b=e.target.closest('[data-ld-call],.ld-deal-quick-call');if(!b)return;if(!sb||!myId)return;e.preventDefault();e.stopImmediatePropagation();const kind=b.dataset.ldCall||'voice';startOutgoing(kind,b)},true);
-  $('ldAcceptCall')?.addEventListener('click',acceptIncoming);$('ldRejectCall')?.addEventListener('click',rejectIncoming);$('ldEndBtn')?.addEventListener('click',function(e){if(currentCall){e.stopImmediatePropagation();finish(true)}},true);
-  window.LinkDiretoLiveCalls={boot,start:(kind='voice',el=null)=>startOutgoing(kind,el),accept:acceptIncoming,reject:rejectIncoming,end:()=>finish(true),setClient:c=>{sb=c;myId=null;signalChannel=null;boot()},setTarget:(id,name)=>{window.activeConversation={...(window.activeConversation||{}),otherUserId:id,name}}};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-})();
-</script>
+
 
 <!-- V44: botões de chamada fixos no topo da conversa + modo demo -->
-<style id="ld-calls-top-v44">
-.ld-call-actions{
-  position:absolute!important;
-  top:calc(10px + env(safe-area-inset-top))!important;
-  right:12px!important;
-  z-index:120!important;
-  margin:0!important;
-  padding:4px!important;
-  border-radius:24px!important;
-  background:rgba(3,12,9,.78)!important;
-  border:1px solid rgba(58,235,171,.22)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.30)!important;
-  backdrop-filter:blur(12px)!important;
-  -webkit-backdrop-filter:blur(12px)!important;
-}
-.ld-call-btn{
-  width:40px!important;height:40px!important;
-  background:linear-gradient(145deg,#17c982,#22e5a2)!important;
-  color:#04100b!important;border:0!important;
-  box-shadow:0 5px 14px rgba(29,224,153,.20)!important;
-}
-.ld-chat-top-host-v44{position:relative!important;padding-top:58px!important}
-.ld-demo-call-chip-v44{position:absolute;top:calc(14px + env(safe-area-inset-top));left:14px;z-index:121;display:none;padding:7px 10px;border-radius:999px;background:#d7ff39;color:#06100b;font-size:10px;font-weight:950;letter-spacing:.06em}
-body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
-@media(max-width:390px){.ld-call-actions{right:8px!important}.ld-call-btn{width:38px!important;height:38px!important}}
-</style>
-<div id="ldDemoChipV44" class="ld-demo-call-chip-v44">MODO DEMO</div>
-<script id="ld-calls-top-v44-script">
-(function(){
-  function locate(){
-    document.querySelectorAll('.ld-call-actions').forEach(box=>{
-      const host=box.closest('.modal,[role="dialog"],.panel,.card,section,div');
-      if(host){host.classList.add('ld-chat-top-host-v44'); if(box.parentElement!==host) host.appendChild(box)}
-    });
-  }
-  const qs=new URLSearchParams(location.search); const demo=qs.get('callDemo')==='1';
-  if(demo)document.body?.classList.add('ld-call-demo-v44');
-  function demoIncoming(kind='voice'){
-    const inc=document.getElementById('ldIncomingCall'); if(!inc)return;
-    document.getElementById('ldIncomingName').textContent='Cliente Demo';
-    document.getElementById('ldIncomingType').textContent=kind==='video'?'VIDEOCHAMADA':'CHAMADA DE VOZ';
-    document.getElementById('ldIncomingAvatar').textContent='CD';
-    inc.classList.add('show');inc.setAttribute('aria-hidden','false');
-  }
-  document.addEventListener('click',e=>{
-    if(!demo)return; const b=e.target.closest('[data-ld-call],.ld-deal-quick-call'); if(!b)return;
-    // Em modo demo deixa o motor local V41 abrir a chamada mesmo com Supabase ativo.
-    e.stopImmediatePropagation(); e.preventDefault();
-    const kind=b.dataset.ldCall||'voice'; window.LinkDiretoCalls?.[kind==='video'?'startVideo':'startVoice']?.();
-  },true);
-  window.LinkDiretoCallDemo={incoming:demoIncoming,voice:()=>window.LinkDiretoCalls?.startVoice(),video:()=>window.LinkDiretoCalls?.startVideo()};
-  const run=()=>{locate(); const mo=new MutationObserver(locate);mo.observe(document.body,{childList:true,subtree:true})};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
-})();
-</script>
-
-
 
 <!-- V45: posicionamento definitivo no cabeçalho da Sala de Negócio -->
-<style id="ld-calls-room-head-v45">
-.ld-room-call-head-v45{position:relative!important;padding-right:112px!important;min-height:46px!important}
-.ld-room-call-head-v45 .ld-call-actions{
-  position:absolute!important;
-  top:0!important;
-  right:46px!important;
-  display:flex!important;
-  gap:7px!important;
-  padding:0!important;
-  margin:0!important;
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-.ld-room-call-head-v45 .ld-call-btn{
-  width:38px!important;height:38px!important;min-width:38px!important;
-  border-radius:50%!important;
-  background:rgba(21,218,148,.14)!important;
-  border:1px solid rgba(41,238,168,.38)!important;
-  color:#2ce6a3!important;
-  font-size:18px!important;
-  box-shadow:none!important;
-}
-.ld-room-call-head-v45 .ld-call-btn:active{transform:scale(.94)!important;background:rgba(21,218,148,.25)!important}
-/* desfaz o espaço extra criado pela versão anterior quando os botões estavam em baixo */
-.ld-chat-top-host-v44.ld-room-v45{padding-top:0!important}
-@media(max-width:390px){
- .ld-room-call-head-v45{padding-right:104px!important}
- .ld-room-call-head-v45 .ld-call-actions{right:42px!important;gap:5px!important}
- .ld-room-call-head-v45 .ld-call-btn{width:35px!important;height:35px!important;min-width:35px!important;font-size:17px!important}
-}
-</style>
-<script id="ld-calls-room-head-v45-script">
-(function(){
-  const norm=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-  function visible(el){return !!(el && (el.offsetWidth||el.offsetHeight||el.getClientRects().length));}
-  function scan(){
-    const inputs=[...document.querySelectorAll('input[placeholder*="mensagem" i],textarea[placeholder*="mensagem" i],input[placeholder*="message" i],textarea[placeholder*="message" i]')].filter(visible);
-    inputs.forEach(inp=>{
-      let room=inp.closest('[role="dialog"],.modal,.modal-card,.dialog,.sheet,.panel');
-      if(!room){
-        let n=inp.parentElement;
-        for(let i=0;n&&i<8;i++,n=n.parentElement){if(/sala de neg[oó]cio/i.test(norm(n.textContent))){room=n;break}}
-      }
-      if(!room)return;
-      const title=[...room.querySelectorAll('h1,h2,h3,h4,strong')].find(x=>/sala de neg[oó]cio/i.test(norm(x.textContent)));
-      if(!title)return;
-      let head=title.parentElement||room;
-      head.classList.add('ld-room-call-head-v45');
-      room.classList.add('ld-room-v45');
-      let box=room.querySelector('.ld-call-actions');
-      if(!box && window.LinkDiretoCalls?.refresh){window.LinkDiretoCalls.refresh();box=room.querySelector('.ld-call-actions')}
-      if(box && box.parentElement!==head)head.appendChild(box);
-    });
-  }
-  const run=()=>{scan();let queued=false;const mo=new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;scan()})});mo.observe(document.body,{childList:true,subtree:true});setTimeout(scan,500);setTimeout(scan,1400)};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
-  document.addEventListener('click',()=>setTimeout(scan,120),false);
-  window.LinkDiretoCallsTopV45={refresh:scan};
-})();
-</script>
+
+
+
+<!-- V47: painel de simulacao seguro (so aparece com ?callDemo=1) -->
+
 </body></html>
