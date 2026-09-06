@@ -2344,4 +2344,166 @@ function toggleOpportunityForm(open){
   else{c.classList.add('hidden'); if(hub)hub.style.display='grid'; window.scrollTo({top:0,behavior:'smooth'})}
 }
 </script>
+
+<!-- V20: China Direto - fornecedores monitorizados + caixa de entrada Supabase -->
+<style id="china-monitor-v20-style">
+#chinaMonitorBtn{margin-left:8px}
+.china-monitor-modal{position:fixed;inset:0;z-index:26000;background:rgba(0,0,0,.82);display:none;align-items:flex-end;justify-content:center;padding:0}
+.china-monitor-modal.show{display:flex}
+.china-monitor-card{width:min(620px,100%);max-height:92vh;overflow:auto;background:#07100c;border:1px solid rgba(255,255,255,.12);border-radius:24px 24px 0 0;padding:18px 16px calc(24px + env(safe-area-inset-bottom));color:#fff}
+.china-monitor-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
+.china-monitor-head h2{margin:0;font-size:20px}
+.china-monitor-x{border:0;background:rgba(255,255,255,.08);color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px}
+.china-monitor-status{padding:12px;border-radius:14px;background:rgba(255,255,255,.05);font-size:12px;line-height:1.45;margin-bottom:14px}
+.china-monitor-status.ok{background:rgba(53,220,145,.10)}
+.china-monitor-status.wait{background:rgba(255,190,60,.09)}
+.china-monitor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.china-monitor-grid input{width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.13);background:#0d1712;color:#fff}
+.china-monitor-add{width:100%;margin-top:9px;padding:13px;border:0;border-radius:13px;background:#d7ff38;color:#07100c;font-weight:950}
+.china-watch-list{display:grid;gap:8px;margin-top:14px}
+.china-watch-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.035)}
+.china-watch-item b{display:block;font-size:13px}.china-watch-item small{display:block;opacity:.62;margin-top:2px}
+.china-watch-del{border:0;background:rgba(255,75,75,.12);color:#ff9a9a;border-radius:10px;padding:8px 10px}
+.china-monitor-note{font-size:11px;opacity:.58;margin-top:14px;line-height:1.45}
+@media(max-width:520px){.china-monitor-grid{grid-template-columns:1fr}}
+</style>
+
+<div id="chinaMonitorModal" class="china-monitor-modal" aria-hidden="true">
+  <div class="china-monitor-card">
+    <div class="china-monitor-head">
+      <div><div style="font-size:10px;opacity:.55;letter-spacing:.12em">CHINA DIRETO</div><h2>📡 Fornecedores monitorizados</h2></div>
+      <button id="chinaMonitorClose" class="china-monitor-x" type="button">×</button>
+    </div>
+    <div id="chinaMonitorStatus" class="china-monitor-status wait">A verificar a ponte…</div>
+
+    <div class="china-monitor-grid">
+      <input id="chinaWatchCode" placeholder="Código, ex.: CHN-001">
+      <input id="chinaWatchPhone" placeholder="Número interno, ex.: +86…">
+      <input id="chinaWatchName" placeholder="Nome interno (opcional)">
+      <input id="chinaWatchLabel" placeholder="Etiqueta, ex.: Eletrónica">
+    </div>
+    <button id="chinaWatchAdd" class="china-monitor-add" type="button">+ Adicionar fornecedor monitorizado</button>
+
+    <div id="chinaWatchList" class="china-watch-list"></div>
+    <div class="china-monitor-note">
+      O número fica apenas nesta área administrativa. A vitrine pública usa somente o código interno do fornecedor.
+      Esta versão prepara o Link Direto para receber automaticamente itens numa caixa de entrada Supabase; ela não lê Status do WhatsApp por conta própria.
+    </div>
+  </div>
+</div>
+
+<script id="china-monitor-v20-script">
+(function(){
+  'use strict';
+  const K_WATCH='ld_china_watch_v20';
+  const K_PROD='ld_china_products_v18';
+  const $=id=>document.getElementById(id);
+  const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  function client(){
+    const cands=[window.supabaseClient,window.sb,window._supabase,window.supabaseApp,window.supabase];
+    return cands.find(x=>x&&typeof x.channel==='function'&&typeof x.from==='function')||null;
+  }
+
+  function ensureButton(){
+    const china=document.getElementById('view-china');
+    if(!china || document.getElementById('chinaMonitorBtn')) return;
+    const candidates=[...china.querySelectorAll('button')];
+    const anchor=candidates.find(b=>/fornecedor|importar|status/i.test(b.textContent||'')) || candidates[0];
+    const btn=document.createElement('button');
+    btn.id='chinaMonitorBtn';btn.type='button';btn.className=anchor?.className||'btn';
+    btn.textContent='📡 Monitor';
+    btn.addEventListener('click',open);
+    if(anchor?.parentElement) anchor.insertAdjacentElement('afterend',btn);
+    else china.prepend(btn);
+  }
+
+  function open(){ $('chinaMonitorModal')?.classList.add('show'); renderWatch(); bridgeStatus(); }
+  function close(){ $('chinaMonitorModal')?.classList.remove('show'); }
+
+  function renderWatch(){
+    const list=$('chinaWatchList'); if(!list) return;
+    const a=read(K_WATCH);
+    list.innerHTML=a.length?a.map((x,i)=>`<div class="china-watch-item"><div><b>${esc(x.code)} · ${esc(x.name||'Fornecedor')}</b><small>${esc(x.label||'Sem categoria')} · contacto privado</small></div><button class="china-watch-del" data-i="${i}" type="button">Remover</button></div>`).join(''):'<div style="opacity:.55;font-size:12px;padding:8px">Ainda não há fornecedores monitorizados.</div>';
+    list.querySelectorAll('.china-watch-del').forEach(b=>b.onclick=()=>{const x=read(K_WATCH);x.splice(Number(b.dataset.i),1);write(K_WATCH,x);renderWatch()});
+  }
+
+  function addWatch(){
+    const code=$('chinaWatchCode')?.value.trim().toUpperCase();
+    const phone=$('chinaWatchPhone')?.value.trim();
+    const name=$('chinaWatchName')?.value.trim();
+    const label=$('chinaWatchLabel')?.value.trim();
+    if(!code||!phone){alert('Coloca o código e o número interno do fornecedor.');return}
+    const a=read(K_WATCH);
+    if(a.some(x=>x.code===code)){alert('Este código já existe.');return}
+    a.unshift({code,phone,name,label,createdAt:new Date().toISOString()});write(K_WATCH,a);
+    ['chinaWatchCode','chinaWatchPhone','chinaWatchName','chinaWatchLabel'].forEach(id=>{if($(id))$(id).value=''});
+    renderWatch();
+  }
+
+  function bridgeStatus(){
+    const el=$('chinaMonitorStatus'), sb=client();
+    if(!el)return;
+    if(sb){el.className='china-monitor-status ok';el.innerHTML='<b>✅ Link Direto preparado para receber a caixa de entrada.</b><br>Quando surgir um item autorizado na tabela <code>china_status_inbox</code>, fornecedores selecionados entram automaticamente na vitrine por 48 horas.'}
+    else {el.className='china-monitor-status wait';el.innerHTML='<b>⏳ Supabase ainda não foi encontrado nesta página.</b><br>A lista de fornecedores funciona localmente, mas a receção automática só liga quando o cliente Supabase estiver disponível.'}
+  }
+
+  function mirror(row){
+    if(!row) return;
+    const watched=read(K_WATCH);
+    const supplier=watched.find(x=>x.code===String(row.supplier_code||'').toUpperCase());
+    if(!supplier) return;
+    const items=read(K_PROD);
+    const marker='inbox:'+String(row.id||'');
+    if(items.some(x=>x.bridgeMarker===marker)) return;
+    const created=new Date(row.created_at||Date.now());
+    const expiry=row.expires_at?new Date(row.expires_at):new Date(created.getTime()+48*60*60*1000);
+    if(expiry.getTime()<=Date.now()) return;
+    items.unshift({
+      id:'bridge_'+(row.id||Date.now()),
+      supplierId:supplier.code,
+      title:(row.caption||'Produto internacional').slice(0,90),
+      price:'',
+      category:supplier.label||'China Direto',
+      desc:row.caption||'Produto recebido do fornecedor internacional.',
+      media:row.media_url||'',
+      mediaType:String(row.media_type||'image').startsWith('video')?'video':'image',
+      redactions:[],
+      createdAt:created.toISOString(),
+      expiresAt:expiry.toISOString(),
+      bridgeMarker:marker,
+      source:'bridge'
+    });
+    write(K_PROD,items);
+    if(window.ChinaDireto?.render) try{window.ChinaDireto.render()}catch(e){}
+  }
+
+  let subscribed=false;
+  async function startBridge(){
+    const sb=client(); if(!sb||subscribed){setTimeout(startBridge,2000);return}
+    subscribed=true;
+    try{
+      const {data,error}=await sb.from('china_status_inbox').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(100);
+      if(!error && Array.isArray(data)) data.reverse().forEach(mirror);
+      sb.channel('ld-china-status-inbox-v20')
+        .on('postgres_changes',{event:'INSERT',schema:'public',table:'china_status_inbox'},payload=>mirror(payload.new))
+        .subscribe();
+      bridgeStatus();
+    }catch(e){console.warn('China Monitor V20:',e)}
+  }
+
+  function boot(){
+    ensureButton();
+    $('chinaMonitorClose')?.addEventListener('click',close);
+    $('chinaMonitorModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)close()});
+    $('chinaWatchAdd')?.addEventListener('click',addWatch);
+    renderWatch(); bridgeStatus(); startBridge();
+    const mo=new MutationObserver(()=>ensureButton()); mo.observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
 </body></html>
