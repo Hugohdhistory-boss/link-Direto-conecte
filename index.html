@@ -2644,4 +2644,90 @@ document.addEventListener('click',function(e){
 })();
 </script>
 
+
+<script id="china-force-render-v23">
+(function(){
+  const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
+  const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
+  const K_WATCH='ld_china_watch_v20';
+  const K_PROD='ld_china_products_v18';
+
+  const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+  const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+
+  async function forceSync(){
+    const watched=read(K_WATCH);
+    if(!watched.length) return;
+
+    const now=new Date().toISOString();
+    const url=`${SUPABASE_URL}/rest/v1/china_status_inbox?select=*&expires_at=gt.${encodeURIComponent(now)}&order=created_at.desc&limit=100`;
+
+    try{
+      const r=await fetch(url,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
+      if(!r.ok) throw new Error(await r.text());
+      const rows=await r.json();
+
+      const activeCodes=new Set(watched.map(x=>String(x.code||'').trim().toUpperCase()));
+      const existing=read(K_PROD);
+
+      const preserved=existing.filter(x=>x.source!=='supabase_force_v23' && x.source!=='supabase_direct_v22' && x.source!=='supabase_bridge');
+      const rebuilt=[];
+
+      for(const row of rows){
+        const code=String(row.supplier_code||'').trim().toUpperCase();
+        if(!activeCodes.has(code)) continue;
+        const supplier=watched.find(x=>String(x.code||'').trim().toUpperCase()===code);
+        const created=new Date(row.created_at||Date.now());
+        const expires=new Date(row.expires_at||created.getTime()+48*60*60*1000);
+        if(expires.getTime()<=Date.now()) continue;
+
+        rebuilt.push({
+          id:'force_'+String(row.id),
+          supplierId:code,
+          title:(row.caption||'Produto internacional').slice(0,90),
+          price:'',
+          category:supplier?.label||'China Direto',
+          desc:row.caption||'Produto recebido do fornecedor internacional.',
+          media:row.media_url||'',
+          mediaType:String(row.media_type||'image').startsWith('video')?'video':'image',
+          redactions:[],
+          createdAt:created.toISOString(),
+          expiresAt:expires.toISOString(),
+          bridgeMarker:'force:'+String(row.id),
+          source:'supabase_force_v23'
+        });
+      }
+
+      write(K_PROD,[...rebuilt,...preserved]);
+
+      try{
+        if(window.ChinaDireto?.render) window.ChinaDireto.render();
+      }catch(e){ console.warn('China force render',e); }
+
+      const status=document.getElementById('chinaMonitorStatus');
+      if(status){
+        status.className='china-monitor-status ok';
+        status.innerHTML=`<b>✅ Ponte Supabase ligada.</b><br>${rows.length} item(ns) ativo(s) encontrados; ${rebuilt.length} produto(s) reconstruído(s) para a vitrine.`;
+      }
+    }catch(err){
+      console.warn('China force sync',err);
+    }
+  }
+
+  window.ChinaForceV23={sync:forceSync};
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(forceSync,1500);
+  });
+
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button');
+    if(!b) return;
+    if(document.getElementById('view-china')?.classList.contains('active') && /atualizar|monitor/i.test(b.textContent||'')){
+      setTimeout(forceSync,120);
+    }
+  });
+})();
+</script>
+
 </body></html>
