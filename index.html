@@ -2166,6 +2166,7 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
   window.LinkDiretoCallDemo={incoming:demoIncoming,voice:()=>window.LinkDiretoCalls?.startVoice(),video:()=>window.LinkDiretoCalls?.startVideo()};
   const run=()=>{locate(); const mo=new MutationObserver(locate);mo.observe(document.body,{childList:true,subtree:true})};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  setInterval(()=>{if(document.getElementById('view-china')?.classList.contains('active'))render()},60000);
 })();
 </script>
 
@@ -2238,6 +2239,11 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
 
 <style id="china-redact-v48">
 .cd-redact-preview{position:relative;display:none;margin:10px 0 6px;border-radius:16px;overflow:hidden;background:#000;min-height:180px;max-height:420px;touch-action:manipulation}.cd-redact-preview img,.cd-redact-preview video{display:block;width:100%;max-height:420px;object-fit:contain;background:#000}.cd-redact-layer{position:absolute;inset:0;cursor:crosshair}.cd-redact-box{position:absolute;background:#050806;border-radius:5px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}.cd-redact-help{font-size:12px;opacity:.65;line-height:1.35;margin:4px 0 8px}.cd-redact-tools{display:flex;gap:8px;flex-wrap:wrap}.cd-redact-tools button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:inherit;border-radius:12px;padding:9px 11px;font-weight:700}.china-media{position:relative}.china-public-redaction{position:absolute;background:#050806;border-radius:5px;z-index:3;pointer-events:none}.china-private-note{font-size:12px;opacity:.62;margin-top:5px}.china-no-price{font-size:12px;opacity:.62;margin:5px 0 7px}
+.china-expiry{display:inline-flex;align-items:center;gap:6px;margin:7px 0 9px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.06);font-size:10px;font-weight:800}
+.china-expiry.new{background:rgba(58,220,150,.12)}
+.china-expiry.soon{background:rgba(255,174,0,.14)}
+.china-expired-note{padding:13px;text-align:center;opacity:.6;font-size:12px}
+
 </style>
 
 <script id="china-direto-v46-script">
@@ -2257,7 +2263,7 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
   function openImport(){
     const sups=read(K_SUP); if(!sups.length){toast('Primeiro cadastra um fornecedor.');return openSupplier()}
     cdRedactions=[]; if(cdPreviewUrl){try{URL.revokeObjectURL(cdPreviewUrl)}catch(e){} cdPreviewUrl=''}
-    modal(`<h2>＋ Importar Status</h2><p style="opacity:.65">Escolhe a foto ou vídeo do Status. O fornecedor continua fora do Link Direto: o número fica privado e o preço não é mostrado ao público.</p><form class="china-form" onsubmit="ChinaDireto.saveImport(event)"><label>Fornecedor<select id="cdImportSupplier" required>${sups.map(s=>`<option value="${esc(s.id)}">${esc(s.code)} — ${esc(s.name||'Fornecedor')}</option>`).join('')}</select></label><label>Foto ou vídeo do Status<input id="cdImportMedia" type="file" accept="image/*,video/*" required onchange="ChinaDireto.previewImport(this)"></label><div id="cdRedactPreview" class="cd-redact-preview"><div id="cdRedactMedia"></div><div id="cdRedactLayer" class="cd-redact-layer" onclick="ChinaDireto.addRedaction(event)"></div></div><div class="cd-redact-help">Se o chinês escreveu o <b>preço</b> ou <b>número</b> dentro da foto/vídeo, toca em cima desse texto para o cobrir. Podes tocar várias vezes.</div><div class="cd-redact-tools"><button type="button" onclick="ChinaDireto.undoRedaction()">↶ Desfazer</button><button type="button" onclick="ChinaDireto.clearRedactions()">Limpar ocultações</button></div><label>Nome do produto<input id="cdImportTitle" required maxlength="100" placeholder="Ex.: Smartwatch S9"></label><label>Categoria<input id="cdImportCategory" placeholder="Eletrónicos"></label><label>Descrição<textarea id="cdImportDesc" maxlength="500" placeholder="Detalhes úteis do produto..."></textarea></label><div class="china-private-note">🔒 O contacto real do fornecedor fica visível apenas na administração. Preço público: <b>Sob consulta</b>.</div><button class="btn primary" type="submit">Publicar na China Direto</button></form>`)
+    modal(`<h2>＋ Importar Status</h2><p style="opacity:.65">Escolhe a foto ou vídeo do Status. O fornecedor continua fora do Link Direto: o número fica privado e o preço não é mostrado ao público.</p><form class="china-form" onsubmit="ChinaDireto.saveImport(event)"><label>Fornecedor<select id="cdImportSupplier" required>${sups.map(s=>`<option value="${esc(s.id)}">${esc(s.code)} — ${esc(s.name||'Fornecedor')}</option>`).join('')}</select></label><label>Foto ou vídeo do Status<input id="cdImportMedia" type="file" accept="image/*,video/*" required onchange="ChinaDireto.previewImport(this)"></label><div id="cdRedactPreview" class="cd-redact-preview"><div id="cdRedactMedia"></div><div id="cdRedactLayer" class="cd-redact-layer" onclick="ChinaDireto.addRedaction(event)"></div></div><div class="cd-redact-help">Se o chinês escreveu o <b>preço</b> ou <b>número</b> dentro da foto/vídeo, toca em cima desse texto para o cobrir. Podes tocar várias vezes.</div><div class="cd-redact-tools"><button type="button" onclick="ChinaDireto.undoRedaction()">↶ Desfazer</button><button type="button" onclick="ChinaDireto.clearRedactions()">Limpar ocultações</button></div><label>Nome do produto<input id="cdImportTitle" required maxlength="100" placeholder="Ex.: Smartwatch S9"></label><label>Categoria<input id="cdImportCategory" placeholder="Eletrónicos"></label><label>Descrição<textarea id="cdImportDesc" maxlength="500" placeholder="Detalhes úteis do produto..."></textarea></label><div class="china-private-note">🔒 O contacto real do fornecedor fica visível apenas na administração. Preço público: <b>Sob consulta</b>. A publicação fica ativa por <b>48 horas</b>.</div><button class="btn primary" type="submit">Publicar por 48 horas</button></form>`)
   }
   function previewImport(inp){
     const f=inp?.files?.[0],wrap=document.getElementById('cdRedactPreview'),media=document.getElementById('cdRedactMedia'); if(!f||!wrap||!media)return;
@@ -2277,13 +2283,39 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
   async function saveImport(e){
     e.preventDefault();const f=document.getElementById('cdImportMedia').files[0];if(!f)return toast('Escolhe uma foto ou vídeo.');
     if(f.size>18*1024*1024)return toast('Ficheiro muito grande. Usa até 18 MB nesta versão.');
-    const media=await fileToData(f); const a=read(K_PROD); a.unshift({id:'prd_'+Date.now(),supplierId:document.getElementById('cdImportSupplier').value,title:document.getElementById('cdImportTitle').value.trim(),price:'',category:document.getElementById('cdImportCategory').value.trim(),desc:document.getElementById('cdImportDesc').value.trim(),media,mediaType:f.type.startsWith('video/')?'video':'image',redactions:cdRedactions.slice(),createdAt:new Date().toISOString()});
+    const media=await fileToData(f); const a=read(K_PROD); const createdAt=new Date(); const expiresAt=new Date(createdAt.getTime()+48*60*60*1000); a.unshift({id:'prd_'+Date.now(),supplierId:document.getElementById('cdImportSupplier').value,title:document.getElementById('cdImportTitle').value.trim(),price:'',category:document.getElementById('cdImportCategory').value.trim(),desc:document.getElementById('cdImportDesc').value.trim(),media,mediaType:f.type.startsWith('video/')?'video':'image',redactions:cdRedactions.slice(),createdAt:createdAt.toISOString(),expiresAt:expiresAt.toISOString()});
     try{write(K_PROD,a)}catch(err){return toast('Sem espaço no aparelho. Usa uma foto menor.')}
-    closeModal();toast('Status publicado sem mostrar o número.');render()
+    closeModal();toast('Publicado por 48 horas, com contacto protegido.');render()
+  }
+  function expiryInfo(p){
+    const created = new Date(p.createdAt || Date.now()).getTime();
+    const expiry = new Date(p.expiresAt || (created + 48*60*60*1000)).getTime();
+    const left = expiry - Date.now();
+    if(left <= 0) return {expired:true,left:0,label:'Expirado',cls:'soon'};
+    const hrs = Math.ceil(left/3600000);
+    const age = Date.now() - created;
+    if(age < 6*3600000) return {expired:false,left,label:`Novo · ${hrs}h restantes`,cls:'new'};
+    if(left <= 6*3600000) return {expired:false,left,label:`Termina em breve · ${hrs}h`,cls:'soon'};
+    return {expired:false,left,label:`${hrs}h restantes`,cls:''};
   }
   function render(){
-    const feed=document.getElementById('chinaFeed');if(!feed)return; const q=(document.getElementById('chinaSearch')?.value||'').toLowerCase(); const arr=read(K_PROD).filter(p=>(p.title+' '+p.desc+' '+p.category).toLowerCase().includes(q));
-    feed.innerHTML=arr.length?arr.map(p=>`<article class="china-card"><div class="china-media">${p.mediaType==='video'?`<video src="${p.media}" muted playsinline preload="metadata" controls></video>`:`<img src="${p.media}" alt="${esc(p.title)}">`}${(p.redactions||[]).map(b=>`<span class="china-public-redaction" style="left:${b.x*100}%;top:${b.y*100}%;width:${b.w*100}%;height:${b.h*100}%"></span>`).join('')}</div><div class="china-body"><div class="china-supplier"><span>🇨🇳</span><i></i><span>Fornecedor Internacional Verificado</span></div><div class="china-title">${esc(p.title)}</div><div class="china-no-price">Preço: <b>Sob consulta</b></div><div class="china-desc">${esc(p.desc||p.category||'Produto importado')}</div><button class="btn" onclick="ChinaDireto.interest('${p.id}')">PEDIR ESTE PRODUTO</button></div></article>`).join(''):'<div class="china-empty">Ainda não há produtos. Usa <b>Importar Status</b> para publicar o primeiro.</div>';
+    const feed=document.getElementById('chinaFeed');if(!feed)return;
+    const q=(document.getElementById('chinaSearch')?.value||'').toLowerCase();
+    const all=read(K_PROD);
+    let changed=false;
+    all.forEach(p=>{
+      if(!p.expiresAt){
+        const created=new Date(p.createdAt||Date.now()).getTime();
+        p.expiresAt=new Date(created+48*60*60*1000).toISOString();
+        changed=true;
+      }
+    });
+    if(changed) write(K_PROD,all);
+    const arr=all.filter(p=>!expiryInfo(p).expired).filter(p=>(p.title+' '+p.desc+' '+p.category).toLowerCase().includes(q));
+    feed.innerHTML=arr.length?arr.map(p=>{
+      const ex=expiryInfo(p);
+      return `<article class="china-card"><div class="china-media">${p.mediaType==='video'?`<video src="${p.media}" muted playsinline preload="metadata" controls></video>`:`<img src="${p.media}" alt="${esc(p.title)}">`}${(p.redactions||[]).map(b=>`<span class="china-public-redaction" style="left:${b.x*100}%;top:${b.y*100}%;width:${b.w*100}%;height:${b.h*100}%"></span>`).join('')}</div><div class="china-body"><div class="china-supplier"><span>🇨🇳</span><i></i><span>Fornecedor Internacional Verificado</span></div><div class="china-title">${esc(p.title)}</div><div class="china-expiry ${ex.cls}">⏱ ${ex.label}</div><div class="china-no-price">Preço: <b>Sob consulta</b></div><div class="china-desc">${esc(p.desc||p.category||'Produto importado')}</div><button class="btn" onclick="ChinaDireto.interest('${p.id}')">PEDIR ESTE PRODUTO</button></div></article>`;
+    }).join(''):'<div class="china-empty">Nenhum produto ativo neste momento. As publicações desaparecem automaticamente após <b>48 horas</b>.</div>';
     renderOrders()
   }
   function interest(id){const p=read(K_PROD).find(x=>x.id===id);if(!p)return;modal(`<h2>Tenho interesse</h2><p><b>${esc(p.title)}</b></p><form class="china-form" onsubmit="ChinaDireto.submitInterest(event,'${esc(id)}')"><label>O que precisas?<textarea id="cdInterestText" required placeholder="Ex.: Quero 5 unidades. Qual é o preço final em Maputo?"></textarea></label><label>Teu contacto<input id="cdInterestContact" required placeholder="WhatsApp ou telefone"></label><button class="btn primary" type="submit">Enviar pedido ao Link Direto</button><small style="opacity:.55">O contacto do fornecedor não será revelado.</small></form>`)}
@@ -2295,6 +2327,7 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
   window.ChinaDireto={openSupplier,saveSupplier,openImport,previewImport,addRedaction,undoRedaction,clearRedactions,saveImport,render,interest,submitInterest,renderOrders,setOrder,contactSupplier};
   const run=()=>{addHomeCard();render();const old=window.showView;if(typeof old==='function'&&!old.__china){const wrapped=function(v,b){const r=old.apply(this,arguments);if(v==='china')setTimeout(render,0);return r};wrapped.__china=true;window.showView=wrapped}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  setInterval(()=>{if(document.getElementById('view-china')?.classList.contains('active'))render()},60000);
 })();
 </script>
 
