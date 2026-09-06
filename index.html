@@ -1039,7 +1039,7 @@ function openMatchDirect(button){
 })();
 </script>
 
-<script src="app.js?v=31.3"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
+<script src="app_v32_china_bridge.js?v=32.0"></script>\n<script id="link-direto-verificado-v30">\n(function(){\n  const KEY='linkDiretoVerifiedAccountsV1';\n  const normalize=v=>String(v||'').trim().toLowerCase();\n  function read(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return{};} }\n  function write(v){ localStorage.setItem(KEY,JSON.stringify(v)); }\n  function isVerified(email){ const e=normalize(email); return !!(e && read()[e]); }\n  function addBadge(el,size){\n    if(!el || el.querySelector(':scope > .ld-verified-badge')) return;\n    el.classList.add('ld-verified-name');\n    const b=document.createElement('span');\n    b.className='ld-verified-badge'+(size?' '+size:'');\n    b.title='Conta verificada no Link Direto Connect';\n    b.setAttribute('aria-label','Conta verificada');\n    el.appendChild(b);\n  }\n  function removeBadge(el){\n    if(!el) return;\n    el.querySelectorAll(':scope > .ld-verified-badge').forEach(b=>b.remove());\n    el.classList.remove('ld-verified-name');\n  }\n  function currentEmail(){\n    const el=document.getElementById('profileEmail');\n    const txt=normalize(el && el.textContent);\n    return txt && txt!=='—' ? txt : '';\n  }\n  function refreshProfile(){\n    const yes=isVerified(currentEmail());\n    ['summaryName','profileName'].forEach(id=>{\n      const el=document.getElementById(id);\n      if(yes) addBadge(el,id==='summaryName'?'large':''); else removeBadge(el);\n    });\n  }\n  function scan(root=document){\n    refreshProfile();\n    if(!root.querySelectorAll) return;\n    root.querySelectorAll('[data-verified="true"],[data-is-verified="true"],.verified-user').forEach(card=>{\n      const name=card.matches('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company')?card:\n        card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n    root.querySelectorAll('[data-email]').forEach(card=>{\n      const email=card.getAttribute('data-email');\n      if(!isVerified(email)) return;\n      const name=card.querySelector('[data-profile-name],.profile-name,.user-name,.author-name,.discover-name,.job-company,h3,h4,strong');\n      addBadge(name,'small');\n    });\n  }\n  window.LinkDiretoVerify={\n    add:function(email){const e=normalize(email);if(!e)return false;const m=read();m[e]=true;write(m);scan(document);return true;},\n    remove:function(email){const e=normalize(email);const m=read();delete m[e];write(m);scan(document);return true;},\n    has:isVerified,\n    current:function(value=true){const e=currentEmail();if(!e)return false;return value?this.add(e):this.remove(e);},\n    refresh:function(){scan(document);}\n  };\n  const mo=new MutationObserver(muts=>{for(const m of muts){for(const n of m.addedNodes){if(n.nodeType===1)scan(n);}}refreshProfile();});\n  document.addEventListener('DOMContentLoaded',()=>{scan(document);mo.observe(document.body,{childList:true,subtree:true,characterData:true});});\n  window.addEventListener('pageshow',()=>scan(document));\n})();\n</script>\n<script src="ai-ads.js"></script>
 
 
 <style id="photo-center-highlight-v35">
@@ -2392,7 +2392,7 @@ function toggleOpportunityForm(open){
   </div>
 </div>
 
-<script id="china-monitor-v20-script">
+<script id="china-monitor-v21-script">
 (function(){
   'use strict';
   const K_WATCH='ld_china_watch_v20';
@@ -2401,11 +2401,6 @@ function toggleOpportunityForm(open){
   const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-
-  function client(){
-    const cands=[window.supabaseClient,window.sb,window._supabase,window.supabaseApp,window.supabase];
-    return cands.find(x=>x&&typeof x.channel==='function'&&typeof x.from==='function')||null;
-  }
 
   function ensureButton(){
     const china=document.getElementById('view-china');
@@ -2420,7 +2415,12 @@ function toggleOpportunityForm(open){
     else china.prepend(btn);
   }
 
-  function open(){ $('chinaMonitorModal')?.classList.add('show'); renderWatch(); bridgeStatus(); }
+  function open(){
+    $('chinaMonitorModal')?.classList.add('show');
+    renderWatch();
+    bridgeStatus();
+    syncNow();
+  }
   function close(){ $('chinaMonitorModal')?.classList.remove('show'); }
 
   function renderWatch(){
@@ -2440,27 +2440,45 @@ function toggleOpportunityForm(open){
     if(a.some(x=>x.code===code)){alert('Este código já existe.');return}
     a.unshift({code,phone,name,label,createdAt:new Date().toISOString()});write(K_WATCH,a);
     ['chinaWatchCode','chinaWatchPhone','chinaWatchName','chinaWatchLabel'].forEach(id=>{if($(id))$(id).value=''});
-    renderWatch();
+    renderWatch(); syncNow();
   }
 
-  function bridgeStatus(){
-    const el=$('chinaMonitorStatus'), sb=client();
-    if(!el)return;
-    if(sb){el.className='china-monitor-status ok';el.innerHTML='<b>✅ Link Direto preparado para receber a caixa de entrada.</b><br>Quando surgir um item autorizado na tabela <code>china_status_inbox</code>, fornecedores selecionados entram automaticamente na vitrine por 48 horas.'}
-    else {el.className='china-monitor-status wait';el.innerHTML='<b>⏳ Supabase ainda não foi encontrado nesta página.</b><br>A lista de fornecedores funciona localmente, mas a receção automática só liga quando o cliente Supabase estiver disponível.'}
+  function bridgeStatus(error){
+    const el=$('chinaMonitorStatus'); if(!el)return;
+    const bridge=window.LinkDiretoChinaBridge;
+    if(!bridge){
+      el.className='china-monitor-status wait';
+      el.innerHTML='<b>⏳ Ponte ainda não carregou.</b><br>Confirma se o novo <code>app_v32_china_bridge.js</code> foi enviado para o GitHub.';
+      return;
+    }
+    if(!bridge.isAuthenticated()){
+      el.className='china-monitor-status wait';
+      el.innerHTML='<b>🔐 Entra na tua conta Link Direto.</b><br>A tabela está protegida no Supabase e só é lida com sessão autenticada.';
+      return;
+    }
+    if(error){
+      el.className='china-monitor-status wait';
+      el.innerHTML='<b>⚠️ A ponte ligou, mas o Supabase recusou a leitura.</b><br>Confirma a tabela <code>china_status_inbox</code> e a policy de leitura.';
+      return;
+    }
+    el.className='china-monitor-status ok';
+    el.innerHTML='<b>✅ Ponte Supabase ligada.</b><br>Itens de fornecedores monitorizados entram na vitrine e expiram automaticamente em 48 horas.';
   }
 
   function mirror(row){
-    if(!row) return;
+    if(!row) return false;
     const watched=read(K_WATCH);
     const supplier=watched.find(x=>x.code===String(row.supplier_code||'').toUpperCase());
-    if(!supplier) return;
+    if(!supplier) return false;
+
     const items=read(K_PROD);
     const marker='inbox:'+String(row.id||'');
-    if(items.some(x=>x.bridgeMarker===marker)) return;
+    if(items.some(x=>x.bridgeMarker===marker)) return false;
+
     const created=new Date(row.created_at||Date.now());
     const expiry=row.expires_at?new Date(row.expires_at):new Date(created.getTime()+48*60*60*1000);
-    if(expiry.getTime()<=Date.now()) return;
+    if(expiry.getTime()<=Date.now()) return false;
+
     items.unshift({
       id:'bridge_'+(row.id||Date.now()),
       supplierId:supplier.code,
@@ -2474,24 +2492,30 @@ function toggleOpportunityForm(open){
       createdAt:created.toISOString(),
       expiresAt:expiry.toISOString(),
       bridgeMarker:marker,
-      source:'bridge'
+      source:'supabase_bridge'
     });
     write(K_PROD,items);
-    if(window.ChinaDireto?.render) try{window.ChinaDireto.render()}catch(e){}
+    return true;
   }
 
-  let subscribed=false;
-  async function startBridge(){
-    const sb=client(); if(!sb||subscribed){setTimeout(startBridge,2000);return}
-    subscribed=true;
-    try{
-      const {data,error}=await sb.from('china_status_inbox').select('*').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(100);
-      if(!error && Array.isArray(data)) data.reverse().forEach(mirror);
-      sb.channel('ld-china-status-inbox-v20')
-        .on('postgres_changes',{event:'INSERT',schema:'public',table:'china_status_inbox'},payload=>mirror(payload.new))
-        .subscribe();
-      bridgeStatus();
-    }catch(e){console.warn('China Monitor V20:',e)}
+  function consume(rows,error){
+    bridgeStatus(error);
+    if(error||!Array.isArray(rows)) return;
+    let added=0;
+    [...rows].reverse().forEach(r=>{if(mirror(r))added++});
+    if(added){
+      try{ window.ChinaDireto?.render?.(); }catch(e){}
+      const t=window.toast;
+      if(typeof t==='function') t(`${added} produto${added===1?'':'s'} recebido${added===1?'':'s'} no China Direto.`);
+    }
+  }
+
+  async function syncNow(){
+    const bridge=window.LinkDiretoChinaBridge;
+    bridgeStatus();
+    if(!bridge||!bridge.isAuthenticated()) return;
+    try{ consume(await bridge.loadActive(),null); }
+    catch(err){ consume([],err); }
   }
 
   function boot(){
@@ -2499,11 +2523,37 @@ function toggleOpportunityForm(open){
     $('chinaMonitorClose')?.addEventListener('click',close);
     $('chinaMonitorModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)close()});
     $('chinaWatchAdd')?.addEventListener('click',addWatch);
-    renderWatch(); bridgeStatus(); startBridge();
-    const mo=new MutationObserver(()=>ensureButton()); mo.observe(document.body,{childList:true,subtree:true});
+    renderWatch();
+    bridgeStatus();
+
+    const waitForBridge=setInterval(()=>{
+      if(window.LinkDiretoChinaBridge){
+        clearInterval(waitForBridge);
+        window.LinkDiretoChinaBridge.subscribe(consume);
+        window.LinkDiretoChinaBridge.start(8000);
+        syncNow();
+      }
+    },300);
+
+    const mo=new MutationObserver(()=>ensureButton());
+    mo.observe(document.body,{childList:true,subtree:true});
   }
+
+  window.ChinaMonitorV21={sync:syncNow};
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
+</script>
+
+
+<script id="china-refresh-v21">
+document.addEventListener('click',function(e){
+  const b=e.target.closest('button');
+  if(!b) return;
+  if(document.getElementById('view-china')?.classList.contains('active') && /atualizar/i.test(b.textContent||'')){
+    setTimeout(()=>window.ChinaMonitorV21?.sync?.(),50);
+  }
+});
 </script>
 
 </body></html>
