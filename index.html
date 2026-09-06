@@ -2396,7 +2396,7 @@ function toggleOpportunityForm(open){
 (function(){
   'use strict';
   const K_WATCH='ld_china_watch_v20';
-  const K_PROD='ld_china_products_v18';
+  const K_PROD='ld_china_products_v1';
   const $=id=>document.getElementById(id);
   const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -2439,6 +2439,13 @@ function toggleOpportunityForm(open){
     const a=read(K_WATCH);
     if(a.some(x=>x.code===code)){alert('Este código já existe.');return}
     a.unshift({code,phone,name,label,createdAt:new Date().toISOString()});write(K_WATCH,a);
+    try{
+      const sk='ld_china_suppliers_v1', sups=read(sk);
+      if(!sups.some(s=>String(s.code||'').trim().toUpperCase()===code)){
+        sups.unshift({id:'supmon_'+Date.now(),code,name,phone,createdAt:new Date().toISOString()});
+        write(sk,sups);
+      }
+    }catch(e){}
     ['chinaWatchCode','chinaWatchPhone','chinaWatchName','chinaWatchLabel'].forEach(id=>{if($(id))$(id).value=''});
     renderWatch(); syncNow();
   }
@@ -2562,7 +2569,7 @@ document.addEventListener('click',function(e){
   const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
   const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
   const K_WATCH='ld_china_watch_v20';
-  const K_PROD='ld_china_products_v18';
+  const K_PROD='ld_china_products_v1';
 
   const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -2650,7 +2657,7 @@ document.addEventListener('click',function(e){
   const SUPABASE_URL='https://bfrofclxcjpufqpfyqiz.supabase.co';
   const SUPABASE_KEY='sb_publishable_oXyVQBSbjW64hotxW2G-BA_akx34fk1';
   const K_WATCH='ld_china_watch_v20';
-  const K_PROD='ld_china_products_v18';
+  const K_PROD='ld_china_products_v1';
 
   const read=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
   const write=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -2683,7 +2690,7 @@ document.addEventListener('click',function(e){
 
         rebuilt.push({
           id:'force_'+String(row.id),
-          supplierId:code,
+          supplierId:(read('ld_china_suppliers_v1').find(s=>String(s.code||'').trim().toUpperCase()===code)?.id||code),
           title:(row.caption||'Produto internacional').slice(0,90),
           price:'',
           category:supplier?.label||'China Direto',
@@ -2726,6 +2733,29 @@ document.addEventListener('click',function(e){
     if(document.getElementById('view-china')?.classList.contains('active') && /atualizar|monitor/i.test(b.textContent||'')){
       setTimeout(forceSync,120);
     }
+  });
+})();
+</script>
+
+
+<script id="china-storage-migration-v24">
+(function(){
+  try{
+    const oldKey='ld_china_products_v18', newKey='ld_china_products_v1';
+    const oldRows=JSON.parse(localStorage.getItem(oldKey)||'[]');
+    const newRows=JSON.parse(localStorage.getItem(newKey)||'[]');
+    if(Array.isArray(oldRows)&&oldRows.length){
+      const ids=new Set(newRows.map(x=>String(x.bridgeMarker||x.id)));
+      let changed=false;
+      oldRows.forEach(x=>{
+        const k=String(x.bridgeMarker||x.id);
+        if(!ids.has(k)){newRows.unshift(x);ids.add(k);changed=true}
+      });
+      if(changed)localStorage.setItem(newKey,JSON.stringify(newRows));
+    }
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{try{window.ChinaForceV23?.sync?.();window.ChinaDireto?.render?.()}catch(e){}},900);
   });
 })();
 </script>
