@@ -821,10 +821,10 @@
 
 <style id="ld-delivery-v1">
 #ldDeliveryStrip.ld-delivery-strip{
-  width:auto!important;
+  width:100%!important;
   max-width:none!important;
   box-sizing:border-box!important;
-  margin:10px 16px 10px!important;
+  margin:10px 0 10px!important;
   padding:12px 13px!important;
   border-radius:18px!important;
   display:flex!important;
@@ -836,8 +836,8 @@
     linear-gradient(135deg,rgba(53,233,174,.06),rgba(255,255,255,.025))!important;
 }
 #ldDeliveryStrip .ld-delivery-icon{
-  width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
-  flex:none;font-size:24px;background:rgba(53,233,174,.11);border:1px solid rgba(53,233,174,.16)
+  width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  flex:none;background:rgba(53,233,174,.08);border:1px solid rgba(53,233,174,.22)
 }
 #ldDeliveryStrip .ld-delivery-copy{flex:1;min-width:0}
 #ldDeliveryStrip .ld-delivery-copy b{display:block;font-size:15px;line-height:1.1;color:#fff}
@@ -849,12 +849,13 @@
 #ldDeliveryStrip>button span{font-size:20px;line-height:.7}
 
 #view-home #ldDeliveryStrip{
-  margin-left:16px!important;
-  margin-right:16px!important;
+  width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
 }
 @media(max-width:390px){
   #ldDeliveryStrip{gap:8px!important;padding:10px!important}
-  #ldDeliveryStrip .ld-delivery-icon{width:38px;height:38px;font-size:21px}
+  #ldDeliveryStrip .ld-delivery-icon{width:42px;height:42px}
   #ldDeliveryStrip .ld-delivery-copy b{font-size:13px}
   #ldDeliveryStrip .ld-delivery-copy small{font-size:8.7px}
   #ldDeliveryStrip>button{padding:9px 10px;font-size:9px;max-width:108px}
@@ -1349,7 +1350,18 @@ function openMatchDirect(button){
   function insertHomeStrip(){
     const home=document.getElementById('view-home'); if(!home||document.getElementById('ldDeliveryStrip'))return;
     const hero=home.querySelector('.hero'); const el=document.createElement('section'); el.id='ldDeliveryStrip';el.className='ld-delivery-strip';
-    el.innerHTML='<div class="ld-delivery-icon">🛵</div><div class="ld-delivery-copy"><b>Pedir Entrega</b><small>Recebe ou envia os teus produtos com entregadores de confiança.</small></div><button type="button" onclick="openDeliveryModal()">Solicitar Delivery <span>›</span></button>';
+    el.innerHTML='<div class="ld-delivery-icon" aria-hidden="true">
+<svg viewBox="0 0 64 64" width="34" height="34" role="img">
+  <rect x="10" y="17" width="20" height="17" rx="3" fill="#c89558"/>
+  <path d="M13 17h14l3 5H10z" fill="#e5b06e"/>
+  <path d="M27 33h10l7-12h7l-2 5h-4l-5 11H27z" fill="#35e9ae"/>
+  <path d="M37 29h10c4 0 7 3 7 7v3H43l-6-10z" fill="#35e9ae"/>
+  <circle cx="25" cy="43" r="7" fill="#08130f" stroke="#35e9ae" stroke-width="4"/>
+  <circle cx="49" cy="43" r="7" fill="#08130f" stroke="#35e9ae" stroke-width="4"/>
+  <path d="M41 22l4-7h8" fill="none" stroke="#35e9ae" stroke-width="4" stroke-linecap="round"/>
+  <path d="M37 36H25" fill="none" stroke="#35e9ae" stroke-width="5" stroke-linecap="round"/>
+</svg>
+</div><div class="ld-delivery-copy"><b>Pedir Entrega</b><small>Recebe ou envia os teus produtos com entregadores de confiança.</small></div><button type="button" onclick="openDeliveryModal()">Solicitar Delivery <span>›</span></button>';
     hero?.insertAdjacentElement('afterend',el);
   }
   function render(){
