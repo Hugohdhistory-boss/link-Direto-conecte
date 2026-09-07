@@ -836,8 +836,8 @@
     linear-gradient(135deg,rgba(53,233,174,.06),rgba(255,255,255,.025))!important;
 }
 #ldDeliveryStrip .ld-delivery-icon{
-  width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  flex:none;background:rgba(53,233,174,.08);border:1px solid rgba(53,233,174,.22)
+  width:54px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  flex:none;background:rgba(255,190,32,.07);border:1px solid rgba(255,200,62,.18)
 }
 #ldDeliveryStrip .ld-delivery-copy{flex:1;min-width:0}
 #ldDeliveryStrip .ld-delivery-copy b{display:block;font-size:15px;line-height:1.1;color:#fff}
@@ -855,7 +855,7 @@
 }
 @media(max-width:390px){
   #ldDeliveryStrip{gap:8px!important;padding:10px!important}
-  #ldDeliveryStrip .ld-delivery-icon{width:42px;height:42px}
+  #ldDeliveryStrip .ld-delivery-icon{width:48px;height:42px}
   #ldDeliveryStrip .ld-delivery-copy b{font-size:13px}
   #ldDeliveryStrip .ld-delivery-copy small{font-size:8.7px}
   #ldDeliveryStrip>button{padding:9px 10px;font-size:9px;max-width:108px}
@@ -1351,15 +1351,23 @@ function openMatchDirect(button){
     const home=document.getElementById('view-home'); if(!home||document.getElementById('ldDeliveryStrip'))return;
     const hero=home.querySelector('.hero'); const el=document.createElement('section'); el.id='ldDeliveryStrip';el.className='ld-delivery-strip';
     el.innerHTML='<div class="ld-delivery-icon" aria-hidden="true">
-<svg viewBox="0 0 64 64" width="34" height="34" role="img">
-  <rect x="10" y="17" width="20" height="17" rx="3" fill="#c89558"/>
-  <path d="M13 17h14l3 5H10z" fill="#e5b06e"/>
-  <path d="M27 33h10l7-12h7l-2 5h-4l-5 11H27z" fill="#35e9ae"/>
-  <path d="M37 29h10c4 0 7 3 7 7v3H43l-6-10z" fill="#35e9ae"/>
-  <circle cx="25" cy="43" r="7" fill="#08130f" stroke="#35e9ae" stroke-width="4"/>
-  <circle cx="49" cy="43" r="7" fill="#08130f" stroke="#35e9ae" stroke-width="4"/>
-  <path d="M41 22l4-7h8" fill="none" stroke="#35e9ae" stroke-width="4" stroke-linecap="round"/>
-  <path d="M37 36H25" fill="none" stroke="#35e9ae" stroke-width="5" stroke-linecap="round"/>
+<svg viewBox="0 0 72 56" width="42" height="34" role="img" aria-label="Moto de entrega amarela">
+  <defs>
+    <linearGradient id="ldMotoGold" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffb000"/>
+      <stop offset="1" stop-color="#ffd84d"/>
+    </linearGradient>
+  </defs>
+  <circle cx="20" cy="43" r="8" fill="#070b09" stroke="#c8d0cd" stroke-width="2.4"/>
+  <circle cx="55" cy="43" r="8" fill="#070b09" stroke="#c8d0cd" stroke-width="2.4"/>
+  <circle cx="20" cy="43" r="3" fill="#7c8581"/>
+  <circle cx="55" cy="43" r="3" fill="#7c8581"/>
+  <path d="M21 40h18l8-14h9l4 13h-7l-3-8-7 12H28z" fill="url(#ldMotoGold)"/>
+  <path d="M30 20h17c4 0 6 2 6 5v3H33c-4 0-7-2-7-5 0-2 2-3 4-3z" fill="url(#ldMotoGold)"/>
+  <rect x="34" y="10" width="17" height="12" rx="3" fill="#151c19" stroke="#ffd84d" stroke-width="1.5"/>
+  <path d="M42 10V6h8" fill="none" stroke="#ffd84d" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M53 25l7-7h6" fill="none" stroke="#ffd84d" stroke-width="2.7" stroke-linecap="round"/>
+  <path d="M25 40l6-13" fill="none" stroke="#ffd84d" stroke-width="3" stroke-linecap="round"/>
 </svg>
 </div><div class="ld-delivery-copy"><b>Pedir Entrega</b><small>Recebe ou envia os teus produtos com entregadores de confiança.</small></div><button type="button" onclick="openDeliveryModal()">Solicitar Delivery <span>›</span></button>';
     hero?.insertAdjacentElement('afterend',el);
