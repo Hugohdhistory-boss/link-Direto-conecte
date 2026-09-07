@@ -818,6 +818,70 @@
 #view-china .china-actions{align-items:center}
 </style>
 
+
+<style id="ld-delivery-v1">
+#ldDeliveryStrip.ld-delivery-strip{
+  margin:10px 16px 10px!important;
+  padding:12px 13px!important;
+  border-radius:18px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:11px!important;
+  border:1px solid rgba(53,233,174,.28)!important;
+  background:
+    radial-gradient(circle at 86% 40%,rgba(53,233,174,.13),transparent 34%),
+    linear-gradient(135deg,rgba(53,233,174,.06),rgba(255,255,255,.025))!important;
+}
+#ldDeliveryStrip .ld-delivery-icon{
+  width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  flex:none;font-size:24px;background:rgba(53,233,174,.11);border:1px solid rgba(53,233,174,.16)
+}
+#ldDeliveryStrip .ld-delivery-copy{flex:1;min-width:0}
+#ldDeliveryStrip .ld-delivery-copy b{display:block;font-size:15px;line-height:1.1;color:#fff}
+#ldDeliveryStrip .ld-delivery-copy small{display:block;margin-top:4px;font-size:9.8px;line-height:1.3;opacity:.63}
+#ldDeliveryStrip>button{
+  border:0;border-radius:13px;padding:10px 12px;background:#35e9ae;color:#04100b;
+  font-weight:950;font-size:10px;line-height:1.05;display:flex;align-items:center;gap:7px;flex:none
+}
+#ldDeliveryStrip>button span{font-size:20px;line-height:.7}
+@media(max-width:390px){
+  #ldDeliveryStrip{gap:8px!important;padding:10px!important}
+  #ldDeliveryStrip .ld-delivery-icon{width:38px;height:38px;font-size:21px}
+  #ldDeliveryStrip .ld-delivery-copy b{font-size:13px}
+  #ldDeliveryStrip .ld-delivery-copy small{font-size:8.7px}
+  #ldDeliveryStrip>button{padding:9px 10px;font-size:9px;max-width:108px}
+}
+
+.ld-delivery-modal{
+  position:fixed;inset:0;z-index:20000;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(0,0,0,.68);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)
+}
+.ld-delivery-modal.open{display:flex}
+.ld-delivery-sheet{
+  width:min(100%,520px);max-height:90vh;overflow:auto;border-radius:26px 26px 0 0;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  background:#07100c;border:1px solid rgba(53,233,174,.2);box-shadow:0 -20px 50px rgba(0,0,0,.45)
+}
+.ld-delivery-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ld-delivery-head div{display:flex;gap:10px;align-items:center}
+.ld-delivery-head i{font-style:normal;font-size:28px}
+.ld-delivery-head b{display:block;font-size:18px}
+.ld-delivery-head small{display:block;opacity:.58;margin-top:2px}
+.ld-delivery-close{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font-size:20px}
+.ld-delivery-form{display:grid;gap:10px}
+.ld-delivery-form label{display:grid;gap:5px;font-size:11px;font-weight:750;opacity:.95}
+.ld-delivery-form input,.ld-delivery-form textarea,.ld-delivery-form select{
+  width:100%;box-sizing:border-box;border-radius:13px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.045);color:#fff;padding:12px;font:inherit;outline:none
+}
+.ld-delivery-form textarea{min-height:76px;resize:vertical}
+.ld-delivery-form input:focus,.ld-delivery-form textarea:focus,.ld-delivery-form select:focus{border-color:rgba(53,233,174,.55)}
+.ld-delivery-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ld-delivery-submit{border:0;border-radius:14px;padding:13px;background:#35e9ae;color:#04100b;font-weight:950;font-size:13px;margin-top:3px}
+.ld-delivery-note{font-size:9.5px;opacity:.52;line-height:1.35;text-align:center}
+@media(max-width:390px){.ld-delivery-grid{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div id="toast" class="toast" aria-live="polite"></div>
@@ -1275,9 +1339,9 @@ function openMatchDirect(button){
     const uniq=new Map();out.sort((a,b)=>b.score-a.score).forEach(m=>{if(!uniq.has(m.id))uniq.set(m.id,m)});matches=[...uniq.values()].slice(0,12);
   }
   function insertHomeStrip(){
-    const home=document.getElementById('view-home'); if(!home||document.getElementById('ldSmartStrip'))return;
-    const hero=home.querySelector('.hero'); const el=document.createElement('section'); el.id='ldSmartStrip';el.className='ld-smart-strip';
-    el.innerHTML='<div class="ld-smart-kicker">⚡ CONEXÃO DIRETA</div><h3 id="ldSmartTitle">O teu post procura por ti.</h3><p id="ldSmartText">Publica TENHO ou PRECISO e o Link Direto procura correspondências automaticamente.</p><div class="ld-smart-row"><button class="primary" onclick="LinkDiretoSmart.open()">Ver conexões</button><button class="ghost" onclick="showView(\'publish\')">Criar procura</button></div><div id="ldSmartCount" class="ld-smart-count">0</div>';
+    const home=document.getElementById('view-home'); if(!home||document.getElementById('ldDeliveryStrip'))return;
+    const hero=home.querySelector('.hero'); const el=document.createElement('section'); el.id='ldDeliveryStrip';el.className='ld-delivery-strip';
+    el.innerHTML='<div class="ld-delivery-icon">🛵</div><div class="ld-delivery-copy"><b>Pedir Entrega</b><small>Recebe ou envia os teus produtos com entregadores de confiança.</small></div><button type="button" onclick="openDeliveryModal()">Solicitar Delivery <span>›</span></button>';
     hero?.insertAdjacentElement('afterend',el);
   }
   function render(){
@@ -2806,6 +2870,89 @@ document.addEventListener('DOMContentLoaded',()=>{
   cleanManualImport();
   new MutationObserver(cleanManualImport).observe(document.body,{childList:true,subtree:true});
 });
+</script>
+
+
+<div id="ldDeliveryModal" class="ld-delivery-modal" aria-hidden="true">
+  <div class="ld-delivery-sheet" role="dialog" aria-modal="true" aria-labelledby="ldDeliveryTitle">
+    <div class="ld-delivery-head">
+      <div><i>🛵</i><span><b id="ldDeliveryTitle">Solicitar Delivery</b><small>Preenche os dados da entrega.</small></span></div>
+      <button class="ld-delivery-close" type="button" onclick="closeDeliveryModal()" aria-label="Fechar">×</button>
+    </div>
+    <form id="ldDeliveryForm" class="ld-delivery-form" onsubmit="submitDeliveryRequest(event)">
+      <div class="ld-delivery-grid">
+        <label>Recolha
+          <input id="ldDeliveryPickup" required placeholder="Bairro / local de recolha">
+        </label>
+        <label>Destino
+          <input id="ldDeliveryDropoff" required placeholder="Bairro / local de entrega">
+        </label>
+      </div>
+      <div class="ld-delivery-grid">
+        <label>Tipo de entrega
+          <select id="ldDeliveryType">
+            <option value="produto">Produto / encomenda</option>
+            <option value="documento">Documento</option>
+            <option value="comida">Comida</option>
+            <option value="outro">Outro</option>
+          </select>
+        </label>
+        <label>Contacto
+          <input id="ldDeliveryContact" required inputmode="tel" placeholder="+258 ...">
+        </label>
+      </div>
+      <label>O que será transportado?
+        <input id="ldDeliveryItem" required maxlength="100" placeholder="Ex.: caixa de roupas, peças, documento...">
+      </label>
+      <label>Observações
+        <textarea id="ldDeliveryNotes" maxlength="300" placeholder="Quantidade, tamanho, referência do local, urgência..."></textarea>
+      </label>
+      <button class="ld-delivery-submit" type="submit">Pedir Entregador</button>
+      <div class="ld-delivery-note">O pedido fica registado no dispositivo nesta versão de teste.</div>
+    </form>
+  </div>
+</div>
+
+<script id="ld-delivery-v1-js">
+(function(){
+  const KEY='ld_delivery_requests_v1';
+  window.openDeliveryModal=function(){
+    const m=document.getElementById('ldDeliveryModal'); if(!m)return;
+    m.classList.add('open'); m.setAttribute('aria-hidden','false');
+    setTimeout(()=>document.getElementById('ldDeliveryPickup')?.focus(),80);
+  };
+  window.closeDeliveryModal=function(){
+    const m=document.getElementById('ldDeliveryModal'); if(!m)return;
+    m.classList.remove('open'); m.setAttribute('aria-hidden','true');
+  };
+  window.submitDeliveryRequest=function(e){
+    e.preventDefault();
+    const req={
+      id:'DLV-'+Date.now().toString(36).toUpperCase(),
+      pickup:document.getElementById('ldDeliveryPickup')?.value.trim()||'',
+      dropoff:document.getElementById('ldDeliveryDropoff')?.value.trim()||'',
+      type:document.getElementById('ldDeliveryType')?.value||'produto',
+      contact:document.getElementById('ldDeliveryContact')?.value.trim()||'',
+      item:document.getElementById('ldDeliveryItem')?.value.trim()||'',
+      notes:document.getElementById('ldDeliveryNotes')?.value.trim()||'',
+      status:'procurando_entregador',
+      createdAt:new Date().toISOString()
+    };
+    let rows=[]; try{ rows=JSON.parse(localStorage.getItem(KEY)||'[]'); if(!Array.isArray(rows))rows=[] }catch(_){}
+    rows.unshift(req); localStorage.setItem(KEY,JSON.stringify(rows.slice(0,50)));
+    e.target.reset();
+    closeDeliveryModal();
+    if(typeof showToast==='function') showToast('🛵 Pedido de delivery criado. A procurar entregador...');
+    else if(typeof toast==='function') toast('🛵 Pedido de delivery criado. A procurar entregador...');
+    else alert('Pedido de delivery criado. A procurar entregador...');
+  };
+  document.addEventListener('click',function(e){
+    if(e.target?.id==='ldDeliveryModal') closeDeliveryModal();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') closeDeliveryModal();
+  });
+})();
 </script>
 
 </body></html>
