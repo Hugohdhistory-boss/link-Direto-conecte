@@ -905,7 +905,7 @@
   <div class="page-title visual-title"><span class="visual-icon green">＋</span><div><h2>Publicar</h2><p>Escolhe o que queres fazer.</p></div></div>
   <div class="publish-hub-v47">
     <button class="publish-hub-card china" onclick="showView('china')">
-      <span class="hub-icon">🇨🇳</span><span><b>China Direto</b><small>Importar Status dos fornecedores e gerir pedidos.</small></span><i>›</i>
+      <span class="hub-icon">🇨🇳</span><span><b>Links da China</b><small>Importar Status dos fornecedores e gerir pedidos.</small></span><i>›</i>
     </button>
     <button class="publish-hub-card" onclick="toggleOpportunityForm(true)">
       <span class="hub-icon">＋</span><span><b>Publicar TENHO / PRECISO</b><small>Criar uma oportunidade no feed.</small></span><i>›</i>
@@ -986,7 +986,7 @@
 <section id="view-china" class="view">
   <div class="china-hero">
     <div class="china-flag">🇨🇳</div>
-    <span class="eyebrow">CHINA DIRETO</span>
+    <span class="eyebrow">LINKS DA CHINA</span>
     <h2>Produtos dos teus fornecedores, sem expor os contactos.</h2>
     <p>Importa um Status que viste no WhatsApp, associa ao fornecedor e publica para todos. O número fica sempre privado.</p>
     <div class="china-hero-actions">
@@ -1001,7 +1001,7 @@
   <div class="china-auto-flow">
   <div class="china-auto-dot">⚡</div>
   <div>
-    <b>China Direto Automático</b>
+    <b>Links da China</b>
     <small>Fornecedor → ponte segura → Supabase → vitrine por 48 horas.</small>
   </div>
   <span>48H</span>
@@ -1044,7 +1044,7 @@ function openMoreMenu(){
         <button class="btn ghost" onclick="closeModal();showView('trending')">🔥 Trending</button>
         <button class="btn ghost" onclick="closeModal();showView('ai-ads')">✨ IA Anúncios</button>
         <button class="btn ghost" onclick="closeModal();showView('market')">▣ Mercado</button>
-        <button class="btn ghost" onclick="closeModal();showView('china')">🇨🇳 China Direto</button>
+        <button class="btn ghost" onclick="closeModal();showView('china')">🇨🇳 Links da China</button>
         <button class="btn ghost" onclick="closeModal();showView('jobs')">💼 Empregos</button>
         <button class="btn ghost" onclick="closeModal();showView('discover')">⌕ Descobrir</button>
         <button class="btn ghost" onclick="closeModal();showView('profile')">● Perfil</button>
@@ -2442,7 +2442,7 @@ body.ld-call-demo-v44 .ld-demo-call-chip-v44{display:block}
   function renderOrders(){const box=document.getElementById('chinaOrders');if(!box)return;const a=read(K_ORD);box.innerHTML=a.length?a.map(o=>{const s=read(K_SUP).find(x=>x.id===o.supplierId);return `<div class="china-order"><b>${esc(o.product)} · ${esc(o.status.toUpperCase())}</b><span>Cliente: ${esc(o.contact)} · ${esc(o.text)}</span><span style="display:block;margin-top:4px">Interno: ${esc(s?.code||'—')} ${s?.phone?'· '+esc(s.phone):''}</span><div class="order-actions"><button onclick="ChinaDireto.setOrder('${o.id}','em análise')">Em análise</button><button onclick="ChinaDireto.contactSupplier('${o.id}')">Fornecedor</button><button onclick="ChinaDireto.setOrder('${o.id}','concluído')">Concluir</button></div></div>`}).join(''):'<div style="padding:14px;text-align:center;opacity:.55">Nenhum pedido ainda.</div>'}
   function setOrder(id,status){const a=read(K_ORD),o=a.find(x=>x.id===id);if(o){o.status=status;write(K_ORD,a);renderOrders()}}
   function contactSupplier(id){const o=read(K_ORD).find(x=>x.id===id),s=read(K_SUP).find(x=>x.id===o?.supplierId);if(!s?.phone)return toast('Fornecedor sem telefone.');const n=s.phone.replace(/\D/g,'');const msg=encodeURIComponent(`Olá. Tenho um cliente interessado em: ${o.product}. Pedido interno ${o.id}.`);window.open(`https://wa.me/${n}?text=${msg}`,'_blank')}
-  function addHomeCard(){const home=document.getElementById('view-home');if(!home||home.querySelector('.china-home-card'))return;const anchor=home.querySelector('.quick-stats');const d=document.createElement('div');d.className='china-home-card';d.innerHTML='<span class="flag">🇨🇳</span><div><b>China Direto</b><small>Produtos internacionais recebidos pela ponte Link Direto, com contactos protegidos.</small></div><button onclick="showView(\'china\')">Abrir</button>';anchor?.after(d)}
+  function addHomeCard(){const home=document.getElementById('view-home');if(!home||home.querySelector('.china-home-card'))return;const anchor=home.querySelector('.quick-stats');const d=document.createElement('div');d.className='china-home-card';d.innerHTML='<span class="flag">🇨🇳</span><div><b>Links da China</b><small>Produtos internacionais recebidos pela ponte Link Direto, com contactos protegidos.</small></div><button onclick="showView(\'china\')">Abrir</button>';anchor?.after(d)}
   window.ChinaDireto={openSupplier,saveSupplier,openImport,previewImport,addRedaction,undoRedaction,clearRedactions,saveImport,render,interest,submitInterest,renderOrders,setOrder,contactSupplier};
   const run=()=>{addHomeCard();render();const old=window.showView;if(typeof old==='function'&&!old.__china){const wrapped=function(v,b){const r=old.apply(this,arguments);if(v==='china')setTimeout(render,0);return r};wrapped.__china=true;window.showView=wrapped}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
@@ -2490,7 +2490,7 @@ function toggleOpportunityForm(open){
 <div id="chinaMonitorModal" class="china-monitor-modal" aria-hidden="true">
   <div class="china-monitor-card">
     <div class="china-monitor-head">
-      <div><div style="font-size:10px;opacity:.55;letter-spacing:.12em">CHINA DIRETO</div><h2>📡 Fornecedores monitorizados</h2></div>
+      <div><div style="font-size:10px;opacity:.55;letter-spacing:.12em">LINKS DA CHINA</div><h2>📡 Fornecedores monitorizados</h2></div>
       <button id="chinaMonitorClose" class="china-monitor-x" type="button">×</button>
     </div>
     <div id="chinaMonitorStatus" class="china-monitor-status wait">A verificar a ponte…</div>
